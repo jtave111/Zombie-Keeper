@@ -150,40 +150,54 @@ int main(int argc, char* argv[]){
 
         appInit.createSession(ptr_session);
 
+
+        //----TODO REFATORAR ISSO PARA MESMO MODO DO NODE 
         appInit.scannSession(ptr_session, scan_opt_flags, sec, usec);
 
         printSessionJson(ptr_session);
 
     }
 
-    // "./Binary --scan_node 'node-ip' + 'node-mac' + 'networkIdentfier' + ('-all-ports' or '-any-ports') + 0 + 200000 "
+    // "./Binary --scan_node  + 'node-mac' + 'networkIdentfier' + ('-all-ports' or '-any-ports') + 0 + 200000 "
     if(command == "--scan_node"){
 
-        std::string node_ip = argv[2];
-        std::string node_mac = argv[3];
-        std::string network_identfier = argv[4];
-        std::string scan_opt_flags = argv[5];
-        long sec = std::stoi(argv[6]);
-        long usec = std::stoi(argv[7]);
+        std::string node_mac = argv[2];
+        std::string network_identfier = argv[3];
+        std::string scan_opt_flags = argv[4];
+        long sec = std::stoi(argv[5]);
+        long usec = std::stoi(argv[6]);
 
-
-        if(!ping.ping(node_ip.c_str())) return 0;
-
-        if(auxFingerprint_session.getMacAddress_module1(node_ip) != node_mac) return 0;
-
-
+        //if(!ping.ping(node_ip.c_str())) return 0;        
+       
         Session session_header;
         Session *ptr_session = &session_header;
         appInit.createSession(ptr_session);
 
         if(session_header.getNetworkIdentifier() != network_identfier ) return 0;
 
-        Node target_node;
+        Node *node_ptr = nullptr;
 
-        Node *node_ptr = &target_node;
-    
-        target_node.setIpAddress(node_ip);  
-        target_node.setMacAddress(node_mac);
+        auto& nodeList = session_header.getMutableNodes();
+
+
+        for(Node &n: nodeList){
+
+            if(n.getMacAddress() == node_mac){
+                node_ptr = &n;
+                break;
+            }
+
+        }
+       
+        if(node_ptr == nullptr) {
+         
+            return 1; 
+        }
+        
+
+        std::string node_ip = node_ptr->getIpAddress();
+
+        // if(!ping.ping(node_ip.c_str())) return 1;
 
         appInit.linkingNode_inPointer(session_header, node_ptr, node_ip, node_mac);
 
@@ -192,6 +206,7 @@ int main(int argc, char* argv[]){
         printNodeJson(ptr_session, node_ptr);
 
     }
+
 
     return 0;
    

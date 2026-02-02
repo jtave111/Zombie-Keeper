@@ -177,7 +177,6 @@ bool Scanner::portScan_tcp(Port *port_ptr, std::string ip, int port, long timeou
 }
 
 
-
 //Make scan ALL ports --All ports all nodes
 void Scanner::scan_all_TcpNodePorts(Session &session, long sec, long usec){
     

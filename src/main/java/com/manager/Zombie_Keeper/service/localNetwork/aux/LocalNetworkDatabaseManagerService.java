@@ -20,8 +20,7 @@ import com.manager.Zombie_Keeper.service.localNetwork.fingerprint.LocalNetworkFi
 
 import jakarta.transaction.Transactional;
 
-@Service
-public class LocalNetworkDatabaseManagerService {
+@Service public class LocalNetworkDatabaseManagerService {
 
     LocalNetworkFingerprintService localNetFp;
     NetworkSessionRepository sessionRepository;
@@ -64,15 +63,136 @@ public class LocalNetworkDatabaseManagerService {
 
             }
 
+            if(n.getVulnerabilitys() != null){
+
+
+                List<Vulnerability> vulnerabilities = n.getVulnerabilitys();
+
+                for(Vulnerability v: vulnerabilities){
+
+                    v.setNode(n);
+                }
+            }
+
         }
 
         return s;
     }
 
+    @Transactional public NetworkNode updateNode(NetworkSession sessionJSON){
+        
+       
+        if(sessionJSON == null || sessionJSON.getDevices() == null || sessionJSON.getDevices().isEmpty()) {
+       
+            
+            return null;
+        }
+        sessionJSON = this.linkigNodesInSession(sessionJSON);    
+        NetworkNode nodeJSON = sessionJSON.getDevices().get(0);
+        
+
+        if(sessionRepository.findByNetworkIdentifier(sessionJSON.getNetworkIdentifier()).isPresent()){
+
+            
+            NetworkSession sessionDBA = sessionRepository.findById(
+                sessionRepository.findIdByNetworkIdentifier(sessionJSON.getNetworkIdentifier())
+            ).get();
+
+            sessionDBA.setLastSeen(LocalDateTime.now());
+
+            NetworkNode nodeDBA = null;
+            
+            for(NetworkNode n: sessionDBA.getDevices()){
+
+                if(n.getMacAddress().equals(nodeJSON.getMacAddress())) {
+                    nodeDBA = n;
+                    break;
+                }
+            }
+
+            if(nodeDBA == null){
+                nodeJSON.setNetwork(sessionDBA);
+                sessionDBA.getDevices().add(nodeJSON);
+
+                return nodeJSON;
+            }
+
+            nodeDBA.setHostname(nodeJSON.getHostname());
+            nodeDBA.setIpAddress(nodeJSON.getIpAddress());
+            nodeDBA.setOs(nodeJSON.getOs());
+            nodeDBA.setTrusted(nodeJSON.isTrusted());
+            nodeDBA.setVendor(nodeJSON.getVendor());
+            nodeDBA.setVunerabilityScore(nodeJSON.getVunerabilityScore());
+
+
+            Map<Integer, Port> mapPortsDBA = new HashMap<>();
+            for(Port p: nodeDBA.getOpenPorts()) mapPortsDBA.put(p.getNumber(), p);
+            List<Port> portsJSON = nodeJSON.getOpenPorts();
+
+            for(Port p: portsJSON ){
+                Integer portIntJSON = p.getNumber();
+
+                if(mapPortsDBA.containsKey(portIntJSON)){
+
+                    Port portUpdateDBA = mapPortsDBA.get(portIntJSON);
+                    mapPortsDBA.remove(portIntJSON);
+
+                    portUpdateDBA.setProtocol(p.getProtocol());
+                    portUpdateDBA.setService(p.getService());
+                    portUpdateDBA.setBanner(p.getBanner());
+
+                }else{
+                    p.setNode(nodeDBA);
+                    nodeDBA.getOpenPorts().add(p);
+                }
+
+            }
+
+            nodeDBA.getOpenPorts().removeAll(mapPortsDBA.values());
+
+
+            Map<String, Vulnerability> mapVulnerabilityDBA = new HashMap<>();
+            for(Vulnerability v: nodeDBA.getVulnerabilitys()) mapVulnerabilityDBA.put(v.getCve(), v);
+            List<Vulnerability> vulnerabilitiesJSON = nodeJSON.getVulnerabilitys();
+
+            for(Vulnerability v: vulnerabilitiesJSON){
+
+                String cveJSON = v.getCve();
+
+                if(mapVulnerabilityDBA.containsKey(cveJSON)){
+                    
+                    Vulnerability vulnerabilityUpdateDBA = mapVulnerabilityDBA.get(cveJSON);
+
+                    //Para atualizar vunl  que foram tratadas
+                    mapVulnerabilityDBA.remove(cveJSON);
+
+                    vulnerabilityUpdateDBA.setName(v.getName());
+                    vulnerabilityUpdateDBA.setTitle(v.getTitle());
+                    vulnerabilityUpdateDBA.setSeverity(v.getSeverity());
+                    vulnerabilityUpdateDBA.setDescription(v.getDescription());
+
+                }else{
+
+
+                    v.setNode(nodeDBA);
+                    nodeDBA.getVulnerabilitys().add(v);
+                }
+            }
+
+            nodeDBA.getVulnerabilitys().removeAll(mapVulnerabilityDBA.values());
+            
+            return nodeDBA;
+
+        }else{
+
+            return null;
+
+        }
+        
+    }
 
     //for update
-    @Transactional 
-    public NetworkSession updateCompleteSession( NetworkSession sessionJSON){
+    @Transactional public NetworkSession updateCompleteSession( NetworkSession sessionJSON){
         NetworkSession sessionDBA = new NetworkSession();
         
         sessionJSON = this.linkigNodesInSession(sessionJSON);
@@ -204,6 +324,5 @@ public class LocalNetworkDatabaseManagerService {
         System.out.println("--UPDATE--");
         return sessionDBA;
     }
-
 
 }

@@ -48,7 +48,7 @@ public class LocalNetworkFingerprintService {
         
     }
 
-    public String excLocalNodeFingerPrint(String binaryName,String id, String mac, String networkIdentfier,  String flag, String sec, String usec ){
+    public String excLocalNodeFingerPrint(String binaryName,  String mac, String networkIdentfier,  String flag, String sec, String usec ){
 
         List<String> comand = new ArrayList<>();
         StringBuilder output = new StringBuilder();
@@ -68,13 +68,62 @@ public class LocalNetworkFingerprintService {
                 binaryFile.setExecutable(true);
             }
 
-            //Continue 
+            comand.add(binaryFile.getAbsolutePath());
+            
+            comand.add("--scan_node");
+            comand.add(mac);
+            comand.add(networkIdentfier);
+            comand.add(flag);
+            comand.add(sec);
+            comand.add(usec);
+
+
 
         } catch (Exception e) {
-            // TODO: handle exception
+            System.out.println(e.getMessage());
         }
 
-        return " ";
+        try {
+
+            ProcessBuilder pb = new ProcessBuilder(comand);
+
+            pb.redirectErrorStream(true);
+
+            Process process = pb.start();
+
+            try(BufferedReader buffer = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                
+                String line;
+
+                while ((line = buffer.readLine()) != null) {
+                    output.append(line).append("\n");
+                }
+
+
+
+            } catch (Exception e) {
+                System.out.println("ERROR " + e.getMessage());
+            }
+
+            boolean finished  = process.waitFor(60, TimeUnit.SECONDS);
+            
+            if(!finished) {
+                process.destroyForcibly();
+                output.append("\nERROR");
+            }
+
+
+            int exitCode = process.exitValue();
+
+            if(exitCode == 1 ) return "falidPing";
+            
+        } catch (Exception e) {
+           e.printStackTrace();
+           System.out.println("ERROR " + e.getMessage());
+        
+        }
+
+        return extractJson(output.toString());
     }
 
     // "./Binary --create_session '-all-ports' or 'any-ports' "
