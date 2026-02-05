@@ -24,7 +24,9 @@ public:
     //Linking pointers 
     void linkingNode_inPointer(Session &session, Node *node_ptr, std::string ip, std::string mac);
 
+    //TODO create simple scan call 
     
-   
+
+    bool scanPort(std::string ip, int port, long sec, long usec);
 };
 

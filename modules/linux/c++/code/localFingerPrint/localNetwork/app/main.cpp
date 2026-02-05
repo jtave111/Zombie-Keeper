@@ -134,15 +134,15 @@ int main(int argc, char* argv[]){
     FingerprintSession auxFingerprint_session;
     Ping ping;
 
-   // "./Binary --create_session '-all-ports' or '-any-ports' 0 200000 "
+    // "./Binary --create_session '-all-ports' or '-any-ports' 0 200000 "
     std::string command = argv[1];
 
     if(command == "--create_session"){
 
         std::string scan_opt_flags = argv[2];
 
-        int sec = std::stoi(argv[3]);
-        int usec = std::stoi(argv[4]);
+        long sec = std::stoi(argv[3]);
+        long usec = std::stoi(argv[4]);
 
         Session session;
 
@@ -155,6 +155,57 @@ int main(int argc, char* argv[]){
         appInit.scannSession(ptr_session, scan_opt_flags, sec, usec);
 
         printSessionJson(ptr_session);
+
+    }
+
+    // ./Binary --simple_scan + 'networkIdentfier' + mac + ip + port + sec + usec 
+    if(command == "--simple_scan"){
+
+        std::string network_identfier = argv[2];
+        std::string mac = argv[3];
+        std::string ip = argv[4];
+        int port = std::stoi(argv[5]);
+
+
+        long sec = std::stoi(argv[6]);
+        long usec = std::stoi(argv[7]);
+
+        Session session;
+        Session *ptr_session = &session;
+
+        appInit.createSession(ptr_session);
+    
+
+        if(ptr_session->getNetworkIdentifier() != network_identfier) return 0;
+
+
+        Node *node_ptr = nullptr;
+
+        auto& nodeList = session.getMutableNodes();
+
+        for(Node &n: nodeList){
+
+            if(n.getMacAddress() == mac){
+
+                if(n.getIpAddress() == ip){
+                    node_ptr = &n;
+                    break;
+
+                }else{
+
+                    return 1; 
+
+                }
+            }
+        }
+
+        if(node_ptr == nullptr) return 1;
+
+        appInit.linkingNode_inPointer(session, node_ptr, ip, mac);
+
+        
+        return 1 ? appInit.scanPort(ip, port, sec, usec) : 2;
+        
 
     }
 
@@ -173,7 +224,7 @@ int main(int argc, char* argv[]){
         Session *ptr_session = &session_header;
         appInit.createSession(ptr_session);
 
-        if(session_header.getNetworkIdentifier() != network_identfier ) return 0;
+        if(session_header.getNetworkIdentifier() != network_identfier ) return 2;
 
         Node *node_ptr = nullptr;
 
@@ -184,6 +235,7 @@ int main(int argc, char* argv[]){
 
             if(n.getMacAddress() == node_mac){
                 node_ptr = &n;
+                
                 break;
             }
 

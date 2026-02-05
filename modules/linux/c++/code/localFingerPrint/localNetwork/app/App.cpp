@@ -38,3 +38,9 @@ void App::scanNode(Node *ptr, std::string flags, long sec, long usec){
 
 
 }
+
+
+bool App::scanPort(std::string ip, int port, long sec, long usec){
+    
+    return scanner.portScan_tcp(ip, port, sec, usec);
+}
