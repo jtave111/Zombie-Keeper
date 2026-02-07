@@ -176,7 +176,7 @@ int main(int argc, char* argv[]){
         appInit.createSession(ptr_session);
     
 
-        if(ptr_session->getNetworkIdentifier() != network_identfier) return 0;
+       // if(ptr_session->getNetworkIdentifier() != network_identfier) return 0;
 
 
         Node *node_ptr = nullptr;
@@ -204,8 +204,12 @@ int main(int argc, char* argv[]){
         appInit.linkingNode_inPointer(session, node_ptr, ip, mac);
 
         
-        return 1 ? appInit.scanPort(ip, port, sec, usec) : 2;
-        
+        if(appInit.scanPort(ip, port, sec, usec)){
+            return 0;
+
+        }else{
+            return 2;
+        }
 
     }
 
@@ -260,7 +264,7 @@ int main(int argc, char* argv[]){
     }
 
 
-    return 0;
+  
    
 }
 

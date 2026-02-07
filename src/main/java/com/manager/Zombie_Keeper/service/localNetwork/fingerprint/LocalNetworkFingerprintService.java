@@ -2,6 +2,7 @@ package com.manager.Zombie_Keeper.service.localNetwork.fingerprint;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -124,6 +125,63 @@ public class LocalNetworkFingerprintService {
         }
 
         return extractJson(output.toString());
+    }
+
+    public int excLocalPortScan(String binaryName, String networkIdentfier, String mac, String ip, String port, String sec, String usec){
+
+        List<String> comand = new ArrayList<>();
+        
+
+        try {
+
+            File root = this.getRootPath();
+            File binaryFile = new File(root, "modules/linux/c++/code/localFingerPrint/" + binaryName );
+            
+
+            if(!binaryFile.exists()) throw new FileNotFoundException();
+
+            if(!binaryFile.canExecute()){
+                binaryFile.setExecutable(true);
+            }
+            
+            comand.add(binaryFile.getAbsolutePath());
+            comand.add("--simple_scan");
+            comand.add(networkIdentfier);
+            comand.add(mac);
+            comand.add(ip);
+            comand.add(port);
+            comand.add(sec);
+            comand.add(usec);
+        
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("ERROR " + e.getMessage());
+        }
+
+
+        int exitCode =-1;
+        try {
+            
+            ProcessBuilder pb = new ProcessBuilder(comand);
+            Process process = pb.start();
+
+            boolean finished = process.waitFor(60, TimeUnit.SECONDS);
+
+            if(!finished){
+                process.destroyForcibly();
+                
+            }
+
+            exitCode = process.exitValue();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("ERROR " + e.getMessage());
+        }
+
+        return exitCode;
+
     }
 
     // "./Binary --create_session '-all-ports' or 'any-ports' "
