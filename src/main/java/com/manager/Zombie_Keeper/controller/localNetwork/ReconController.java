@@ -73,7 +73,6 @@ public class ReconController {
     }  
 
     @GetMapping(value = "/node/{binaryName}/{networkIdentfier}/{mac}/{ip}/{port}/{sec}/{usec}")
-
     public ResponseEntity<Integer> simpleScan(@PathVariable String binaryName, @PathVariable String networkIdentfier, 
         @PathVariable String mac,  @PathVariable String ip,@PathVariable String port, @PathVariable String sec, @PathVariable String usec) {
 

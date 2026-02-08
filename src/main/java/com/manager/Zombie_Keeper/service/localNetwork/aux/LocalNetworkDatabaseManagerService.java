@@ -1,6 +1,7 @@
 package com.manager.Zombie_Keeper.service.localNetwork.aux;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,7 +128,11 @@ import jakarta.transaction.Transactional;
 
             Map<Integer, Port> mapPortsDBA = new HashMap<>();
             for(Port p: nodeDBA.getOpenPorts()) mapPortsDBA.put(p.getNumber(), p);
+
+            System.out.println("DEBUG: Portas no Banco antes do sync: " + mapPortsDBA.size());
             List<Port> portsJSON = nodeJSON.getOpenPorts();
+            System.out.println("DEBUG: Portas no JSON novo: " + portsJSON.size());
+            List<Port> portsRemove = new ArrayList<>();
 
             for(Port p: portsJSON ){
                 Integer portIntJSON = p.getNumber();
@@ -135,12 +140,14 @@ import jakarta.transaction.Transactional;
                 if(mapPortsDBA.containsKey(portIntJSON)){
 
                     Port portUpdateDBA = mapPortsDBA.get(portIntJSON);
+                
                     mapPortsDBA.remove(portIntJSON);
-
                     portUpdateDBA.setProtocol(p.getProtocol());
                     portUpdateDBA.setService(p.getService());
                     portUpdateDBA.setBanner(p.getBanner());
+                
 
+                   
                 }else{
                     p.setNode(nodeDBA);
                     nodeDBA.getOpenPorts().add(p);
@@ -148,7 +155,31 @@ import jakarta.transaction.Transactional;
 
             }
 
-            nodeDBA.getOpenPorts().removeAll(mapPortsDBA.values());
+            //TODO: melhor a precisao disso 
+            for(Port stalePort : mapPortsDBA.values()){
+                
+                System.out.println("DEBUG: Iniciando scan na porta: " + stalePort.getNumber() + " ip " + nodeDBA.getIpAddress());
+                
+                int resultPortScan = localNetFp.excLocalPortScan(
+                    "LocalFingerPrint", 
+                    sessionDBA.getNetworkIdentifier(), 
+                    nodeDBA.getMacAddress(), 
+                    nodeDBA.getIpAddress(), 
+                    String.valueOf(stalePort.getNumber()), 
+                    "2", 
+                    "0"
+                );
+
+                System.out.println("Resultado do port scan: "  + resultPortScan);
+
+                if(resultPortScan == 2){
+                    System.out.println("Porta antiga " + stalePort.getNumber() + " confirmada fechada. Removendo");
+                    portsRemove.add(stalePort);
+                }
+            }
+
+            //Para atualizar portas que foram fechadas
+            nodeDBA.getOpenPorts().removeAll(portsRemove);
 
 
             Map<String, Vulnerability> mapVulnerabilityDBA = new HashMap<>();
@@ -239,6 +270,8 @@ import jakarta.transaction.Transactional;
                     List<Port> portsUpdateJSON = n.getOpenPorts();
                     for(Port p: portsUpdateDBA){mapNodesPortsDBA.put(p.getNumber(), p);}
             
+                    List<Port> portsRemove = new ArrayList<>();
+
                     for(Port p: portsUpdateJSON){
                         Integer portNumberJSON = p.getNumber();
 
@@ -248,7 +281,6 @@ import jakarta.transaction.Transactional;
                             
                             //Para atualizar portas que foram fechadas
                             mapNodesPortsDBA.remove(portNumberJSON);
-
 
                             portUpdateDBA.setProtocol(p.getProtocol());
                             portUpdateDBA.setService(p.getService());
@@ -263,10 +295,33 @@ import jakarta.transaction.Transactional;
                     
                     }
 
+                    //TODO: melhor a precisao disso 
+                    for(Port stalePort : mapNodesPortsDBA.values()){
+                        
+                        System.out.println("DEBUG: Iniciando scan na porta: " + stalePort.getNumber() + " ip " + nodeUpdateDBA.getIpAddress());
+                       
+                        int resultPortScan = localNetFp.excLocalPortScan(
+                            "LocalFingerPrint", 
+                            sessionDBA.getNetworkIdentifier(), 
+                            nodeUpdateDBA.getMacAddress(), 
+                            nodeUpdateDBA.getIpAddress(), 
+                            String.valueOf(stalePort.getNumber()), 
+                            "2", 
+                            "0"
+                        );
+
+                        System.out.println("Resultado do port scan: "  + resultPortScan);
+
+                        if(resultPortScan == 2){
+                            System.out.println("Porta antiga " + stalePort.getNumber() + " confirmada fechada. Removendo");
+                            portsRemove.add(stalePort);
+                        }
+                    }
 
                     //Para atualizar portas que foram fechadas
-                    nodeUpdateDBA.getOpenPorts().removeAll(mapNodesPortsDBA.values());
+                    nodeUpdateDBA.getOpenPorts().removeAll(portsRemove);
 
+                    
                     Map<String, Vulnerability> mapNodesVulnerability = new HashMap<>();
                     List<Vulnerability> vulnerabilitiesUpdateDBA = nodeUpdateDBA.getVulnerabilitys();
                     List<Vulnerability> vulnerabilitiesUpdateJSON = n.getVulnerabilitys();
@@ -292,7 +347,6 @@ import jakarta.transaction.Transactional;
                             vulnerabilityUpdateDBA.setDescription(v.getDescription());
 
                         }else{
-
 
                             v.setNode(nodeUpdateDBA);
                             nodeUpdateDBA.getVulnerabilitys().add(v);
