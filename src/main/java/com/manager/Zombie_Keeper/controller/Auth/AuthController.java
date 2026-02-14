@@ -12,7 +12,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.access.prepost.PreAuthorize; // Importante
+import org.springframework.security.access.prepost.PreAuthorize; 
 import org.springframework.web.bind.annotation.*;
 
 import com.manager.Zombie_Keeper.dtos.auth.CreateAcRequest;
@@ -25,6 +25,8 @@ import com.manager.Zombie_Keeper.repository.auth.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.GetMapping;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -66,7 +68,19 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User or Password invalid");
             
         }
+    }
 
+    @GetMapping("/get-session-id")
+    public ResponseEntity<String> getHttpSessionId(HttpServletRequest request){
+        
+        HttpSession session = request.getSession();
+
+        String sessionId = session.getId();
+
+        System.out.println("Id da sessão " + sessionId);
+
+        return ResponseEntity.ok(sessionId);
+    }    
         /*
        Optional<User> userOptional = userRepository.findByUsername(dto.getUsername());
        
@@ -104,7 +118,7 @@ public class AuthController {
 
         }
         */      
-    } 
+    
 
 
     @PostMapping("/register")

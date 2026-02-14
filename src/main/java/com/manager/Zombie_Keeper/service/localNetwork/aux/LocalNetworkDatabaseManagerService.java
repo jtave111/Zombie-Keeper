@@ -128,10 +128,7 @@ import jakarta.transaction.Transactional;
 
             Map<Integer, Port> mapPortsDBA = new HashMap<>();
             for(Port p: nodeDBA.getOpenPorts()) mapPortsDBA.put(p.getNumber(), p);
-
-            System.out.println("DEBUG: Portas no Banco antes do sync: " + mapPortsDBA.size());
             List<Port> portsJSON = nodeJSON.getOpenPorts();
-            System.out.println("DEBUG: Portas no JSON novo: " + portsJSON.size());
             List<Port> portsRemove = new ArrayList<>();
 
             for(Port p: portsJSON ){
@@ -295,7 +292,7 @@ import jakarta.transaction.Transactional;
                     
                     }
 
-                    //TODO: melhor a precisao disso 
+                    //TODO: melhor a precisao disso // colocar em ingles 
                     for(Port stalePort : mapNodesPortsDBA.values()){
                         
                         System.out.println("DEBUG: Iniciando scan na porta: " + stalePort.getNumber() + " ip " + nodeUpdateDBA.getIpAddress());

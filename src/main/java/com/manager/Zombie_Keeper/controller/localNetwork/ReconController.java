@@ -5,42 +5,58 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.http.MediaType;
 
+import com.manager.Zombie_Keeper.controller.Auth.AuthController;
 import com.manager.Zombie_Keeper.model.entity.localNetwork.NetworkNode;
 import com.manager.Zombie_Keeper.model.entity.localNetwork.NetworkSession;
 import com.manager.Zombie_Keeper.repository.localNetwork.NetworkNodeRepository;
 import com.manager.Zombie_Keeper.repository.localNetwork.NetworkSessionRepository;
 import com.manager.Zombie_Keeper.service.localNetwork.aux.LocalNetworkDatabaseManagerService;
 import com.manager.Zombie_Keeper.service.localNetwork.fingerprint.LocalNetworkFingerprintService;
+import com.manager.Zombie_Keeper.service.processManagerService.ProcessManagerService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import tools.jackson.databind.ObjectMapper;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
 @RequestMapping("/c2-server/local-network/recon")
 public class ReconController {
-
+    
+    //service 
     LocalNetworkFingerprintService localNetFp;
-    NetworkSessionRepository sessionRepository;
     LocalNetworkDatabaseManagerService auxNetworkAuxsService;
+    ProcessManagerService processManagerService;
+    
+    //repository
+    NetworkSessionRepository sessionRepository;
     NetworkNodeRepository networkNodeRepository;
+   
 
+    //controller
+     AuthController authController;
 
     public ReconController(LocalNetworkFingerprintService localNetFp, NetworkSessionRepository sessionRepository, 
-        LocalNetworkDatabaseManagerService auxNetworkAuxsService, NetworkNodeRepository networkNodeRepository ){
+        LocalNetworkDatabaseManagerService auxNetworkAuxsService, NetworkNodeRepository networkNodeRepository, 
+        AuthController authController, ProcessManagerService processManagerService){
         
             this.localNetFp = localNetFp;
             this.sessionRepository = sessionRepository;
             this.auxNetworkAuxsService = auxNetworkAuxsService;
             this.networkNodeRepository = networkNodeRepository;
+            this.authController = authController;
+            this.processManagerService = processManagerService;
     }
     
+
+
     /*
     *  use sec usec for struct timeval(c++) non-bloking io configuration
     *  Ex: "LocalFingerPrint", "all or any ", "0", "300000"
@@ -72,31 +88,6 @@ public class ReconController {
         return ResponseEntity.ok(json);
     }  
 
-    @GetMapping(value = "/node/{binaryName}/{networkIdentfier}/{mac}/{ip}/{port}/{sec}/{usec}")
-    public ResponseEntity<Integer> simpleScan(@PathVariable String binaryName, @PathVariable String networkIdentfier, 
-        @PathVariable String mac,  @PathVariable String ip,@PathVariable String port, @PathVariable String sec, @PathVariable String usec) {
-
-
-        try {
-            int result = localNetFp.excLocalPortScan(binaryName, networkIdentfier, mac, ip, port, sec, usec);
-
-
-
-            return ResponseEntity.ok(result);
-
-
-        } catch (Exception e) {
-           
-            e.printStackTrace();
-            System.out.println("ERROR " + e.getMessage());
-        }   
-
-        
-
-        return ResponseEntity.ok(-1);
-
-    }
-    
 
     @GetMapping(value = "/node/{binaryName}/{mac}/{networkIdentfier}/{flag}/{sec}/{usec}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> nodeRecon(@PathVariable String binaryName, @PathVariable String networkIdentfier, 
@@ -154,6 +145,70 @@ public class ReconController {
         }
         
         return ResponseEntity.ok(json);
+    }
+
+
+    @GetMapping(value = "/node/{binaryName}/{networkIdentfier}/{mac}/{ip}/{port}/{sec}/{usec}")
+    public ResponseEntity<Integer> simpleScan(@PathVariable String binaryName, @PathVariable String networkIdentfier, 
+        @PathVariable String mac,  @PathVariable String ip,@PathVariable String port, @PathVariable String sec, @PathVariable String usec) {
+
+
+        try {
+            int result = localNetFp.excLocalPortScan(binaryName, networkIdentfier, mac, ip, port, sec, usec);
+
+
+
+            return ResponseEntity.ok(result);
+
+
+        } catch (Exception e) {
+           
+            e.printStackTrace();
+            System.out.println("ERROR " + e.getMessage());
+        }   
+
+        
+
+        return ResponseEntity.ok(-1);
+
+    }
+
+    //TODO Refatorar para o ingles--------------------------------- i
+    //Localhost = http://localhost:8080/ or http://l92.168.x.x:8080/
+    //http://localhost:8080/c2-server/local-network/recon/automation/python/start-recon/request.py?localHost=http://localhost:8080&pathScan=/c2-server/local-network/recon/session/LocalFingerPrint/any/0/300000
+    @GetMapping(value = "/automation/python/start-recon/{script}")
+    public ResponseEntity<String> requestAutomation(HttpServletRequest request, @PathVariable String script, @RequestParam String localHost,@RequestParam String pathScan){  
+
+        
+        String JSESSIONID = authController.getHttpSessionId(request).getBody();
+        
+        String completeUrlScan = localHost + pathScan;
+
+        System.out.println("Url: " +  completeUrlScan );
+
+        CompletableFuture.runAsync(() -> {
+
+            String resultScript = localNetFp.execRequestAutomation(script, JSESSIONID, completeUrlScan);
+            System.out.println(" Automação [" + script + "] foi encerrada. Saída: " + resultScript);
+        });
+        
+
+
+        return ResponseEntity.ok("Autmoação iniciada em background");
+    }
+
+
+    @DeleteMapping(value = "/automation/python/stop/{script}")
+    public ResponseEntity<String> stopProcess(@PathVariable String script) {  
+
+        
+        boolean wasKilled = processManagerService.killProcess(script, localNetFp.getActiveProcesses());
+
+        if (wasKilled) {
+            return ResponseEntity.ok(" Automação [" + script + "] foi encerrada com sucesso");
+        } else {
+            return ResponseEntity.status(404).body(" Nenhuma automação rodando com o nome [" + script + "]");
+        }
     }
 
     @DeleteMapping("/admin/reset-database")
