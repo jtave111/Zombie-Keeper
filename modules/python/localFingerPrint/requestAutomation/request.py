@@ -15,6 +15,7 @@ def login(jsession_id, test_url):
     request = urllib.request.Request(url=test_url, headers=headers)
     opener = urllib.request.build_opener()
 
+
     try:
         with opener.open(request) as res:
             
@@ -73,13 +74,12 @@ def automation_request():
                 print("\nStop script...")
                 break
             except Exception as e:
-                print(f"Connection refused: {e}")
+                print(f"Con. refused: {e}")
                 break
     else:
         print("Unauthorized.")
 
     
-
 def main():
    automation_request()
         
