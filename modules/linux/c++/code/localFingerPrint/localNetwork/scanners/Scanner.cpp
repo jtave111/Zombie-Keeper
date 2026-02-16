@@ -2,6 +2,202 @@
 #include "localNetwork/model/h/Session.h"
 #include <netdb.h>
 
+/**
+* UPD funcs  
+*/ 
+
+bool Scanner::portScan_udp(std::string ip, int port, long timeout_sec, long timeout_usec){
+
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);
+
+    if(sock < 0) return false;
+
+    struct sockaddr_in target;
+    memset(&target, 0, sizeof(target));
+    target.sin_family =  AF_INET;
+    target.sin_port = htons(port);
+    inet_pton(AF_INET, ip.c_str(), &target.sin_addr);
+
+    if (connect(sock, (struct sockaddr*)&target, sizeof(target)) < 0) {
+        close(sock);
+        return false;
+    }
+    
+    const char* payload  = "";
+    int payload_len = 0;
+
+    this->defineUDP_payload(port, payload, payload_len);
+    
+  
+    if(send(sock, payload, 1, 0) < 0){
+        close(sock);
+        return false;
+    }
+
+    fd_set read_fds;
+    FD_ZERO(&read_fds);
+    FD_SET(sock, &read_fds);
+
+    struct timeval tv;
+    tv.tv_sec = timeout_sec;
+    tv.tv_usec = timeout_usec;
+
+
+    int res = select(sock + 1, &read_fds, NULL, NULL, &tv);
+
+    if(res > 0){
+
+        char buffer[1024];
+        // O socket tem algo para ler, pode ser dados ou um erro ICMP
+        int recv_len = recv(sock, buffer, sizeof(buffer), 0);
+
+        if(recv_len < 0){
+
+            if(errno == ECONNREFUSED){
+                close(sock);
+                return false;
+            }
+
+            return true;
+        }
+
+
+    }else if(res == 0){
+
+        close(sock);
+        return true;
+    }
+
+    close(sock);
+    return false;
+}
+
+void Scanner::defineUDP_payload(int port, const char* &payload, int &payload_len){
+    
+    switch (port){
+        case 123: // NTP
+            payload = "\xe3\x00\x04\xfa\x00\x01\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00"
+                      "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+                      "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+            payload_len = 48;
+            break;
+        
+        case 53: // DNS
+            payload = "\xdb\x42\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00\x06\x67\x6f\x6f"
+                      "\x67\x6c\x65\x03\x63\x6f\x6d\x00\x00\x01\x00\x01";
+            payload_len = 28;
+            break;
+
+        case 161: // SNMP
+            payload = "\x30\x26\x02\x01\x00\x04\x06\x70\x75\x62\x6c\x69\x63\xa0\x19\x02"
+                      "\x04\x13\x12\x47\x69\x02\x01\x00\x02\x01\x00\x30\x0b\x30\x09\x06"
+                      "\x05\x2b\x06\x01\x02\x01\x05\x00";
+            payload_len = 40;
+            break;
+        
+        case 111: // RPCbind
+            payload = "\x01\x09\x1f\x18\x00\x00\x00\x00\x00\x00\x00\x02\x00\x01\x86\xa0"
+                      "\x00\x00\x00\x02\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x00"
+                      "\x00\x00\x00\x00\x00\x00\x00\x00";
+            payload_len = 40;
+            break;
+            
+        case 137: // NetBIOS
+            payload = "\x82\x28\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x20\x43\x4b\x41"
+                      "\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41"
+                      "\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x00"
+                      "\x00\x21\x00\x01";
+            payload_len = 50;
+            break;
+        
+        case 67:   
+        case 68: // DHCP
+            {
+                static char dhcp_payload[300] = {0}; 
+                dhcp_payload[0] = '\x01'; 
+                dhcp_payload[1] = '\x01'; 
+                dhcp_payload[2] = '\x06'; 
+                dhcp_payload[3] = '\x00'; 
+                
+                dhcp_payload[236] = '\x63'; dhcp_payload[237] = '\x82';
+                dhcp_payload[238] = '\x53'; dhcp_payload[239] = '\x63';
+                dhcp_payload[240] = '\x35'; dhcp_payload[241] = '\x01'; dhcp_payload[242] = '\x01'; 
+                dhcp_payload[243] = '\xff';
+
+                payload = dhcp_payload;
+                payload_len = 300;
+            }
+            break;
+
+        case 1434: // MS-SQL Server
+            payload = "\x02"; 
+            payload_len = 1;
+            break;
+            
+        case 1900: // SSDP / UPnP
+            payload = "M-SEARCH * HTTP/1.1\r\n"
+                      "Host: 239.255.255.250:1900\r\n"
+                      "Man: \"ssdp:discover\"\r\n"
+                      "MX: 2\r\n"
+                      "ST: ssdp:all\r\n\r\n";
+            payload_len = 104; 
+            break;
+
+        case 5353: // mDNS (Bonjour/Avahi)
+            payload = "\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x09\x5f\x73\x65"
+                      "\x72\x76\x69\x63\x65\x73\x07\x5f\x64\x6e\x73\x2d\x73\x64\x04\x5f"
+                      "\x75\x64\x70\x05\x6c\x6f\x63\x61\x6c\x00\x00\x0c\x00\x01";
+            payload_len = 46;
+            break;
+
+        case 500: // IKE / IPsec VPN
+            payload = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+                      "\x01\x10\x02\x00\x00\x00\x00\x00\x00\x00\x00\x28\x00\x00\x00\x0c"
+                      "\x00\x00\x00\x01\x01\x00\x00\x10";
+            payload_len = 40;
+            break;
+        
+        case 5060: // SIP (VoIP) 
+            payload = "OPTIONS sip:nm SIP/2.0\r\n"
+                      "To: <sip:nm@nm>\r\n"
+                      "From: <sip:nm@nm>;tag=1\r\n"
+                      "Call-ID: 1\r\n"
+                      "CSeq: 1 OPTIONS\r\n"
+                      "Via: SIP/2.0/UDP 127.0.0.1;branch=z9hG4bK1\r\n\r\n";
+            payload_len = 127;
+            break;
+
+        case 623: // IPMI / RMCP
+            payload = "\x06\x00\xff\x07\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+                      "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+                      "\x00\x00\x00\x00\x00\x00\x00\x00";
+            payload_len = 40;
+            break;    
+        
+        case 1194: // OpenVPN
+            payload = "\x38\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+            payload_len = 14;
+            break;
+
+        case 1645:
+        case 1812: // RADIUS Authentication
+            payload = "\x01\x18\x00\x1a\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+                      "\x00\x00\x00\x00\x01\x06\x61\x64\x6d\x69\x6e"; 
+            payload_len = 26;
+            break;
+
+        default:
+           
+            payload = "\x00";
+            payload_len = 1;
+            break;
+    }
+}
+
+
+/**
+* TCP funcs  
+*/ 
 
 /**
  * @brief Attempts to establish a TCP connection to a specific host and port using non-blocking I/O.
