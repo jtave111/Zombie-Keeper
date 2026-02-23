@@ -6,75 +6,10 @@
 * UPD funcs  
 */ 
 
-bool Scanner::portScan_udp(std::string ip, int port, long timeout_sec, long timeout_usec){
-
-    int sock = socket(AF_INET, SOCK_DGRAM, 0);
-
-    if(sock < 0) return false;
-
-    struct sockaddr_in target;
-    memset(&target, 0, sizeof(target));
-    target.sin_family =  AF_INET;
-    target.sin_port = htons(port);
-    inet_pton(AF_INET, ip.c_str(), &target.sin_addr);
-
-    if (connect(sock, (struct sockaddr*)&target, sizeof(target)) < 0) {
-        close(sock);
-        return false;
-    }
-    
-    const char* payload  = "";
-    int payload_len = 0;
-
-    this->defineUDP_payload(port, payload, payload_len);
-    
-  
-    if(send(sock, payload, 1, 0) < 0){
-        close(sock);
-        return false;
-    }
-
-    fd_set read_fds;
-    FD_ZERO(&read_fds);
-    FD_SET(sock, &read_fds);
-
-    struct timeval tv;
-    tv.tv_sec = timeout_sec;
-    tv.tv_usec = timeout_usec;
-
-
-    int res = select(sock + 1, &read_fds, NULL, NULL, &tv);
-
-    if(res > 0){
-
-        char buffer[1024];
-        // O socket tem algo para ler, pode ser dados ou um erro ICMP
-        int recv_len = recv(sock, buffer, sizeof(buffer), 0);
-
-        if(recv_len < 0){
-
-            if(errno == ECONNREFUSED){
-                close(sock);
-                return false;
-            }
-
-            return true;
-        }
-
-
-    }else if(res == 0){
-
-        close(sock);
-        return true;
-    }
-
-    close(sock);
-    return false;
-}
-
 void Scanner::defineUDP_payload(int port, const char* &payload, int &payload_len){
     
     switch (port){
+        
         case 123: // NTP
             payload = "\xe3\x00\x04\xfa\x00\x01\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00"
                       "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
@@ -102,8 +37,9 @@ void Scanner::defineUDP_payload(int port, const char* &payload, int &payload_len
             payload_len = 40;
             break;
             
-        case 137: // NetBIOS
-            payload = "\x82\x28\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x20\x43\x4b\x41"
+        case 137: // NetBIOS-NS (Assinatura agressiva baseada no Nmap)
+            
+            payload = "\x80\xf0\x00\x10\x00\x01\x00\x00\x00\x00\x00\x00\x20\x43\x4b\x41"
                       "\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41"
                       "\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x00"
                       "\x00\x21\x00\x01";
@@ -185,13 +121,193 @@ void Scanner::defineUDP_payload(int port, const char* &payload, int &payload_len
                       "\x00\x00\x00\x00\x01\x06\x61\x64\x6d\x69\x6e"; 
             payload_len = 26;
             break;
-
+        case 2049: // NFSv3 (Network File System)
+            payload = "\x01\x02\x03\x04\x00\x00\x00\x00\x00\x00\x00\x02\x00\x01\x86\xa3"
+                      "\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+                      "\x00\x00\x00\x00\x00\x00\x00\x00";
+            
+            payload_len = 40;
+            break;
         default:
            
             payload = "\x00";
             payload_len = 1;
             break;
     }
+}
+
+int Scanner::portScan_udp(std::string ip, int port, long timeout_sec, long timeout_usec){
+
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);
+
+    if(sock < 0) return 4;
+
+    struct sockaddr_in target;
+    memset(&target, 0, sizeof(target));
+    target.sin_family =  AF_INET;
+    target.sin_port = htons(port);
+    inet_pton(AF_INET, ip.c_str(), &target.sin_addr);
+
+    if (connect(sock, (struct sockaddr*)&target, sizeof(target)) < 0) {
+        close(sock);
+        return 4;
+    }
+    
+    const char* payload  = "";
+    int payload_len = 0;
+
+    this->defineUDP_payload(port, payload, payload_len);
+    
+  
+    if(send(sock, payload, payload_len, 0) < 0){
+        close(sock);
+        return 4;
+    }
+
+    fd_set read_fds;
+    FD_ZERO(&read_fds);
+    FD_SET(sock, &read_fds);
+
+    struct timeval tv;
+    tv.tv_sec = timeout_sec;
+    tv.tv_usec = timeout_usec;
+
+
+    int res = select(sock + 1, &read_fds, NULL, NULL, &tv);
+
+    if(res > 0){
+
+        char buffer[1024];
+        // O socket tem algo para ler, pode ser dados ou um erro ICMP
+        int recv_len = recv(sock, buffer, sizeof(buffer), 0);
+
+        if(recv_len < 0){
+
+            if(errno == ECONNREFUSED){
+                close(sock);
+                return 0;
+            }
+
+            close(sock);
+            return 2;
+        }
+
+        //open
+        close(sock);
+        return 1;
+
+    }else if(res == 0){
+        //open/filt
+        close(sock);
+        return 3;
+    }
+
+    close(sock);
+    return 4;
+}
+
+/*  Enum-
+    CLOSED = 0,          
+    OPEN = 1,            
+    FILTERED = 2,        
+    OPEN_FILTERED = 3,   
+    INTERNAL_ERROR = 4
+*/
+port_status Scanner::portScan_udp(Port *port_ptr, std::string ip, int port, long timeout_sec, long timeout_usec){
+
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);
+
+    if (sock < 0){
+        port_ptr->setStatus(std::to_string(port_status::INTERNAL_ERROR));
+        return port_status::INTERNAL_ERROR ;
+    }
+
+    struct sockaddr_in target;
+    memset(&target, 0, sizeof(target));
+    target.sin_family = AF_INET;
+    target.sin_port = htons(port);
+    inet_pton(AF_INET, ip.c_str(), &target.sin_addr);
+
+    struct servent *service_port = nullptr;
+    service_port = getservbyport(htons(port), "udp");
+
+    if(service_port != nullptr){
+        port_ptr->setService(service_port->s_name);
+        port_ptr->setProtocol(service_port->s_proto);
+    }else{
+        port_ptr->setService("unknown");
+        port_ptr->setProtocol("udp");
+    }
+
+    if(connect(sock, (struct sockaddr*)&target, sizeof(target)) < 0){
+        close(sock);
+        port_ptr->setStatus(std::to_string(port_status::INTERNAL_ERROR));
+        return port_status::INTERNAL_ERROR;
+    }
+
+    const char* payload = nullptr;
+    int payload_len = 0;
+
+    this->defineUDP_payload(port, payload, payload_len);
+
+    if(send(sock, payload, payload_len, 0) < 0){
+        close(sock);
+        port_ptr->setStatus(std::to_string(port_status::INTERNAL_ERROR));
+        return port_status::INTERNAL_ERROR;
+    }
+
+    fd_set read_fds;
+    FD_ZERO(&read_fds);
+    FD_SET(sock, &read_fds);
+
+    struct timeval tv;
+    tv.tv_sec = timeout_sec;
+    tv.tv_usec = timeout_usec;
+
+    int res = select(sock + 1, &read_fds, NULL, NULL, &tv);
+
+
+    if(res > 0){
+        
+        char buffer[1024];
+        memset(&buffer, 0, sizeof(buffer));
+
+        ssize_t recv_len = recv(sock, buffer, sizeof(buffer) -1, 0);
+
+        
+        if(recv_len < 0){
+           
+            if(errno == ECONNREFUSED){
+
+                close(sock); 
+                port_ptr->setStatus(std::to_string(port_status::CLOSED));
+                return port_status::CLOSED;
+            }
+
+            close(sock);
+            port_ptr->setStatus(std::to_string(port_status::FILTERED));
+            return port_status::FILTERED;
+        }
+
+        buffer[recv_len] = '\0';
+        if(recv_len > 0) port_ptr->setBanner(std::string(buffer));
+
+
+        close(sock);
+        port_ptr->setStatus(std::to_string(port_status::OPEN));
+        return port_status::OPEN;
+
+    }else if(res == 0){
+
+        close(sock);
+        port_ptr->setStatus(std::to_string(port_status::OPEN_FILTERED));
+        return port_status::OPEN_FILTERED;
+    }
+
+    close(sock);
+    port_ptr->setStatus(std::to_string(port_status::INTERNAL_ERROR));
+    return port_status::INTERNAL_ERROR;
+
 }
 
 
@@ -349,7 +465,7 @@ bool Scanner::portScan_tcp(Port *port_ptr, std::string ip, int port, long timeou
                 char buffer[1024];
                 memset(buffer, 0, sizeof(buffer));
 
-                size_t bytes = recv(sock, buffer, sizeof(buffer) -1, 0);
+                ssize_t bytes = recv(sock, buffer, sizeof(buffer) -1, 0);
 
                 if(bytes > 0) port_ptr->setBanner(std::string (buffer));
 

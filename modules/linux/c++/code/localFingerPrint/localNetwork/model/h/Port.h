@@ -1,6 +1,7 @@
 #pragma once 
 #include <string>
 
+
 class Port
 {
 private:
@@ -8,13 +9,15 @@ private:
     std::string protocol;
     std::string service; 
     std::string banner;
+    //TODO: impl in java 
+    std::string status;
 
 public:
     Port() = default;
     
     Port(int number, std::string protocol, std::string service, std::string banner);
 
-    std::string toJson() const;
+
 
     int getNumber() const { return number; }
     
@@ -24,6 +27,7 @@ public:
     
     const std::string& getBanner() const { return banner; }
 
+    const std::string& getStatus() const {return status;}
 
     void setNumber(int number) { 
         this->number = number; 
@@ -39,5 +43,13 @@ public:
 
     void setBanner(const std::string& banner) { 
         this->banner = banner; 
+    }   
+    
+    void setStatus(const std::string& status){
+        
+        this->status = status;
     }
+
+    
+
 };

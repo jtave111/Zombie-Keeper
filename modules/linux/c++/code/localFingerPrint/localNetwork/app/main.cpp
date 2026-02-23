@@ -264,7 +264,15 @@ int main(int argc, char* argv[]){
     }
 
 
-  
+    if(command == "-test"){
+
+        std::string ip = argv[2];
+        long sec = std::stoi(argv[3]);
+        long usec = std::stoi(argv[4]);
+
+
+        appInit.test_scan_udp(ip, sec, usec);
+    }
    
 }
 

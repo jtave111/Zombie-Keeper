@@ -18,15 +18,18 @@ public:
     void createSession(Session *session);
     void createHeaderSession(Session *ptr_session);
 
-
     void scannSession(Session *ptr_session, std::string flags, long sec, long usec);
     void scanNode(Node *ptr, std::string flags, long sec, long usec);
     //Linking pointers 
     void linkingNode_inPointer(Session &session, Node *node_ptr, std::string ip, std::string mac);
 
-    //TODO create simple scan call 
-    
+    //TODO create simple scan call     
 
     bool scanPort(std::string ip, int port, long sec, long usec);
+
+
+    //Teste
+
+    void test_scan_udp(std::string ip,long timeout_sec, long timeout_usec);
 };
 
