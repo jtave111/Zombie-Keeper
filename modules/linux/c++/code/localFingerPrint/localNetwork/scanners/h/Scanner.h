@@ -43,7 +43,7 @@ public:
     */
     
     // port scan TCP
-    bool portScan_tcp(std::string ip, int port, long timeout_sec, long timeout_usec);
+    port_status portScan_tcp(std::string ip, int port, long timeout_sec, long timeout_usec);
     //Overload
     bool portScan_tcp( Port *port_ptr, std::string ip, int port, long timeout_sec, long timeout_usec);
     

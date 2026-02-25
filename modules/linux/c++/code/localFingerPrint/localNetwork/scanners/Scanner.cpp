@@ -38,7 +38,7 @@ void Scanner::defineUDP_payload(int port, const char* &payload, int &payload_len
             break;
             
         case 137: // NetBIOS-NS (Assinatura agressiva baseada no Nmap)
-            
+
             payload = "\x80\xf0\x00\x10\x00\x01\x00\x00\x00\x00\x00\x00\x20\x43\x4b\x41"
                       "\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41"
                       "\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x41\x00"
@@ -320,11 +320,13 @@ port_status Scanner::portScan_udp(Port *port_ptr, std::string ip, int port, long
  * * This function initiates a TCP 3-Way Handshake without blocking the execution thread.
  * It uses 'select()' to multiplex the I/O and wait for the connection result within a specific timeout.
  */
-bool Scanner::portScan_tcp(std::string ip, int port,long timeout_sec, long timeout_usec){
+port_status Scanner::portScan_tcp(std::string ip, int port,long timeout_sec, long timeout_usec){
 
     int sock = socket(AF_INET, SOCK_STREAM, 0);
 
-    if(sock < 0) return false;
+    if(sock < 0){
+        return port_status::INTERNAL_ERROR;
+    } 
 
     //Set Non-Blocking Mod
     // O_NONBLOCK: Operations like connect() will return immediately with EINPROGRESS
@@ -339,7 +341,7 @@ bool Scanner::portScan_tcp(std::string ip, int port,long timeout_sec, long timeo
 
     if(inet_pton(AF_INET, ip.c_str(), &target.sin_addr) <= 0 ) {
         close(sock);
-        return false;
+        return port_status::INTERNAL_ERROR;
     }
 
     //Send syn packet 
@@ -347,10 +349,29 @@ bool Scanner::portScan_tcp(std::string ip, int port,long timeout_sec, long timeo
 
     if(res < 0){
         
+        int so_error; 
+        socklen_t len = sizeof(so_error);
+
+        if(getsockopt(sock, SOL_SOCKET, SO_ERROR, &so_error, &len) < 0){
+            close(sock);
+        
+            return port_status::INTERNAL_ERROR;
+        }   
+
+        if(so_error != 0){
+            close(sock);
+            // Servidor mandou pacote RST (Porta explicitamente fechada)
+            if(so_error == ECONNREFUSED){
+                
+                return port_status::CLOSED;
+            }
+            
         
         //Connection in progress, It means the TCP Handshake SYN has been sent, but we are waiting for SYN-ACK.
         if(errno == EINPROGRESS){
-            
+           
+           
+
             fd_set myset;
             FD_ZERO(&myset);
             FD_SET(sock, &myset);
