@@ -11,6 +11,8 @@ import java.util.UUID;
 @Repository
 public interface AgentRepository extends JpaRepository<Agent, UUID> {
 
-    Optional<Agent> findByIp(String ip);
+    Optional<Agent> findByIpv4(String ipv4);
+
+    Optional<Agent> findByMacAddress(String macAddress);
     
 }

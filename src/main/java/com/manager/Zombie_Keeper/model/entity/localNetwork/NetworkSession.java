@@ -18,103 +18,127 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "network_session")
 public class NetworkSession {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID id;
-    //Mac gateway or SSID + BSSID
-    @Column(nullable = false, length = 700)
+
+    // MAC gateway or SSID + BSSID
+    @JsonProperty("network_identifier")
+    @Column(name = "network_identifier", nullable = false, length = 700)
     private String networkIdentifier;
 
-    //TODO criar
-   // private String networkInterface;
+    // Ex: "Starbucks WiFi", "CORP-DOMAIN.local"
+    @JsonProperty("network_name")
+    @Column(name = "network_name")
+    private String networkName;
 
+    // Ex: "eth0", "wlan0", "ens33"
+    @JsonProperty("network_interface")
+    @Column(name = "network_interface")
+    private String networkInterface;
+
+    // Ex: "WIFI", "ETHERNET", "VPN"
+    @JsonProperty("network_type")
+    @Column(name = "network_type", length = 50)
+    private String networkType;
+
+    @JsonProperty("gateway_ip")
+    @Column(name = "gateway_ip")
     private String gatewayIp;
+
+    @JsonProperty("subnet_mask")
+    @Column(name = "subnet_mask")
     private String subnetMask;
+
+    @JsonProperty("cidr")
     private String cidr;
 
+    @JsonProperty("first_seen")
+    @Column(name = "first_seen")
     private LocalDateTime firstSeen; 
+
+    @JsonProperty("last_seen")
+    @Column(name = "last_seen")
     private LocalDateTime lastSeen;
 
     @OneToMany(mappedBy = "network", cascade = CascadeType.ALL, orphanRemoval = true)  
     @JsonProperty("nodes") 
     private List<NetworkNode> devices = new ArrayList<>();
 
+    // =========================================
+    // HOOKS (Gatilhos do Hibernate)
+    // =========================================
 
     @PrePersist
-    public void prePersist() {
+    public void onPrePersist() {
         if (this.firstSeen == null) {
             this.firstSeen = LocalDateTime.now();
         }
         this.lastSeen = LocalDateTime.now();
     }
 
-    public UUID getId() {
-        return id;
+    // Automatiza o update do último visto sempre que a sessão for alterada
+    @PreUpdate
+    public void onPreUpdate() {
+        this.lastSeen = LocalDateTime.now();
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    // =========================================
+    // MÉTODOS AUXILIARES (Boa prática)
+    // =========================================
+
+    public void addDevice(NetworkNode node) {
+        devices.add(node);
+        node.setNetwork(this);
     }
 
-    public String getNetworkIdentifier() {
-        return networkIdentifier;
+    public void removeDevice(NetworkNode node) {
+        devices.remove(node);
+        node.setNetwork(null);
     }
 
-    public void setNetworkIdentifier(String networkIdentifier) {
-        this.networkIdentifier = networkIdentifier;
-    }
+    // =========================================
+    // GETTERS E SETTERS
+    // =========================================
 
-    public String getGatewayIp() {
-        return gatewayIp;
-    }
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
 
-    public void setGatewayIp(String gatewayIp) {
-        this.gatewayIp = gatewayIp;
-    }
+    public String getNetworkIdentifier() { return networkIdentifier; }
+    public void setNetworkIdentifier(String networkIdentifier) { this.networkIdentifier = networkIdentifier; }
 
-    public String getSubnetMask() {
-        return subnetMask;
-    }
+    public String getNetworkName() { return networkName; }
+    public void setNetworkName(String networkName) { this.networkName = networkName; }
 
-    public void setSubnetMask(String subnetMask) { 
-        this.subnetMask = subnetMask;
-    }
+    public String getNetworkInterface() { return networkInterface; }
+    public void setNetworkInterface(String networkInterface) { this.networkInterface = networkInterface; }
 
-    public String getCidr() {
-        return cidr;
-    }
+    public String getNetworkType() { return networkType; }
+    public void setNetworkType(String networkType) { this.networkType = networkType; }
 
-    public void setCidr(String cidr) {
-        this.cidr = cidr;
-    }
+    public String getGatewayIp() { return gatewayIp; }
+    public void setGatewayIp(String gatewayIp) { this.gatewayIp = gatewayIp; }
 
-    public LocalDateTime getFirstSeen() { 
-        return firstSeen;
-    }
+    public String getSubnetMask() { return subnetMask; }
+    public void setSubnetMask(String subnetMask) { this.subnetMask = subnetMask; }
 
-    public void setFirstSeen(LocalDateTime firstSeen) { 
-        this.firstSeen = firstSeen;
-    }
+    public String getCidr() { return cidr; }
+    public void setCidr(String cidr) { this.cidr = cidr; }
 
-    public LocalDateTime getLastSeen() {
-        return lastSeen;
-    }
+    public LocalDateTime getFirstSeen() { return firstSeen; }
+    public void setFirstSeen(LocalDateTime firstSeen) { this.firstSeen = firstSeen; }
 
-    public void setLastSeen(LocalDateTime lastSeen) {
-        this.lastSeen = lastSeen;
-    }
+    public LocalDateTime getLastSeen() { return lastSeen; }
+    public void setLastSeen(LocalDateTime lastSeen) { this.lastSeen = lastSeen; }
 
-    public List<NetworkNode> getDevices() {
-        return devices;
-    }
-
-    public void setDevices(List<NetworkNode> devices) {
-        this.devices = devices;
-    }
-
+    public List<NetworkNode> getDevices() { return devices; }
+    public void setDevices(List<NetworkNode> devices) { this.devices = devices; }
 }

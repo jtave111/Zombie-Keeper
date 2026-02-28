@@ -1,5 +1,4 @@
-package com.manager.Zombie_Keeper.controller.agent;
-
+package com.manager.Zombie_Keeper.api.controller.agent;
 import com.manager.Zombie_Keeper.exception.DuplicateAgentException;
 import com.manager.Zombie_Keeper.model.entity.agent.Agent;
 import com.manager.Zombie_Keeper.repository.agent.AgentRepository;
@@ -14,12 +13,12 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/c2-server/agents")
-public class AgentController {
+public class AgentRestController {
 
     private final AgentRepository agentRepository;
     private final AgentsService agentsService;
 
-    public AgentController(AgentRepository agentRepository, AgentsService agentsService) {
+    public AgentRestController(AgentRepository agentRepository, AgentsService agentsService) {
         this.agentRepository = agentRepository;
         this.agentsService = agentsService;
     }
@@ -27,7 +26,7 @@ public class AgentController {
     @PostMapping("/register")
     public Agent registerAgent(@RequestBody Agent newAgent){
         /*
-            Criar ---> >>  >> 
+            TODO criar ---> >>  >> 
 
             Criar novo fluxo futuramente 
             Agent registra
@@ -43,7 +42,7 @@ public class AgentController {
             
         */
         
-        if(( agentRepository.findByIp(newAgent.getIp()).isEmpty()) ){
+        if(( agentRepository.findByIpv4(newAgent.getIpv4()).isEmpty()) ){
             
             newAgent = agentsService.setPreInformation(newAgent);
             return agentRepository.save(newAgent);

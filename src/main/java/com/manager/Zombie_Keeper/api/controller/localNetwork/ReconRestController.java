@@ -1,4 +1,4 @@
-package com.manager.Zombie_Keeper.controller.localNetwork;
+package com.manager.Zombie_Keeper.api.controller.localNetwork;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.springframework.http.MediaType;
 
-import com.manager.Zombie_Keeper.controller.Auth.AuthController;
+import com.manager.Zombie_Keeper.api.controller.auth.AuthRestController;
 import com.manager.Zombie_Keeper.model.entity.localNetwork.NetworkNode;
 import com.manager.Zombie_Keeper.model.entity.localNetwork.NetworkSession;
 import com.manager.Zombie_Keeper.repository.localNetwork.NetworkNodeRepository;
@@ -22,30 +22,27 @@ import com.manager.Zombie_Keeper.service.localNetwork.aux.LocalNetworkDatabaseMa
 import com.manager.Zombie_Keeper.service.localNetwork.fingerprint.LocalNetworkFingerprintService;
 import com.manager.Zombie_Keeper.service.processManagerService.ProcessManagerService;
 
+
 import jakarta.servlet.http.HttpServletRequest;
 import tools.jackson.databind.ObjectMapper;
 
 
 @RestController
 @RequestMapping("/c2-server/local-network/recon")
-public class ReconController {
+public class ReconRestController {
     
-    //service 
     LocalNetworkFingerprintService localNetFp;
     LocalNetworkDatabaseManagerService auxNetworkAuxsService;
     ProcessManagerService processManagerService;
     
-    //repository
     NetworkSessionRepository sessionRepository;
     NetworkNodeRepository networkNodeRepository;
    
+    AuthRestController authController;
 
-    //controller
-     AuthController authController;
-
-    public ReconController(LocalNetworkFingerprintService localNetFp, NetworkSessionRepository sessionRepository, 
+    public ReconRestController(LocalNetworkFingerprintService localNetFp, NetworkSessionRepository sessionRepository, 
         LocalNetworkDatabaseManagerService auxNetworkAuxsService, NetworkNodeRepository networkNodeRepository, 
-        AuthController authController, ProcessManagerService processManagerService){
+        AuthRestController authController, ProcessManagerService processManagerService){
         
             this.localNetFp = localNetFp;
             this.sessionRepository = sessionRepository;
@@ -106,7 +103,7 @@ public class ReconController {
             
             if(nodeDBA.isPresent()){
                 networkNodeRepository.delete(nodeDBA.get());
-                System.out.println("Node off delete: ." + " mac:" + nodeDBA.get().getMacAddress() + " ip: " + nodeDBA.get().getIpAddress());
+                System.out.println("Node off delete: ." + " mac:" + nodeDBA.get().getMacAddress() + " ip: " + nodeDBA.get().getIpv4());
             }
 
             return ResponseEntity.ok("{\"status\": \"offline\", \"message\": \"Host unreachable\"}");
@@ -173,7 +170,7 @@ public class ReconController {
 
     }
 
-    //TODO Refatorar para o ingles--------------------------------- i
+    //TODO formalizar isso 
     //Localhost = http://localhost:8080/ or http://l92.168.x.x:8080/
     //http://localhost:8080/c2-server/local-network/recon/automation/python/start-recon/request.py?localHost=http://localhost:8080&pathScan=/c2-server/local-network/recon/session/LocalFingerPrint/any/0/300000
     @GetMapping(value = "/automation/python/start-recon/{script}")

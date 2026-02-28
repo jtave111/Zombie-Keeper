@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+
+<StackPane styleClass="root-pane" stylesheets="/static/css/login.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.manager.Zombie_Keeper.ui.controller.auth.AuthUiController">
+    
+    <HBox alignment="CENTER" maxWidth="1200" spacing="50" StackPane.alignment="CENTER">
+        
+        <VBox alignment="CENTER" maxWidth="450" minWidth="400" HBox.hgrow="ALWAYS">
+            
+            <HBox alignment="BOTTOM_LEFT" spacing="200">
+                <Label style="-fx-font-size: 10px; -fx-font-weight: bold;" styleClass="text-muted" text="C2 INFRASTRUCTURE: OFFLINE" />
+                <Label style="-fx-font-size: 10px; -fx-font-weight: bold;" styleClass="text-accent" text="SECURE_CHANNEL" />
+                <VBox.margin><Insets bottom="10" left="5" right="5"/></VBox.margin>
+            </HBox>
+
+            <VBox styleClass="glass-panel" style="-fx-padding: 35;" spacing="25">
+                
+                <VBox alignment="CENTER" spacing="5">
+                    <StackPane style="-fx-background-color: rgba(244,63,94,0.1); -fx-border-color: rgba(244,63,94,0.2); -fx-background-radius: 12px; -fx-border-radius: 12px;" minHeight="64" minWidth="64" maxHeight="64" maxWidth="64">
+                        <Label style="-fx-font-size: 32px;" styleClass="text-accent" text="☣" /> </StackPane>
+                    <Label styleClass="title-main" text="ZOMBIE_KEEPER">
+                        <VBox.margin><Insets top="10"/></VBox.margin>
+                    </Label>
+                    <Label styleClass="subtitle" text="THREAT OPERATIONS DASHBOARD V3.0" />
+                </VBox>
+
+                <VBox spacing="15">
+                    <VBox spacing="5">
+                        <Label style="-fx-font-size: 10px; -fx-font-weight: bold;" styleClass="text-muted" text="OPERATOR UID" />
+                        <StackPane alignment="CENTER_LEFT">
+                            <TextField fx:id="txtUsername" promptText="EX: ROOT_ADMIN" styleClass="input-field" />
+                            <Label style="-fx-font-size: 14px; -fx-padding: 0 0 0 12;" styleClass="text-muted" text="UID" mouseTransparent="true" />
+                        </StackPane>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label style="-fx-font-size: 10px; -fx-font-weight: bold;" styleClass="text-muted" text="DECRYPTION KEY" />
+                        <StackPane alignment="CENTER_LEFT">
+                            <PasswordField fx:id="txtPassword" promptText="••••••••" styleClass="input-field" />
+                            <Label style="-fx-font-size: 14px; -fx-padding: 0 0 0 12;" styleClass="text-muted" text="KEY" mouseTransparent="true" />
+                        </StackPane>
+                    </VBox>
+
+                    <Button fx:id="btnConnect" text="▶ INITIALIZE SWARM UPLINK" maxWidth="Infinity" onAction="#performLogin" styleClass="btn-connect">
+                        <VBox.margin><Insets top="10"/></VBox.margin>
+                    </Button>
+                </VBox>
+
+                <StackPane styleClass="terminal-box" minHeight="120" maxHeight="120">
+                    <Label text="SESSION LOGS" style="-fx-font-size: 9px; -fx-background-color: rgba(23,23,23,0.8); -fx-padding: 2 5;" styleClass="text-muted" StackPane.alignment="TOP_RIGHT"/>
+                    <ScrollPane fitToWidth="true" styleClass="terminal-scroll" hbarPolicy="NEVER" vbarPolicy="NEVER">
+                        <padding><Insets top="15" right="10" bottom="10" left="10"/></padding>
+                        <VBox fx:id="terminalOutput" spacing="4" alignment="BOTTOM_LEFT">
+                            <Label text="Awaiting operator credentials..." styleClass="terminal-text" opacity="0.4"/>
+                        </VBox>
+                    </ScrollPane>
+                </StackPane>
+
+            </VBox>
+        </VBox>
+
+        <VBox alignment="CENTER" maxWidth="600" minWidth="500" HBox.hgrow="ALWAYS" spacing="25">
+            
+            <VBox styleClass="glass-panel" style="-fx-padding: 30;" spacing="25">
+                <Label text="🌐 GLOBAL NETWORK TELEMETRY" style="-fx-font-size: 11px; -fx-font-weight: bold;" styleClass="text-muted" />
+                
+                <GridPane hgap="15" vgap="15">
+                    <VBox styleClass="stat-box" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS">
+                        <Label text="ACTIVE ZOMBIE NODES" style="-fx-font-size: 10px; -fx-font-weight: bold;" styleClass="text-muted"/>
+                        <HBox alignment="BASELINE_LEFT" spacing="10">
+                            <Label text="14,204" styleClass="stat-value"/>
+                            <Label text="+12% h" style="-fx-font-size: 10px; -fx-background-color: rgba(16,185,129,0.1); -fx-padding: 2 6; -fx-background-radius: 10;" styleClass="text-emerald"/>
+                        </HBox>
+                    </VBox>
+                    
+                    <VBox styleClass="stat-box" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS">
+                        <Label text="GLOBAL THROUGHPUT" style="-fx-font-size: 10px; -fx-font-weight: bold;" styleClass="text-muted"/>
+                        <HBox alignment="BASELINE_LEFT" spacing="5">
+                            <Label text="3.84" styleClass="stat-value"/>
+                            <Label text="TB/s" style="-fx-font-size: 12px;" styleClass="text-muted"/>
+                        </HBox>
+                    </VBox>
+                    
+                    <VBox styleClass="stat-box" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS">
+                        <Label text="C2 INFRASTRUCTURE STATUS" style="-fx-font-size: 10px; -fx-font-weight: bold;" styleClass="text-muted"/>
+                        <HBox alignment="BASELINE_LEFT" spacing="10">
+                            <Label text="3/4" styleClass="stat-value"/>
+                            <Label text="ONLINE" style="-fx-font-size: 12px;" styleClass="text-emerald"/>
+                        </HBox>
+                    </VBox>
+                    
+                    <VBox styleClass="stat-box" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS">
+                        <Label text="SYSTEM LOAD" style="-fx-font-size: 10px; -fx-font-weight: bold;" styleClass="text-muted"/>
+                        <Label text="87%" styleClass="stat-value"/>
+                        <StackPane alignment="CENTER_LEFT" style="-fx-background-color: #262626; -fx-background-radius: 5;" minHeight="6">
+                            <Rectangle width="150" height="6" fill="#e11d48" arcWidth="5" arcHeight="5"/>
+                            <VBox.margin><Insets top="5"/></VBox.margin>
+                        </StackPane>
+                    </VBox>
+                </GridPane>
+
+                <StackPane styleClass="terminal-box" minHeight="180">
+                    <Circle radius="60" fill="transparent" stroke="#262626"/>
+                    <Circle radius="40" fill="transparent" stroke="#262626"/>
+                    <Circle radius="20" fill="transparent" stroke="#262626"/>
+                    <Rectangle width="180" height="1" fill="#262626"/>
+                    <Rectangle width="1" height="180" fill="#262626"/>
+                    
+                    <Circle radius="4" fill="#f43f5e" translateX="-30" translateY="-20"/>
+                    <Circle radius="3" fill="#be123c" translateX="40" translateY="30"/>
+                    
+                    <Label text="MONITORING: GLOBAL SECTOR" style="-fx-font-size: 9px; -fx-background-color: rgba(23,23,23,0.8); -fx-padding: 2 5;" styleClass="text-muted" StackPane.alignment="BOTTOM_LEFT">
+                        <StackPane.margin><Insets bottom="10" left="10"/></StackPane.margin>
+                    </Label>
+                </StackPane>
+            </VBox>
+
+            <VBox styleClass="alert-box" spacing="5">
+                <HBox alignment="CENTER_LEFT">
+                    <Label text="SYSTEM ADVISORY" style="-fx-font-size: 10px; -fx-font-weight: bold;" styleClass="text-muted"/>
+                    <StackPane HBox.hgrow="ALWAYS" />
+                    <Label text="17:42:01 UTC" style="-fx-font-size: 10px; -fx-font-family: 'Consolas';" styleClass="text-muted"/>
+                </HBox>
+                <Label text="Secondary node synchronization scheduled for T-minus 4 hours. Avoid large-scale payload deployment in Subnet Alpha to minimize traffic anomalies." wrapText="true" style="-fx-font-size: 12px; -fx-text-fill: #d4d4d4;"/>
+            </VBox>
+        </VBox>
+
+    </HBox>
+</StackPane>

@@ -2,13 +2,16 @@ package com.manager.Zombie_Keeper.service.agents;
 
 import java.util.HashMap;
 import java.util.HashSet;
-
 import java.util.Map;
 import java.util.Set;
 import org.springframework.stereotype.Service;
 
+import com.manager.Zombie_Keeper.dtos.auth.LoginRequest;
 import com.manager.Zombie_Keeper.model.entity.agent.Agent;
 import com.manager.Zombie_Keeper.model.enums.agent.Tags;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 
 @Service
 public class AgentsService {
@@ -32,7 +35,7 @@ public class AgentsService {
         
 
 
-        agent.setTgas(tags);
+        agent.setTags(tags);
 
         return agent;
     }
@@ -47,7 +50,7 @@ public class AgentsService {
 
         if(os.length() < 3) return false;
 
-        os = os.toLowerCase().replaceAll("\\s", "");
+        os = os.toLowerCase().replaceAll("\s", "");
 
         if(os.equalsIgnoreCase("windows")) return true;
 
@@ -90,7 +93,7 @@ public class AgentsService {
     }
 
     public Boolean isLinux(String os) {
-        os = os.toLowerCase().replaceAll("\\s", "");
+        os = os.toLowerCase().replaceAll("\s", "");
         
         if (os.length() < 3) return false;
 
@@ -128,7 +131,7 @@ public class AgentsService {
  
 
     public Boolean isMac(String os) {
-        os = os.toLowerCase().replaceAll("\\s", "");
+        os = os.toLowerCase().replaceAll("\s", "");
         
         if (os.length() < 3) return false;
 
@@ -162,6 +165,13 @@ public class AgentsService {
         }
 
         return aux >= acept;
+    }
+
+
+
+    public void authenticateUser(LoginRequest dto, HttpServletRequest request) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'authenticateUser'");
     }
 
 

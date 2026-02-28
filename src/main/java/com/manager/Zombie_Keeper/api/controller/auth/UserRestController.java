@@ -1,4 +1,5 @@
-package com.manager.Zombie_Keeper.controller.Auth;
+package com.manager.Zombie_Keeper.api.controller.auth;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/users")
-public class UserController {
+public class UserRestController {
 
     @Autowired
     private UserRepository userRepository;
