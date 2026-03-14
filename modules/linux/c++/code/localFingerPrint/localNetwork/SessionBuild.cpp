@@ -23,6 +23,11 @@ void SessionBuild::buildSession(Session& targetSession){
     targetSession.setSubnetMask(rawSubnetMask);
     targetSession.setCidr(rawCidr);
 
+
+    std::cout << targetSession.getGatewayIp() << std::endl;
+    std::cout << targetSession.getNetworkIdentifier() << std::endl;
+    std::cout << targetSession.getCidr() << std::endl;
+
     
     //------ Build nodes 
 
@@ -64,6 +69,8 @@ void SessionBuild::buildNodes(std::string gateway, int cidr, Session & session){
         // Retirar
         actualNode.setIpAddress(nodeIp);
         actualNode.setMacAddress(nodeMac);
+
+        std::cout << actualNode.getIpAddress() << std::endl;
 
         
         session.addNode(actualNode);

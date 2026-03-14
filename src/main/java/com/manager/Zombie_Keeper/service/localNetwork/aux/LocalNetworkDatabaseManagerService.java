@@ -92,7 +92,6 @@ public class LocalNetworkDatabaseManagerService {
             return null;
         }
         
-        // Chamada corrigida
         sessionJSON = this.linkNodesInSession(sessionJSON);    
         NetworkNode nodeJSON = sessionJSON.getDevices().get(0);
         
@@ -151,6 +150,7 @@ public class LocalNetworkDatabaseManagerService {
                     portUpdateDBA.setProtocol(p.getProtocol());
                     portUpdateDBA.setService(p.getService());
                     portUpdateDBA.setBanner(p.getBanner());
+                    
                 }else{
                     p.setNode(nodeDBA);
                     nodeDBA.getOpenPorts().add(p);

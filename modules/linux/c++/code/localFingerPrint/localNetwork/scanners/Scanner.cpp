@@ -1,6 +1,13 @@
 #include "h/Scanner.h"
 #include "localNetwork/model/h/Session.h"
 #include <netdb.h>
+#include <poll.h>
+#include <atomic>
+
+
+static std::mutex getserv_mutex;
+static std::mutex port_mutex;
+
 
 /**
 * UPD funcs  
@@ -192,12 +199,11 @@ int Scanner::portScan_udp(std::string ip, int port, long timeout_sec, long timeo
             return 2;
         }
 
-        //open
         close(sock);
         return 1;
 
     }else if(res == 0){
-        //open/filt
+        
         close(sock);
         return 3;
     }
@@ -311,121 +317,99 @@ port_status Scanner::portScan_udp(Port *port_ptr, std::string ip, int port, long
 }
 
 
-/**
+/*
 * TCP funcs  
 */ 
 
+
 /**
  * @brief Attempts to establish a TCP connection to a specific host and port using non-blocking I/O.
- * * This function initiates a TCP 3-Way Handshake without blocking the execution thread.
+ * This function initiates a TCP 3-Way Handshake without blocking the execution thread.
  * It uses 'select()' to multiplex the I/O and wait for the connection result within a specific timeout.
  */
-port_status Scanner::portScan_tcp(std::string ip, int port,long timeout_sec, long timeout_usec){
+port_status Scanner::portScan_tcp(std::string ip, int port, long timeout_sec, long timeout_usec) {
 
     int sock = socket(AF_INET, SOCK_STREAM, 0);
 
-    if(sock < 0){
+    if (sock < 0) {
         return port_status::INTERNAL_ERROR;
     } 
 
-    //Set Non-Blocking Mod
-    // O_NONBLOCK: Operations like connect() will return immediately with EINPROGRESS
-    // instead of blocking the process while waiting for the handshake.
     int flags = fcntl(sock, F_GETFL, 0);
     fcntl(sock, F_SETFL, flags | O_NONBLOCK);
-
 
     struct sockaddr_in target {};
     target.sin_family = AF_INET;
     target.sin_port = htons(port);
 
-    if(inet_pton(AF_INET, ip.c_str(), &target.sin_addr) <= 0 ) {
+    if (inet_pton(AF_INET, ip.c_str(), &target.sin_addr) <= 0) {
         close(sock);
         return port_status::INTERNAL_ERROR;
     }
 
-    //Send syn packet 
+    // Send SYN packet 
     int res = connect(sock, (sockaddr*)&target, sizeof(target));
 
-    if(res < 0){
-        
-        int so_error; 
-        socklen_t len = sizeof(so_error);
-
-        if(getsockopt(sock, SOL_SOCKET, SO_ERROR, &so_error, &len) < 0){
-            close(sock);
-        
-            return port_status::INTERNAL_ERROR;
-        }   
-
-        if(so_error != 0){
-            close(sock);
-            // Servidor mandou pacote RST (Porta explicitamente fechada)
-            if(so_error == ECONNREFUSED){
-                
-                return port_status::CLOSED;
-            }
-            
-        
-        //Connection in progress, It means the TCP Handshake SYN has been sent, but we are waiting for SYN-ACK.
-        if(errno == EINPROGRESS){
-           
-           
-
-            fd_set myset;
-            FD_ZERO(&myset);
-            FD_SET(sock, &myset);
-
-            struct timeval tv;
-            tv.tv_sec = timeout_sec;
-            tv.tv_usec = timeout_usec;
-             // We monitor the socket for WRITABILITY.
-            res = select(sock + 1, NULL, &myset, NULL, &tv);
-    
-            if(res > 0){
-
-                int so_error;
-                socklen_t len = sizeof(so_error);
-                
-                // select() returning > 0 only means the process finished.
-                if(getsockopt(sock, SOL_SOCKET, SO_ERROR, &so_error, &len) < 0 ){
-
-                    close(sock);
-                    return false;
-
-                } 
-
-                //accept
-                if(so_error == 0){
-
-                    close(sock);
-                    return true;
-                }
-
-            }
-
-        }
-
-    }else{
-        
+    if (res == 0) {
         close(sock);
-        return true ;
+        return port_status::OPEN;
     } 
+    
+    if (errno != EINPROGRESS) {
+        close(sock);
+        return port_status::CLOSED; 
+    }
 
+    fd_set myset;
+    FD_ZERO(&myset);
+    FD_SET(sock, &myset);
 
-    close(sock);
-    return false;
+    struct timeval tv;
+    tv.tv_sec = timeout_sec;
+    tv.tv_usec = timeout_usec;
+    
+    res = select(sock + 1, NULL, &myset, NULL, &tv);
 
+    if (res < 0) {
+        close(sock);
+        return port_status::INTERNAL_ERROR;
+    } 
+    else if (res == 0) {
+        close(sock);
+        return port_status::FILTERED; 
+    } 
+    else {
+        int so_error = 0;
+        socklen_t len = sizeof(so_error);
+        
+        if (getsockopt(sock, SOL_SOCKET, SO_ERROR, &so_error, &len) < 0) {
+            close(sock);
+            return port_status::INTERNAL_ERROR;
+        } 
+
+        if (so_error == 0) {
+            close(sock);
+            return port_status::OPEN;
+        } else {
+            close(sock);
+            return port_status::CLOSED;
+        }
+    }
 }
 
-//Overload 
-bool Scanner::portScan_tcp(Port *port_ptr, std::string ip, int port, long timeout_sec, long timeout_usec){
+/**
+ * @brief Performs an asynchronous TCP port scan against a specified target.
+ * * This method utilizes non-blocking sockets and the poll() system call to efficiently
+ * determine the state of a port without hanging the executing thread. It also safely
+ * performs banner grabbing and service identification.
+ * @return port_status Enum representing the final state (OPEN, CLOSED, FILTERED, etc.).
+ */
+port_status Scanner::portScan_tcp(Port *port_ptr, std::string ip, int port, long timeout_sec, long timeout_usec) {
 
     int sock = socket(AF_INET, SOCK_STREAM, 0);
-
     if(sock < 0) {
-        close(sock);
-        return false;
+        port_ptr->setStatus(std::to_string(port_status::INTERNAL_ERROR));
+        return port_status::INTERNAL_ERROR;
     }
 
     int flags = fcntl(sock, F_GETFL, 0);
@@ -437,211 +421,234 @@ bool Scanner::portScan_tcp(Port *port_ptr, std::string ip, int port, long timeou
 
     if(inet_pton(AF_INET, ip.c_str(), &target.sin_addr) <= 0){
         close(sock);
-        return false;
+        port_ptr->setStatus(std::to_string(port_status::INTERNAL_ERROR));
+        return port_status::INTERNAL_ERROR;
     }
 
     int res = connect(sock, (sockaddr*)&target, sizeof(target));
 
-    if( res < 0 && errno == EINPROGRESS){
+    if (res < 0 && errno != EINPROGRESS) {
+        close(sock);
+        return port_status::CLOSED;
+    }
 
-        fd_set myset;
-        FD_ZERO(&myset);
-        FD_SET(sock, &myset);
+    port_status final_status = port_status::INTERNAL_ERROR;
 
-        struct timeval tv {timeout_sec, timeout_usec};
+    if (res == 0) {
+        final_status = port_status::OPEN; 
+    } else {
+        
+        struct pollfd pfd;
+        pfd.fd = sock;
+        pfd.events = POLLOUT; 
 
-        res = select (sock + 1, NULL, &myset, NULL, &tv);
+        int timeout_ms = (timeout_sec * 1000) + (timeout_usec / 1000);
+        res = poll(&pfd, 1, timeout_ms);
+
+        if(res < 0){
+            final_status = port_status::INTERNAL_ERROR;
+        }else if(res == 0){
+            final_status = port_status::FILTERED; 
+        }else{
+            int so_error = 0; 
+            socklen_t len = sizeof(so_error);
+            if (getsockopt(sock, SOL_SOCKET, SO_ERROR, &so_error, &len) < 0) {
+                final_status = port_status::INTERNAL_ERROR;
+            } else if(so_error != 0){ 
+                final_status = port_status::CLOSED;
+            } else { 
+                final_status = port_status::OPEN;   
+            }
+        }
+    }
+
+    if(final_status == port_status::OPEN || final_status == port_status::OPEN_FILTERED) {
+        
+        if(port == 80 || port == 443 || port == 8080){
+            const char *req = "HEAD / HTTP/1.0\r\n\r\n";
+            send(sock, req, strlen(req), 0);
+        }
+        
+        struct pollfd pfd_read;
+        pfd_read.fd = sock;
+        pfd_read.events = POLLIN; 
+        
+        res = poll(&pfd_read, 1, 500);
 
         if(res > 0){
+            char buffer[1024] = {0};
+            ssize_t bytes = recv(sock, buffer, sizeof(buffer) - 1, MSG_DONTWAIT);
 
-            int so_error; 
-            socklen_t len = sizeof(so_error);
-
-            if(getsockopt(sock,SOL_SOCKET, SO_ERROR, &so_error, &len)  < 0){
-                close(sock);
-                return false;
-            }   
-
-            if(so_error != 0){
-                close(sock);
-                return false;
+            if(bytes > 0) {
+                port_ptr->setBanner(std::string(buffer));
             }
-
-
-            if(port == 80 || port == 443 || port == 8080){
-                const char *req = "HEAD / HTTP/1.0\r\n\r\n";
-                send(sock, req, strlen(req), 0);
-            }
-            
-            FD_ZERO(&myset);
-            FD_SET(sock, &myset);
-            tv.tv_sec = 0; 
-            tv.tv_usec = 500000;
-            
-            res = select(sock + 1, &myset, NULL, NULL, &tv);
-
-
-            if(res > 0){
-
-                char buffer[1024];
-                memset(buffer, 0, sizeof(buffer));
-
-                ssize_t bytes = recv(sock, buffer, sizeof(buffer) -1, 0);
-
-                if(bytes > 0) port_ptr->setBanner(std::string (buffer));
-
-            }
-
-            close(sock);
-            return true;
-        
         }
-    
-    }
-    else{
 
-        close(sock);
-        return false;
+        
     }
-    
+
     close(sock);
-    return false;
-
+    return final_status;
 }
 
-
-//Make scan ALL ports --All ports all nodes
-void Scanner::scan_all_TcpNodePorts(Session &session, long sec, long usec){
-    
-    /*
-    long sec = 0;
-    long usec = 300000;
-    */
-    std::vector<std::thread> threads;
-
+/**
+ * @brief Performs a massive concurrent TCP port scan across all discovered nodes in the current session.
+ * * @details 
+ * This engine utilizes a thread pool and a lock-free global atomic counter to flatten 
+ * the [Nodes x Ports] matrix into a 1D task queue. This ensures dynamic load balancing 
+ * and zero thread starvation. 
+ * * Thread Safety: Implements strict Mutex locking to prevent race conditions during 
+ * legacy service name resolution (getservbyport) and when appending open ports 
+ * to the target Node structure.
+ * * @param session Reference to the active Session containing the target Nodes.
+ * @param sec     Connection timeout in seconds for each TCP socket.
+ * @param usec    Connection timeout in microseconds for each TCP socket.
+ */
+void Scanner::scan_all_TcpNodePorts(Session &session, long sec, long usec) {
     std::vector<Node> &nodes = session.getMutableNodes();
-   
+    if (nodes.empty()) return;
 
-    for( int i = 0; i < nodes.size(); i ++ ){
+    const int GLOBAL_WORKERS = 5000; 
+    std::vector<std::thread> workers;
 
-        Node* node_ptr = &nodes[i];
+    uint64_t total_nodes = nodes.size();
+    uint64_t total_tasks = total_nodes * 65535; 
 
-        const std::string* ip_ptr = &node_ptr->getIpAddress();
-      
-        threads.emplace_back(&Scanner::aux_allNode_TcpPorts, this, ip_ptr, node_ptr, sec, usec);
+    std::atomic<uint64_t> current_task(0);
 
-    }
-
-    for(auto& t: threads){
-        if(t.joinable()) t.join();
-    }
-
-}
-void Scanner::aux_allNode_TcpPorts(const std::string* ip, Node* node_ptr, long timeout_sec, long timeout_usec){
-    
-    for(int i = 1; i < 65536; i ++){
-
-        Port actualPort;
-        Port * port_ptr = &actualPort;
-        if(Scanner::portScan_tcp(port_ptr, *ip, i,timeout_sec, timeout_usec)){
-         
-            actualPort.setNumber(i);
-
-            struct servent *service;
-            service = getservbyport(htons(i), "tcp");
-        
-            if(service != nullptr) { 
+    for (int i = 0; i < GLOBAL_WORKERS; i++) {
+        workers.emplace_back([this, &nodes, total_tasks, sec, usec, &current_task]() {
             
-                actualPort.setService(service->s_name); 
-                actualPort.setProtocol(service->s_proto); 
-            } else { 
-            
-                actualPort.setService("unknown"); 
-                actualPort.setProtocol("tcp"); 
+            while (true) {
+                uint64_t task = current_task.fetch_add(1);
+                
+                if (task >= total_tasks) {
+                    break;
+                }
+
+                int node_index = task / 65535;
+                int port = (task % 65535) + 1; 
+
+                Node* node_ptr = &nodes[node_index];
+                std::string ip = node_ptr->getIpAddress();
+
+                Port actualPort;
+                Port* port_ptr = &actualPort;
+
+                port_status result_scan = this->portScan_tcp(port_ptr, ip, port, sec, usec);
+                
+                if (result_scan == port_status::OPEN) {
+                 
+                    actualPort.setNumber(port);
+                    actualPort.setStatus(Scanner::setStatusToString(result_scan));
+                
+                    {
+                        std::lock_guard<std::mutex> serv_lock(getserv_mutex);
+                        struct servent *service_port = getservbyport(htons(port), "tcp");
+
+                        if(service_port != nullptr){
+                            actualPort.setService(service_port->s_name);
+                            actualPort.setProtocol(service_port->s_proto);
+                        }else{
+                            actualPort.setProtocol("tcp");
+                            actualPort.setService("unknown");
+                        }
+                    }
+
+                    std::lock_guard<std::mutex> lock(port_mutex);
+                    node_ptr->addPort(actualPort);
+                }
             }
-        
-            node_ptr->addPort(actualPort);
-        }
+        });
+    }
+
+    for (auto& t : workers) {
+        if (t.joinable()) t.join();
     }
 }
 
-
-
+// Refatorar para o memsmo metodo do all 
 //Make scan any ports --Any ports all nodes 
-void Scanner::scan_any_TcpNodePorts(Session &session, long sec, long usec){
- 
-
+void Scanner::scan_any_TcpNodePorts(Session &session, long sec, long usec) {
     std::vector<std::thread> threads;
-
     std::vector<Node> &nodes = session.getMutableNodes();
 
-    for(int i = 0; i < nodes.size(); i ++){
-
-        Node * node_ptr = &nodes[i];
-
-        const std::string * ipPtr = &(node_ptr->getIpAddress());
-
-        threads.emplace_back(&Scanner::aux_any_TcpNodePorts, this, ipPtr, node_ptr, sec, usec);
-    }
-
-    for(auto& t: threads){
-        if(t.joinable() ) t.join();
-    }
-
-}
-void Scanner::aux_any_TcpNodePorts(const std::string* ip, Node * node, long timeout_sec, long timeout_usec){
-
-    std::vector <int> taticalPorts = Scanner::getTacticalTcpPorts();
-    
-    for(int i = 0; i < taticalPorts.size(); i ++){
-
-        Port actualPort;
-        Port * port_ptr = & actualPort;
-        if(Scanner::portScan_tcp(port_ptr, *ip, taticalPorts[i], timeout_sec, timeout_usec )){
-
-
-            actualPort.setNumber(taticalPorts[i]);
-
-            struct servent *service;
-            service = getservbyport(htons(taticalPorts[i]), "tcp");
-
-          
-            if(service != nullptr) { 
-            
-                actualPort.setService(service->s_name); 
-                actualPort.setProtocol(service->s_proto); 
-            } else { 
-            
-                actualPort.setService("unknown"); 
-                actualPort.setProtocol("tcp"); 
-            }
+    for (int i = 0; i < nodes.size(); i++) {
+        Node* node_ptr = &nodes[i];
         
+        std::string ip_cpy = node_ptr->getIpAddress();
 
-            node->addPort(actualPort);
+        threads.emplace_back(&Scanner::aux_any_TcpNodePorts, this, ip_cpy, node_ptr, sec, usec);
+    }
 
-        }
+    for (auto& t : threads) {
+        if (t.joinable()) t.join();
+    }
+}
 
+void Scanner::aux_any_TcpNodePorts(std::string ip, Node* node_ptr, long timeout_sec, long timeout_usec) {
+    
+    std::vector<int> taticalPorts = Scanner::getTacticalTcpPorts();
+    std::vector<std::thread> port_threads;
+    
+    for (int i = 0; i < taticalPorts.size(); i++) {
+        
+        int target_port = taticalPorts[i]; 
+
+        port_threads.emplace_back([this, ip, target_port, node_ptr, timeout_sec, timeout_usec]() {
+            Port actualPort;
+            Port* port_ptr = &actualPort;
+            
+            port_status result_scan = this->portScan_tcp(port_ptr, ip, target_port, timeout_sec, timeout_usec);
+            
+            if (result_scan == port_status::OPEN  ||
+                result_scan == port_status::FILTERED ||
+                result_scan == port_status::OPEN_FILTERED
+                ) {
+             
+                actualPort.setNumber(target_port);
+                actualPort.setStatus(Scanner::setStatusToString(result_scan));
+                
+                {
+                    std::lock_guard<std::mutex> serv_lock(getserv_mutex);
+                    struct servent *service_port = getservbyport(htons(target_port), "tcp");
+
+                    if(service_port != nullptr){
+                        actualPort.setService(service_port->s_name);
+                        actualPort.setProtocol(service_port->s_proto);
+                    }else{
+                        actualPort.setProtocol("tcp");
+                        actualPort.setService("unknown");
+                    }
+                }
+
+                std::lock_guard<std::mutex> lock(port_mutex);
+                node_ptr->addPort(actualPort);
+            }
+        });
+    }
+
+    for (auto& t : port_threads) {
+        if (t.joinable()) t.join();
     }
 }
 
 
 
-//Make scan all or any --One node all ports or any ports - use flag ALL for all ports or use ANY for tatical tcp ports  
-void Scanner::scan_OneNode_Tcp(Node &node, std::string flag, long sec, long usec){
+// Make scan all or any --One node all ports or any ports 
+void Scanner::scan_OneNode_Tcp(Node &node, std::string flag, long sec, long usec) {
     std::vector<std::thread> threads;
     std::string ip = node.getIpAddress();
-    std::mutex mutex; 
     std::vector<int> targetPorts;
-
    
-    if (flag == "all") {
+    if (flag == "all" || flag == "-all-ports") { 
         targetPorts.reserve(65536);
-        for (int i = 0; i < 65536; i++) targetPorts.push_back(i);
-    } else if (flag == "any") {
+        for (int i = 1; i < 65536; i++) targetPorts.push_back(i); 
+    } else if (flag == "any" || flag == "-any-ports") {
         targetPorts = Scanner::getTacticalTcpPorts();
     }
 
-    int max_concurrent_threads = 100;
+    int max_concurrent_threads = 1000; 
 
     for (int portInt : targetPorts) {
 
@@ -654,43 +661,33 @@ void Scanner::scan_OneNode_Tcp(Node &node, std::string flag, long sec, long usec
             threads.clear(); 
         }
 
-       
-        threads.emplace_back([this, &node, &mutex, ip, portInt, sec, usec]() {
+        threads.emplace_back([this, &node, ip, portInt, sec, usec]() {
             
             Port localPort;
-            
-            bool isOpen = this->portScan_tcp(&localPort, ip, portInt, sec, usec);
+            port_status status_scan = this->portScan_tcp(&localPort, ip, portInt, sec, usec);
 
-            if(isOpen){
+            if (status_scan == port_status::OPEN || 
+                status_scan == port_status::FILTERED || 
+                status_scan == port_status::OPEN_FILTERED) {
 
                 localPort.setNumber(portInt);
-             
-                if(localPort.getService().empty()){
-                    struct servent *srv = getservbyport(htons(portInt), "tcp");
-                    if (srv) localPort.setService(srv->s_name);
-                    else localPort.setService("unknown");
-                    
-                    if(localPort.getProtocol().empty()) localPort.setProtocol("tcp");
-                }
-
-                std::lock_guard<std::mutex> lock(mutex);
+                
+                std::lock_guard<std::mutex> lock(port_mutex);
                 node.addPort(localPort);
             }
-            
-
         });
     }
 
     for (auto &t : threads) {
-        if (t.joinable()) {
-            t.join();
-        }
+        if (t.joinable()) t.join();
     }
-    
 }
 
 
 
+
+
+//TODO Refatorar para especificar uma forçada de obtenção de banner
 void Scanner::one_banner_grabbing( std::string ip, int port, long timeout_sec, long timeout_usec){
  
     int sock = socket(AF_INET, SOCK_STREAM, 0);

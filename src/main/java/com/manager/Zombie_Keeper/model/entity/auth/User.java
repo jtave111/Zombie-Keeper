@@ -8,9 +8,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,6 +22,7 @@ import jakarta.validation.constraints.NotBlank;
 @Entity
 @Table(name = "tb_user")
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,63 +32,59 @@ public class User implements UserDetails {
     private String username;
 
     @NotBlank
-    @JsonIgnore
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Column(length = 500, nullable = false, unique = true)
+    @Column(length = 500, nullable = false) // Removido o unique=true (Senhas não devem ser únicas!)
     private String password;
     
     @NotBlank
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false) // Removido o unique=true (Nomes comuns podem se repetir)
     private String name; 
 
-
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id")
+    @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
+    // --- GETTERS E SETTERS ---
 
+    public Long getId() { return this.id; }
+    public void setId(Long id) { this.id = id; }
 
+    public String getUsername() { return this.username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public Role getRole() {
-        return role;
-    }
-    public void setRole(Role role) {
-        this.role = role;
-    }
+    public String getPassword() { return this.password; }
+    public void setPassword(String password) { this.password = password; }
 
-    
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 
-    public Long getId(){
+    // --- MÉTODOS DO SPRING SECURITY (UserDetails) ---
 
-        return this.id;
-    }
-    public void setId(Long id ){
-
-        this.id = id;
-    }
-
-
-    public String getUsername(){
-        
-        return this.username;
-    }
-    public void setUsername(String username){
-        this.username = username;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (this.role == null) {
+            return Collections.emptyList();
+        }
+        // Como o seeder já salva como "ROLE_ADMIN", não precisamos concatenar "ROLE_" aqui novamente
+        return Collections.singletonList(new SimpleGrantedAuthority(this.role.getName()));
     }
 
-    public String getPassword(){
-        return this.password;
-    }
-    public void setPassword(String password){
-        this.password = password;
-    }
+    // Estes 4 métodos são vitais para o Spring Security não bloquear o login
+    @Override
+    public boolean isAccountNonExpired() { return true; }
+
+    @Override
+    public boolean isAccountNonLocked() { return true; }
+
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
+
+    @Override
+    public boolean isEnabled() { return true; }
+
+    // --- EQUALS & HASHCODE ---
 
     @Override
     public boolean equals(Object o) {
@@ -104,22 +98,4 @@ public class User implements UserDetails {
     public int hashCode() {
         return Objects.hash(id);
     }
-    
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        
-        if(this.role == null){
-
-            return Collections.emptyList();
-        }
-
-
-        String roleType = this.role.getType();
-
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + roleType);
-
-
-        return Collections.singletonList(authority);
-    }
-
 }

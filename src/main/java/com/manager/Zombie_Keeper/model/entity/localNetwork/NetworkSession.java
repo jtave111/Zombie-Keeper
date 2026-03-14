@@ -73,9 +73,6 @@ public class NetworkSession {
     @JsonProperty("nodes") 
     private List<NetworkNode> devices = new ArrayList<>();
 
-    // =========================================
-    // HOOKS (Gatilhos do Hibernate)
-    // =========================================
 
     @PrePersist
     public void onPrePersist() {
@@ -85,16 +82,12 @@ public class NetworkSession {
         this.lastSeen = LocalDateTime.now();
     }
 
-    // Automatiza o update do último visto sempre que a sessão for alterada
     @PreUpdate
     public void onPreUpdate() {
         this.lastSeen = LocalDateTime.now();
     }
 
-    // =========================================
-    // MÉTODOS AUXILIARES (Boa prática)
-    // =========================================
-
+  
     public void addDevice(NetworkNode node) {
         devices.add(node);
         node.setNetwork(this);
@@ -105,10 +98,7 @@ public class NetworkSession {
         node.setNetwork(null);
     }
 
-    // =========================================
-    // GETTERS E SETTERS
-    // =========================================
-
+  
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
 

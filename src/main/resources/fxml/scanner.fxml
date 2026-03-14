@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox styleClass="content-pad placeholder-view" alignment="CENTER" spacing="10" 
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.manager.Zombie_Keeper.ui.controller.dashboard.ScannerController">
+    <Label styleClass="ph-icon" text="⟳" />
+    <Label styleClass="ph-title" text="TACTICAL SCANNER" />
+    <Label styleClass="ph-sub" text="" />
+</VBox>

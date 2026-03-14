@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox styleClass="content-pad" spacing="0" 
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.manager.Zombie_Keeper.ui.controller.agent.AgentUIController">
+
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <HBox.margin><Insets bottom="14"/></HBox.margin>
+        <TextField fx:id="agentSearch" styleClass="ag-search" promptText="Search agents..." prefWidth="240" />
+        <ToggleButton fx:id="filterAll"    styleClass="ag-filter" text="ALL" selected="true" />
+        <ToggleButton fx:id="filterOnline" styleClass="ag-filter" text="ONLINE" />
+        <ToggleButton fx:id="filterIdle"   styleClass="ag-filter" text="IDLE" />
+        <ToggleButton fx:id="filterLost"   styleClass="ag-filter" text="LOST" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Label fx:id="agentCount" styleClass="ag-count" text="8 agents" />
+    </HBox>
+
+    <VBox styleClass="panel" VBox.vgrow="ALWAYS">
+        <TableView fx:id="botnetOverviewTable" styleClass="zk-table" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colId"     text="ID"         prefWidth="80"  />
+                <TableColumn fx:id="colIp"     text="IP ADDRESS" prefWidth="130" />
+                <TableColumn fx:id="colMac"    text="MAC"        prefWidth="150" />
+                <TableColumn fx:id="colOs"     text="OS"         prefWidth="100" />
+                <TableColumn fx:id="colUser"   text="USER"       prefWidth="100" />
+                <TableColumn fx:id="colPriv"   text="PRIV"       prefWidth="70"  />
+                <TableColumn fx:id="colStatus" text="STATUS"     prefWidth="90"  />
+                <TableColumn fx:id="colSeen"   text="LAST SEEN"  prefWidth="90"  />
+                <TableColumn fx:id="colActions" text="ACTIONS"   prefWidth="140" />
+            </columns>
+        </TableView>
+    </VBox>
+</VBox>

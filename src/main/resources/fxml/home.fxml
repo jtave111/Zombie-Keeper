@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane styleClass="view-scroll" fitToWidth="true" hbarPolicy="NEVER"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.manager.Zombie_Keeper.ui.controller.home.HomeUiController">
+    
+    <VBox styleClass="content-pad" spacing="0">
+
+        <HBox spacing="10">
+            <HBox.margin><Insets bottom="18"/></HBox.margin>
+
+            <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="0">
+                <Label styleClass="stat-lbl" text="ACTIVE AGENTS" />
+                <Label fx:id="statAgents" styleClass="stat-val" text="0">
+                    <VBox.margin><Insets top="6" bottom="4"/></VBox.margin>
+                </Label>
+                <Label styleClass="stat-meta stat-up" text="▲ +3 since yesterday" />
+                <StackPane styleClass="stat-bar">
+                    <VBox.margin><Insets top="8"/></VBox.margin>
+                    <StackPane fx:id="barAgents" styleClass="stat-bar-fill bar-red" StackPane.alignment="CENTER_LEFT" maxWidth="0"/>
+                </StackPane>
+            </VBox>
+
+            <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="0">
+                <Label styleClass="stat-lbl" text="C2 SERVERS" />
+                <Label styleClass="stat-val" text="3 / 4">
+                    <VBox.margin><Insets top="6" bottom="4"/></VBox.margin>
+                </Label>
+                <Label styleClass="stat-meta stat-neu" text="1 degraded" />
+                <StackPane styleClass="stat-bar">
+                    <VBox.margin><Insets top="8"/></VBox.margin>
+                    <StackPane styleClass="stat-bar-fill bar-yellow" StackPane.alignment="CENTER_LEFT" prefWidth="135"/>
+                </StackPane>
+            </VBox>
+
+            <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="0">
+                <Label styleClass="stat-lbl" text="NETWORK NODES" />
+                <Label fx:id="statNodes" styleClass="stat-val" text="0">
+                    <VBox.margin><Insets top="6" bottom="4"/></VBox.margin>
+                </Label>
+                <Label styleClass="stat-meta stat-up" text="▲ last scan" />
+                <StackPane styleClass="stat-bar">
+                    <VBox.margin><Insets top="8"/></VBox.margin>
+                    <StackPane fx:id="barNodes" styleClass="stat-bar-fill bar-green" StackPane.alignment="CENTER_LEFT" maxWidth="0"/>
+                </StackPane>
+            </VBox>
+
+            <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="0">
+                <Label styleClass="stat-lbl" text="SYSTEM LOAD" />
+                <Label styleClass="stat-val" text="87%">
+                    <VBox.margin><Insets top="6" bottom="4"/></VBox.margin>
+                </Label>
+                <Label styleClass="stat-meta stat-down" text="▼ high" />
+                <StackPane styleClass="stat-bar">
+                    <VBox.margin><Insets top="8"/></VBox.margin>
+                    <StackPane styleClass="stat-bar-fill bar-red" StackPane.alignment="CENTER_LEFT" prefWidth="157"/>
+                </StackPane>
+            </VBox>
+        </HBox>
+
+        <HBox spacing="14" alignment="TOP_LEFT">
+
+            <VBox styleClass="panel" HBox.hgrow="ALWAYS">
+                <HBox styleClass="panel-head" alignment="CENTER_LEFT">
+                    <Label styleClass="panel-title" text="RECENT AGENTS" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Button styleClass="p-action" text="View All →" onAction="#viewAllAgents" />
+                </HBox>
+                <TableView fx:id="homeAgentTable" styleClass="zk-table" prefHeight="220" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colHomeId"     text="ID"     prefWidth="80"  />
+                        <TableColumn fx:id="colHomeIp"     text="IP"     prefWidth="130" />
+                        <TableColumn fx:id="colHomeOs"     text="OS"     prefWidth="80"  />
+                        <TableColumn fx:id="colHomeStatus" text="STATUS" prefWidth="100" />
+                        <TableColumn fx:id="colHomePriv"   text="PRIV"   prefWidth="70"  />
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <VBox styleClass="panel" minWidth="300" maxWidth="300">
+                <HBox styleClass="panel-head">
+                    <Label styleClass="panel-title" text="ACTIVITY FEED" />
+                </HBox>
+                <VBox fx:id="feedBox" styleClass="feed-box" spacing="0" />
+            </VBox>
+
+        </HBox>
+
+    </VBox>
+</ScrollPane>

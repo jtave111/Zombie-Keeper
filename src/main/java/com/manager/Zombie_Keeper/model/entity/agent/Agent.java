@@ -28,7 +28,6 @@ public class Agent {
     @Column(unique = true, nullable = false, updatable = false)
     private Long publicId;
 
-    // --- System Information ---
     private String hostname;
     private String os;
     
@@ -41,7 +40,6 @@ public class Agent {
     @Column(nullable = false)
     private Boolean isElevated = false; // True if Admin/Root
 
-    // --- Network Information ---
     @Column(length = 15)
     private String ipv4;
 
@@ -61,7 +59,6 @@ public class Agent {
 
     private LocalDateTime lastSeen; // Last time it checked in
 
-    // --- Relationships & Collections ---
     @OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Loot> loots = new ArrayList<>();
 
@@ -96,8 +93,7 @@ public class Agent {
         this.lastSeen = LocalDateTime.now();
     }
 
-    // --- Getters and Setters ---
-
+  
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
 

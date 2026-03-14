@@ -1,10 +1,16 @@
 #include "h/App.h"
-#include <iostream>
 #include "Scanner.h"
+#include <iostream>
 #include <iomanip>
 #include <cctype>
 #include <algorithm>
+#include <string>
+#include <stdexcept>
+#include <sys/resource.h>
 
+// ---------------------------------------------------------
+// Helper: Sanitizes strings to ensure valid JSON format
+// ---------------------------------------------------------
 void printSessionJson(Session * session){
    std::cout << "{"; 
 
@@ -53,10 +59,12 @@ void printSessionJson(Session * session){
             if(serviceName.empty()) serviceName = "unknown";
             std::string protocolName = p.getProtocol();
             if(protocolName.empty()) protocolName = "tcp"; 
+            std::string port_status = p.getStatus();
 
             std::cout << "{"; 
             std::cout << "\"number\": " << p.getNumber() << ",";
-            std::cout << "\"proto\": \"" << protocolName << "\",";  
+            std::cout << "\"proto\": \"" << protocolName << "\","; 
+            std::cout << "\"status\": \"" << port_status << "\",";  
             std::cout << "\"service\": \"" << serviceName << "\","; 
             std::cout << "\"banner\": \"" << banner << "\""; 
             std::cout << "}";
@@ -126,153 +134,224 @@ std::cout << "{";
     std::cout << "]"; 
     std::cout << "}" << std::endl;
 }
+// =========================================================
+// MAIN EXECUTABLE (Requires cap_net_raw,cap_net_admin=eip)
+// =========================================================
+int main(int argc, char* argv[]) {
+    struct rlimit rl;
+    if (getrlimit(RLIMIT_NOFILE, &rl) == 0) {
+        rl.rlim_cur = 100000;
+        rl.rlim_max = 100000;
+        setrlimit(RLIMIT_NOFILE, &rl);
+    }
+    if (argc < 2) {
+        std::cerr << "[-] Error: No command provided.\n";
+        std::cerr << "Usage: " << argv[0] << " <command> [args...]\n";
+        return 1;
+    }
 
-//sudo setcap cap_net_raw,cap_net_admin=eip ./"binar name"
 
-int main(int argc, char* argv[]){
+  
+    std::string command = argv[1];
+
     App appInit;
     FingerprintSession auxFingerprint_session;
     Ping ping;
 
-    // "./Binary --create_session '-all-ports' or '-any-ports' 0 200000 "
-    std::string command = argv[1];
+    // ---------------------------------------------------------
+    // Command: --create_session <scan_flags> <sec> <usec>
+    // ---------------------------------------------------------
+    if (command == "--create_session") {
+        if (argc < 5) {
+            std::cerr << "[-] Error: Insufficient arguments for --create_session.\n";
+            return 1;
+        }
 
-    if(command == "--create_session"){
+        try {
+            std::cout << "[DEBUG] 1. Entrou no bloco e leu argumentos...\n";
+            std::string scan_opt_flags = argv[2];
+            long sec = std::stol(argv[3]);
+            long usec = std::stol(argv[4]);
 
-        std::string scan_opt_flags = argv[2];
+            Session session;
+            Session* ptr_session = &session;
 
-        long sec = std::stoi(argv[3]);
-        long usec = std::stoi(argv[4]);
+            std::cout << "[DEBUG] 2. Chamando appInit.createSession()...\n";
+            appInit.createSession(ptr_session);
+            
+            std::cout << "[DEBUG] 3. createSession() sobreviveu! Chamando appInit.scannSession()...\n";
+            appInit.scannSession(ptr_session, scan_opt_flags, sec, usec);
+            
+            std::cout << "[DEBUG] 4. scannSession() sobreviveu! Imprimindo JSON...\n";
+            printSessionJson(ptr_session);
 
-        Session session;
+            std::cout << "[DEBUG] 5. Tudo finalizado com sucesso.\n";
 
-        Session *ptr_session = &session;
-
-        appInit.createSession(ptr_session);
-
-
-        //----TODO REFATORAR ISSO PARA MESMO MODO DO NODE 
-        appInit.scannSession(ptr_session, scan_opt_flags, sec, usec);
-
-        printSessionJson(ptr_session);
-
+        } catch (const std::exception& e) {
+            std::cerr << "[-] Fatal error: " << e.what() << "\n";
+            return 1;
+        } catch (...) {
+            std::cerr << "[-] Erro critico desconhecido pego no catch all!\n";
+            return 1;
+        }
+        
     }
+    /*
+    if (command == "--create_session") {
+        if (argc < 5) {
+            std::cerr << "[-] Error: Insufficient arguments for --create_session.\n";
+            return 1;
+        }
 
-    // ./Binary --simple_scan + 'networkIdentfier' + mac + ip + port + sec + usec 
-    if(command == "--simple_scan"){
+        try {
+            std::string scan_opt_flags = argv[2];
+            long sec = std::stol(argv[3]);
+            long usec = std::stol(argv[4]);
 
-        std::string network_identfier = argv[2];
-        std::string mac = argv[3];
-        std::string ip = argv[4];
-        int port = std::stoi(argv[5]);
+            Session session;
+            Session* ptr_session = &session;
 
+            appInit.createSession(ptr_session);
+            appInit.scannSession(ptr_session, scan_opt_flags, sec, usec);
 
-        long sec = std::stoi(argv[6]);
-        long usec = std::stoi(argv[7]);
+            // Print final JSON for C2 Server Integration
+            printSessionJson(ptr_session);
 
-        Session session;
-        Session *ptr_session = &session;
+        } catch (const std::exception& e) {
+            std::cerr << "[-] Fatal error parsing time arguments: " << e.what() << "\n";
+            return 1;
+        }
+    } 
+    */
+    // ---------------------------------------------------------
+    // Command: --simple_scan <networkIdentfier> <mac> <ip> <port> <sec> <usec>
+    // ---------------------------------------------------------
+    else if (command == "--simple_scan") {
+        if (argc < 8) {
+            std::cerr << "[-] Error: Insufficient arguments for --simple_scan.\n";
+            return 1;
+        }
 
-        appInit.createSession(ptr_session);
-    
+        try {
+            std::string network_identfier = argv[2];
+            std::string mac = argv[3];
+            std::string ip = argv[4];
+            int port = std::stoi(argv[5]);
+            long sec = std::stol(argv[6]);
+            long usec = std::stol(argv[7]);
 
-       // if(ptr_session->getNetworkIdentifier() != network_identfier) return 0;
+            Session session;
+            Session* ptr_session = &session;
 
+            appInit.createSession(ptr_session);
 
-        Node *node_ptr = nullptr;
+            Node* node_ptr = nullptr;
+            auto& nodeList = session.getMutableNodes();
 
-        auto& nodeList = session.getMutableNodes();
-
-        for(Node &n: nodeList){
-
-            if(n.getMacAddress() == mac){
-
-                if(n.getIpAddress() == ip){
-                    node_ptr = &n;
-                    break;
-
-                }else{
-
-                    return 1; 
-
+            for (Node& n : nodeList) {
+                if (n.getMacAddress() == mac) {
+                    if (n.getIpAddress() == ip) {
+                        node_ptr = &n;
+                        break;
+                    } else {
+                        return 1; // IP mismatch
+                    }
                 }
             }
-        }
 
-        if(node_ptr == nullptr) return 1;
+            if (node_ptr == nullptr) return 1;
 
-        appInit.linkingNode_inPointer(session, node_ptr, ip, mac);
-
-        
-        if(appInit.scanPort(ip, port, sec, usec)){
-            return 0;
-
-        }else{
-            return 2;
-        }
-
-    }
-
-    // "./Binary --scan_node  + 'node-mac' + 'networkIdentfier' + ('-all-ports' or '-any-ports') + 0 + 200000 "
-    if(command == "--scan_node"){
-
-        std::string node_mac = argv[2];
-        std::string network_identfier = argv[3];
-        std::string scan_opt_flags = argv[4];
-        long sec = std::stoi(argv[5]);
-        long usec = std::stoi(argv[6]);
-
-        //if(!ping.ping(node_ip.c_str())) return 0;        
-       
-        Session session_header;
-        Session *ptr_session = &session_header;
-        appInit.createSession(ptr_session);
-
-        if(session_header.getNetworkIdentifier() != network_identfier ) return 2;
-
-        Node *node_ptr = nullptr;
-
-        auto& nodeList = session_header.getMutableNodes();
-
-
-        for(Node &n: nodeList){
-
-            if(n.getMacAddress() == node_mac){
-                node_ptr = &n;
-                
-                break;
+            appInit.linkingNode_inPointer(session, node_ptr, ip, mac);
+            
+            if (appInit.scanPort(ip, port, sec, usec)) {
+                return 0; // Success
+            } else {
+                return 2; // Port scan failed/closed
             }
 
+        } catch (const std::exception& e) {
+            std::cerr << "[-] Fatal error parsing numerical arguments: " << e.what() << "\n";
+            return 1;
         }
-       
-        if(node_ptr == nullptr) {
-         
-            return 1; 
-        }
-        
-
-        std::string node_ip = node_ptr->getIpAddress();
-
-        // if(!ping.ping(node_ip.c_str())) return 1;
-
-        appInit.linkingNode_inPointer(session_header, node_ptr, node_ip, node_mac);
-
-        appInit.scanNode(node_ptr, scan_opt_flags, sec, usec);
-
-        printNodeJson(ptr_session, node_ptr);
-
     }
 
+    // ---------------------------------------------------------
+    // Command: --scan_node <node-mac> <networkIdentfier> <scan_flags> <sec> <usec>
+    // ---------------------------------------------------------
+    else if (command == "--scan_node") {
+        if (argc < 7) {
+            std::cerr << "[-] Error: Insufficient arguments for --scan_node.\n";
+            return 1;
+        }
 
-    if(command == "-test"){
+        try {
+            std::string node_mac = argv[2];
+            std::string network_identfier = argv[3];
+            std::string scan_opt_flags = argv[4];
+            long sec = std::stol(argv[5]);
+            long usec = std::stol(argv[6]);
+           
+            Session session_header;
+            Session* ptr_session = &session_header;
+            appInit.createSession(ptr_session);
 
-        std::string ip = argv[2];
-        long sec = std::stoi(argv[3]);
-        long usec = std::stoi(argv[4]);
+            if (session_header.getNetworkIdentifier() != network_identfier) return 2;
 
+            Node* node_ptr = nullptr;
+            auto& nodeList = session_header.getMutableNodes();
 
-        appInit.test_scan_udp(ip, sec, usec);
+            for (Node& n : nodeList) {
+                if (n.getMacAddress() == node_mac) {
+                    node_ptr = &n;
+                    break;
+                }
+            }
+           
+            if (node_ptr == nullptr) return 1; 
+
+            std::string node_ip = node_ptr->getIpAddress();
+
+            appInit.linkingNode_inPointer(session_header, node_ptr, node_ip, node_mac);
+            appInit.scanNode(node_ptr, scan_opt_flags, sec, usec);
+
+            // Output JSON for the single node
+            printNodeJson(ptr_session, node_ptr);
+
+        } catch (const std::exception& e) {
+            std::cerr << "[-] Fatal error parsing numerical arguments: " << e.what() << "\n";
+            return 1;
+        }
     }
-   
+
+    // ---------------------------------------------------------
+    // Command: -test <ip> <sec> <usec>
+    // ---------------------------------------------------------
+    else if (command == "-test") {
+        if (argc < 5) {
+            std::cerr << "[-] Error: Insufficient arguments for -test.\n";
+            return 1;
+        }
+
+        try {
+            std::string ip = argv[2];
+            long sec = std::stol(argv[3]);
+            long usec = std::stol(argv[4]);
+
+            appInit.test_scan_udp(ip, sec, usec);
+
+        } catch (const std::exception& e) {
+            std::cerr << "[-] Fatal error parsing numerical arguments: " << e.what() << "\n";
+            return 1;
+        }
+    } 
+    
+    // ---------------------------------------------------------
+    // Fallback: Command not recognized
+    // ---------------------------------------------------------
+    else {
+        std::cerr << "[-] Error: Unknown command '" << command << "'.\n";
+        return 1;
+    }
+
+    return 0;
 }
-

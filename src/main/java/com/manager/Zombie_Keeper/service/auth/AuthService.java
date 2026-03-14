@@ -62,7 +62,7 @@ public class AuthService {
             throw new IllegalArgumentException("Username already exists");
         }
         
-        Role role = roleRepository.findByType(dto.getRole());
+        Role role = roleRepository.findByName(dto.getRole()).get();
         if (role == null) {
             throw new IllegalArgumentException("Role not found");
         }

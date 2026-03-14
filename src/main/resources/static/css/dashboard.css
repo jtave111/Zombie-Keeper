@@ -1,0 +1,605 @@
+/* ═══════════════════════════════════════════════
+   ZOMBIE_KEEPER — dashboard.css  (JavaFX CSS 2.x)
+   ═══════════════════════════════════════════════ */
+
+/* ── Root ── */
+.root-pane {
+    -fx-background-color: #070709;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+/* ═══════════════════════════════════════════════
+   SIDEBAR
+   ═══════════════════════════════════════════════ */
+
+.sidebar {
+    -fx-background-color: #0d0d10;
+    -fx-border-color: transparent #222228 transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-min-height: 600;
+}
+
+/* Brand */
+.sidebar-brand {
+    -fx-background-color: #0d0d10;
+    -fx-border-color: transparent transparent #18181e transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 18 16 14 16;
+}
+
+.brand-skull {
+    -fx-font-size: 18px;
+    -fx-text-fill: #e11d48;
+    -fx-effect: dropshadow(three-pass-box, rgba(225,29,72,0.4), 8, 0, 0, 0);
+}
+
+.brand-name {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e8e8f0;
+}
+
+.brand-ver {
+    -fx-font-size: 8px;
+    -fx-text-fill: #666672;
+}
+
+/* Nav scroll */
+.nav-scroll {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-padding: 0;
+}
+
+.nav-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.nav-body {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 8 0;
+}
+
+/* Nav section */
+.nav-section {
+    -fx-background-color: transparent;
+    -fx-padding: 14 0 6 0;
+    -fx-spacing: 0;
+}
+
+.nav-label {
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #44444e;
+    -fx-padding: 0 0 3 16;
+}
+
+/* Nav item */
+.nav-item {
+    -fx-background-color: transparent;
+    -fx-padding: 8 16 8 0;
+    -fx-cursor: hand;
+    -fx-min-height: 34;
+}
+
+.nav-item:hover {
+    -fx-background-color: rgba(255,255,255,0.025);
+}
+
+.nav-active {
+    -fx-background-color: rgba(225,29,72,0.07);
+}
+
+/* Left indicator line — simulated with a narrow label */
+.nav-indicator {
+    -fx-min-width: 2;
+    -fx-max-width: 2;
+    -fx-min-height: 34;
+    -fx-max-height: 34;
+    -fx-background-color: transparent;
+}
+
+.nav-active .nav-indicator {
+    -fx-background-color: #e11d48;
+}
+
+/* ── ÍCONES DO MENU (Ajustados) ── */
+.nav-icon {
+    -fx-font-size: 11px;
+    -fx-text-fill: #a0a0b0; /* Cinza mais claro para dar leitura */
+    -fx-min-width: 16;
+    -fx-max-width: 16;
+    -fx-alignment: CENTER;
+}
+
+.nav-active .nav-icon {
+    -fx-text-fill: #e11d48; /* Vermelho ZK se estiver ativo */
+}
+
+.nav-item:hover .nav-icon {
+    -fx-text-fill: #ffffff; /* Fica branco puro ao passar o mouse */
+}
+
+/* ── TEXTO DO MENU (Ajustados) ── */
+.nav-text {
+    -fx-font-size: 11px;
+    -fx-text-fill: #a0a0b0; /* Cinza mais claro para combinar com o ícone */
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+.nav-active .nav-text {
+    -fx-text-fill: #e8e8f0; /* Branco ligeiramente opaco se estiver ativo */
+}
+
+.nav-item:hover .nav-text {
+    -fx-text-fill: #ffffff; /* Acende em branco puro no hover */
+}
+
+.nav-badge {
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-background-color: rgba(225,29,72,0.07);
+    -fx-text-fill: #e11d48;
+    -fx-border-color: rgba(225,29,72,0.2);
+    -fx-border-width: 1;
+    -fx-padding: 1 6 1 6;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+/* Sidebar footer */
+.sidebar-foot {
+    -fx-background-color: transparent;
+    -fx-border-color: #18181e transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 12 16 12 16;
+}
+
+.sdot {
+    -fx-background-color: #10b981;
+    -fx-background-radius: 50%;
+    -fx-effect: dropshadow(three-pass-box, rgba(16,185,129,0.5), 6, 0, 0, 0);
+}
+
+.sdot.offline {
+    -fx-background-color: #44444e;
+    -fx-effect: none;
+}
+
+.s-txt {
+    -fx-font-size: 9px;
+    -fx-text-fill: #666672;
+}
+
+.op-info {
+    -fx-font-size: 8px;
+    -fx-text-fill: #44444e;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+/* ═══════════════════════════════════════════════
+   TOPBAR
+   ═══════════════════════════════════════════════ */
+
+.topbar {
+    -fx-background-color: #0d0d10;
+    -fx-border-color: transparent transparent #222228 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 0 24 0 24;
+    -fx-min-height: 46;
+    -fx-max-height: 46;
+}
+
+.bc-par {
+    -fx-font-size: 9px;
+    -fx-text-fill: #44444e;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+.bc-sep {
+    -fx-font-size: 9px;
+    -fx-text-fill: #44444e;
+}
+
+.bc-cur {
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e8e8f0;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+.tb-time {
+    -fx-font-size: 9px;
+    -fx-text-fill: #666672;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+.tb-op {
+    -fx-font-size: 9px;
+    -fx-text-fill: #666672;
+    -fx-border-color: #222228;
+    -fx-border-width: 1;
+    -fx-padding: 3 10 3 10;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+/* ═══════════════════════════════════════════════
+   CONTENT AREA
+   ═══════════════════════════════════════════════ */
+
+.content-stack {
+    -fx-background-color: #070709;
+}
+
+.content-pad {
+    -fx-padding: 20 24 20 24;
+    -fx-background-color: #070709;
+}
+
+.view-scroll {
+    -fx-background-color: #070709;
+    -fx-control-inner-background: #070709;
+}
+
+.view-scroll .viewport {
+    -fx-background-color: #070709;
+}
+
+/* ═══════════════════════════════════════════════
+   STAT CARDS
+   ═══════════════════════════════════════════════ */
+
+.stat-card {
+    -fx-background-color: #0d0d10;
+    -fx-border-color: #222228;
+    -fx-border-width: 1;
+    -fx-padding: 14 16 14 16;
+}
+
+.stat-lbl {
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #666672;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+.stat-val {
+    -fx-font-size: 26px;
+    -fx-font-weight: 300;
+    -fx-text-fill: #e8e8f0;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+.stat-meta {
+    -fx-font-size: 9px;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+.stat-up   { -fx-text-fill: #10b981; }
+.stat-down { -fx-text-fill: #e11d48; }
+.stat-neu  { -fx-text-fill: #666672; }
+
+.stat-bar {
+    -fx-background-color: #222228;
+    -fx-min-height: 2;
+    -fx-max-height: 2;
+    -fx-pref-height: 2;
+}
+
+.stat-bar-fill {
+    -fx-min-height: 2;
+    -fx-max-height: 2;
+}
+
+.bar-red    { -fx-background-color: #e11d48; }
+.bar-green  { -fx-background-color: #10b981; }
+.bar-yellow { -fx-background-color: #f59e0b; }
+
+/* ═══════════════════════════════════════════════
+   PANELS
+   ═══════════════════════════════════════════════ */
+
+.panel {
+    -fx-background-color: #0d0d10;
+    -fx-border-color: #222228;
+    -fx-border-width: 1;
+}
+
+.panel-head {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #18181e transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 10 16 10 16;
+    -fx-min-height: 36;
+    -fx-max-height: 36;
+}
+
+.panel-title {
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #666672;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+.p-action {
+    -fx-font-size: 9px;
+    -fx-text-fill: #44444e;
+    -fx-background-color: transparent;
+    -fx-border-color: #222228;
+    -fx-border-width: 1;
+    -fx-padding: 3 9 3 9;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-cursor: hand;
+}
+
+.p-action:hover {
+    -fx-text-fill: #e11d48;
+    -fx-border-color: rgba(225,29,72,0.3);
+}
+
+/* ═══════════════════════════════════════════════
+   TABLES
+   ═══════════════════════════════════════════════ */
+
+.zk-table {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-border-color: transparent;
+    -fx-table-cell-border-color: #18181e;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-font-size: 10px;
+}
+
+.zk-table .column-header-background {
+    -fx-background-color: #111115;
+    -fx-border-color: transparent transparent #222228 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.zk-table .column-header {
+    -fx-background-color: transparent;
+    -fx-size: 32px;
+}
+
+.zk-table .column-header .label {
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #44444e;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 4;
+}
+
+.zk-table .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #18181e transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.zk-table .table-row-cell:hover {
+    -fx-background-color: rgba(255,255,255,0.018);
+}
+
+.zk-table .table-row-cell:selected {
+    -fx-background-color: rgba(225,29,72,0.07);
+}
+
+.zk-table .table-cell {
+    -fx-text-fill: #a0a0b0;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-padding: 8 14 8 14;
+    -fx-border-color: transparent;
+}
+
+.zk-table .table-row-cell:selected .table-cell {
+    -fx-text-fill: #e8e8f0;
+}
+
+/* Cell style classes (applied via setCellFactory in controller) */
+.cell-id     { -fx-text-fill: #e11d48; -fx-font-weight: bold; }
+.cell-muted  { -fx-text-fill: #44444e; }
+
+/* Status pills */
+.pill-online { -fx-background-color: rgba(16,185,129,0.1);  -fx-text-fill: #10b981; -fx-border-color: rgba(16,185,129,0.2); -fx-border-width:1; -fx-padding:2 7 2 7; -fx-font-size:8px; -fx-font-weight:bold; }
+.pill-idle   { -fx-background-color: rgba(245,158,11,0.1);  -fx-text-fill: #f59e0b; -fx-border-color: rgba(245,158,11,0.2); -fx-border-width:1; -fx-padding:2 7 2 7; -fx-font-size:8px; -fx-font-weight:bold; }
+.pill-lost   { -fx-background-color: rgba(225,29,72,0.07);  -fx-text-fill: #e11d48; -fx-border-color: rgba(225,29,72,0.2);  -fx-border-width:1; -fx-padding:2 7 2 7; -fx-font-size:8px; -fx-font-weight:bold; }
+
+/* Privilege badges */
+.priv-root { -fx-background-color: rgba(225,29,72,0.1); -fx-text-fill: #e11d48; -fx-border-color: rgba(225,29,72,0.2); -fx-border-width:1; -fx-padding:2 6 2 6; -fx-font-size:8px; -fx-font-weight:bold; }
+.priv-user { -fx-background-color: #111115; -fx-text-fill: #666672; -fx-border-color: #222228; -fx-border-width:1; -fx-padding:2 6 2 6; -fx-font-size:8px; -fx-font-weight:bold; }
+
+/* OS tag */
+.os-tag { -fx-background-color: #111115; -fx-text-fill: #666672; -fx-border-color: #222228; -fx-border-width:1; -fx-padding:1 5 1 5; -fx-font-size:8px; }
+
+/* ═══════════════════════════════════════════════
+   ACTIVITY FEED
+   ═══════════════════════════════════════════════ */
+
+.feed-box {
+    -fx-background-color: transparent;
+}
+
+.feed-item {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #18181e transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 9 16 9 16;
+}
+
+.feed-dot-r { -fx-background-color: #e11d48; -fx-background-radius: 50%; -fx-effect: dropshadow(three-pass-box, rgba(225,29,72,0.4), 5, 0, 0, 0); }
+.feed-dot-g { -fx-background-color: #10b981; -fx-background-radius: 50%; }
+.feed-dot-m { -fx-background-color: #44444e; -fx-background-radius: 50%; }
+
+.feed-txt  { -fx-font-size: 10px; -fx-text-fill: #a0a0b0; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
+.feed-bold { -fx-font-size: 10px; -fx-text-fill: #e8e8f0; -fx-font-weight: bold; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
+.feed-time { -fx-font-size: 8px;  -fx-text-fill: #44444e; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
+
+/* ═══════════════════════════════════════════════
+   AGENTS TOOLBAR
+   ═══════════════════════════════════════════════ */
+
+.ag-search {
+    -fx-background-color: #0d0d10;
+    -fx-border-color: #222228;
+    -fx-border-width: 1;
+    -fx-text-fill: #e8e8f0;
+    -fx-prompt-text-fill: #44444e;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-padding: 7 12 7 12;
+}
+
+.ag-search:focused {
+    -fx-border-color: #e11d48;
+}
+
+.ag-filter {
+    -fx-background-color: #0d0d10;
+    -fx-border-color: #222228;
+    -fx-border-width: 1;
+    -fx-text-fill: #666672;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 12 7 12;
+    -fx-cursor: hand;
+}
+
+.ag-filter:selected {
+    -fx-background-color: rgba(225,29,72,0.07);
+    -fx-border-color: rgba(225,29,72,0.3);
+    -fx-text-fill: #e11d48;
+}
+
+.ag-filter:hover {
+    -fx-text-fill: #e8e8f0;
+}
+
+.ag-count {
+    -fx-font-size: 9px;
+    -fx-text-fill: #44444e;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+.act-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #222228;
+    -fx-border-width: 1;
+    -fx-text-fill: #666672;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-padding: 3 9 3 9;
+    -fx-cursor: hand;
+}
+
+.act-btn:hover {
+    -fx-text-fill: #e11d48;
+    -fx-border-color: rgba(225,29,72,0.3);
+}
+
+/* ═══════════════════════════════════════════════
+   NETWORK MAP
+   ═══════════════════════════════════════════════ */
+
+.scan-btn {
+    -fx-background-color: #e11d48;
+    -fx-border-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+}
+
+.scan-btn:hover {
+    -fx-background-color: #c81941;
+    -fx-effect: dropshadow(three-pass-box, rgba(225,29,72,0.3), 14, 0, 0, 0);
+}
+
+.scan-btn:disabled {
+    -fx-background-color: #44444e;
+    -fx-text-fill: #222228;
+}
+
+.net-info {
+    -fx-font-size: 9px;
+    -fx-text-fill: #666672;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+.node-map {
+    -fx-background-color: #0d0d10;
+    -fx-border-color: #222228;
+    -fx-border-width: 1;
+    -fx-min-height: 420;
+}
+
+.map-tag {
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #44444e;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+/* Node list (ListView) */
+.node-list {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.node-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #18181e transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 10 14 10 14;
+}
+
+.node-list .list-cell:hover {
+    -fx-background-color: rgba(255,255,255,0.02);
+}
+
+.node-list .list-cell:selected {
+    -fx-background-color: rgba(225,29,72,0.07);
+}
+
+.ni-ip   { -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #e8e8f0; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
+.ni-mac  { -fx-font-size: 8px;  -fx-text-fill: #44444e; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
+.ni-ports{ -fx-font-size: 8px;  -fx-text-fill: #3a3a46; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
+
+.nd-on  { -fx-background-color: #10b981; -fx-background-radius: 50%; -fx-effect: dropshadow(three-pass-box, rgba(16,185,129,0.5), 5,0,0,0); }
+.nd-off { -fx-background-color: #44444e; -fx-background-radius: 50%; }
+.nd-ag  { -fx-background-color: #e11d48; -fx-background-radius: 50%; -fx-effect: dropshadow(three-pass-box, rgba(225,29,72,0.5), 5,0,0,0); }
+
+/* ═══════════════════════════════════════════════
+   PLACEHOLDER VIEWS
+   ═══════════════════════════════════════════════ */
+
+.placeholder-view {
+    -fx-background-color: #070709;
+}
+
+.ph-icon {
+    -fx-font-size: 28px;
+    -fx-text-fill: #44444e;
+}
+
+.ph-title {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #666672;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+.ph-sub {
+    -fx-font-size: 9px;
+    -fx-text-fill: #44444e;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+.zk-table .filler {
+    -fx-background-color: #111115;
+    -fx-border-color: transparent transparent #222228 transparent;
+    -fx-border-width: 0 0 1 0;
+}

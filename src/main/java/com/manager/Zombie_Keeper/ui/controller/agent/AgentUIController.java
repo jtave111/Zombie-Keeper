@@ -42,7 +42,7 @@ public class AgentUIController {
     @FXML private TableColumn<Agent, String> colVersion;
     @FXML private TableColumn<Agent, Integer> colPid;
 
-    @Autowired
+    @Autowired //TODO add logger infos 
     private AgentRepository agentRepository;
 
     @FXML
@@ -70,19 +70,19 @@ public class AgentUIController {
 
     @FXML
     public void refreshTable() {
-        logger.debug("Solicitando atualização da lista de agentes ao banco de dados.");
+        logger.debug("Update agents in database.");
         
         CompletableFuture.supplyAsync(() -> agentRepository.findAll())
             .thenAccept(agentsList -> {
                 ObservableList<Agent> agents = FXCollections.observableArrayList(agentsList);
                 Platform.runLater(() -> {
                     botnetOverviewTable.setItems(agents);
-                    logger.info("Tabela atualizada com sucesso. Total de agentes: {}", agentsList.size());
+                    logger.info("Update table. Total agents: {}", agentsList.size());
                 });
             })
             .exceptionally(ex -> {
                 
-                logger.error("Falha ao buscar os agentes no banco de dados.", ex);
+                logger.error("ERROR.", ex);
                 return null;
             });
     }
@@ -92,31 +92,29 @@ public class AgentUIController {
         Agent selectedAgent = botnetOverviewTable.getSelectionModel().getSelectedItem();
         
         if (selectedAgent != null) {
-            logger.info("Iniciando exclusão do agente ID: {}", selectedAgent.getPublicId());
             
             CompletableFuture.runAsync(() -> agentRepository.delete(selectedAgent))
                 .thenRun(() -> {
-                    logger.info("Agente ID: {} excluído com sucesso.", selectedAgent.getPublicId());
                     Platform.runLater(this::refreshTable);
                 })
                 .exceptionally(ex -> {
-                    logger.error("Falha ao deletar o agente ID: {}", selectedAgent.getPublicId(), ex);
                     return null;
                 });
         } else {
-            logger.warn("Tentativa de excluir agente, mas nenhum foi selecionado na tabela.");
+            logger.warn("ERROR agent not selected.");
         }
     }
     
+
     @FXML
     public void interactWithAgent() {
         Agent selectedAgent = botnetOverviewTable.getSelectionModel().getSelectedItem();
         
         if (selectedAgent != null) {
-            logger.info("Iniciando terminal interativo (shell) com o Agente ID: {}", selectedAgent.getPublicId());
+            
             // TODO: Lógica para abrir a view do terminal
         } else {
-            logger.warn("Nenhum agente selecionado para interação.");
+            
         }
     }
 }

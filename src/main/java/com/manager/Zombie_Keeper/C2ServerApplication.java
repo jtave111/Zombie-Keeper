@@ -23,9 +23,11 @@ public class C2ServerApplication extends Application {
         SceneManager sceneManager = springContext.getBean(SceneManager.class);
         sceneManager.setPrimaryStage(primaryStage);
         
-        // Fica muito mais limpo e imune a erros de digitação!
+        
         sceneManager.changeScreen(ViewEnum.LOGIN); 
-    }
+		
+	
+	}
 
     @Override
     public void stop() throws Exception {

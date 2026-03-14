@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="root-pane"
+            stylesheets="/static/css/dashboard.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.manager.Zombie_Keeper.ui.controller.dashboard.DashboardUiController">
+
+    <left>
+        <VBox styleClass="sidebar" minWidth="220" maxWidth="220">
+
+            <HBox styleClass="sidebar-brand" alignment="CENTER_LEFT" spacing="10">
+                <Label styleClass="brand-skull" text="☣" />
+                <VBox spacing="2">
+                    <Label styleClass="brand-name" text="ZOMBIE_KEEPER" />
+                    <Label styleClass="brand-ver"  text="C2 Framework v3.0.1" />
+                </VBox>
+            </HBox>
+
+            <ScrollPane styleClass="nav-scroll" fitToWidth="true" VBox.vgrow="ALWAYS"
+                        hbarPolicy="NEVER" vbarPolicy="NEVER">
+                <VBox styleClass="nav-body">
+
+                    <VBox styleClass="nav-section">
+                        <Label styleClass="nav-label" text="OVERVIEW" />
+                        <HBox styleClass="nav-item nav-active" fx:id="navDashboard" alignment="CENTER_LEFT"
+                              spacing="9" onMouseClicked="#showDashboard">
+                            <Label styleClass="nav-indicator" />
+                            <Label styleClass="nav-icon" text="▣" />
+                            <Label styleClass="nav-text" text="Dashboard" />
+                        </HBox>
+                    </VBox>
+
+                    <VBox styleClass="nav-section">
+                        <Label styleClass="nav-label" text="C2 OPERATIONS" />
+                        <HBox styleClass="nav-item" fx:id="navAgents" alignment="CENTER_LEFT"
+                              spacing="9" onMouseClicked="#showAgents">
+                            <Label styleClass="nav-indicator" />
+                            <Label styleClass="nav-icon" text="◈" />
+                            <Label styleClass="nav-text" text="Agents" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label fx:id="agentBadge" styleClass="nav-badge" text="14" />
+                        </HBox>
+                        <HBox styleClass="nav-item" fx:id="navShell" alignment="CENTER_LEFT"
+                              spacing="9" onMouseClicked="#showShell">
+                            <Label styleClass="nav-indicator" />
+                            <Label styleClass="nav-icon" text="▶" />
+                            <Label styleClass="nav-text" text="Shell" />
+                        </HBox>
+                        <HBox styleClass="nav-item" fx:id="navPayloads" alignment="CENTER_LEFT"
+                              spacing="9" onMouseClicked="#showPayloads">
+                            <Label styleClass="nav-indicator" />
+                            <Label styleClass="nav-icon" text="⬡" />
+                            <Label styleClass="nav-text" text="Payloads" />
+                        </HBox>
+                    </VBox>
+
+                    <VBox styleClass="nav-section">
+                        <Label styleClass="nav-label" text="RECON" />
+                        <HBox styleClass="nav-item" fx:id="navNetwork" alignment="CENTER_LEFT"
+                              spacing="9" onMouseClicked="#showNetwork">
+                            <Label styleClass="nav-indicator" />
+                            <Label styleClass="nav-icon" text="◎" />
+                            <Label styleClass="nav-text" text="Network Map" />
+                        </HBox>
+                        
+                    </VBox>
+
+                    <VBox styleClass="nav-section">
+                        <Label styleClass="nav-label" text="SYSTEM" />
+                        <HBox styleClass="nav-item" fx:id="navLogs" alignment="CENTER_LEFT"
+                              spacing="9" onMouseClicked="#showLogs">
+                            <Label styleClass="nav-indicator" />
+                            <Label styleClass="nav-icon" text="≡" />
+                            <Label styleClass="nav-text" text="Logs" />
+                        </HBox>
+                        <HBox styleClass="nav-item" fx:id="navSettings" alignment="CENTER_LEFT"
+                              spacing="9" onMouseClicked="#showSettings">
+                            <Label styleClass="nav-indicator" />
+                            <Label styleClass="nav-icon" text="⚙" />
+                            <Label styleClass="nav-text" text="Settings" />
+                        </HBox>
+                    </VBox>
+
+                </VBox>
+            </ScrollPane>
+
+            <VBox styleClass="sidebar-foot" spacing="5">
+                <HBox alignment="CENTER_LEFT" spacing="7">
+                    <StackPane fx:id="statusDot" styleClass="sdot" minWidth="6" maxWidth="6" minHeight="6" maxHeight="6"/>
+                    <Label fx:id="statusText" styleClass="s-txt" text="C2 ONLINE" />
+                </HBox>
+                <Label styleClass="op-info" text="operator: ROOT_ADMIN" />
+                <Label styleClass="op-info" text="role: ADMIN · RBAC enforced" />
+            </VBox>
+
+        </VBox>
+    </left>
+
+    <center>
+        <VBox>
+
+            <HBox styleClass="topbar" alignment="CENTER_LEFT" minHeight="46" maxHeight="46">
+                <HBox alignment="CENTER_LEFT" spacing="6">
+                    <Label styleClass="bc-par" text="ZK" />
+                    <Label styleClass="bc-sep" text="/" />
+                    <Label fx:id="bcCur" styleClass="bc-cur" text="Dashboard" />
+                </HBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <HBox alignment="CENTER" spacing="14">
+                    <Label fx:id="clockLabel" styleClass="tb-time" text="--:--:-- UTC" />
+                    <Label styleClass="tb-op" text="☣  ROOT_ADMIN" />
+                </HBox>
+            </HBox>
+
+            <StackPane fx:id="contentStack" VBox.vgrow="ALWAYS" styleClass="content-stack">
+            </StackPane>
+
+        </VBox>
+    </center>
+
+</BorderPane>

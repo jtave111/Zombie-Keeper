@@ -36,7 +36,30 @@ private:
 
 public:
 
-    
+    std::string setStatusToString( port_status sts){
+
+        switch (sts)
+        {
+        case 0:
+            return "CLOSED";
+            break;
+        case 1: 
+            return "OPEN";
+            break;
+
+        case 2:
+            return "FILTERED";
+            break;
+        case 3:
+            return "OPEN_FILTERED";
+            break;
+        case 4:
+            return "INTERNAL_ERROR";
+            break;
+        default:
+            break;
+        }
+    }
 
     /*
     * TCP func
@@ -45,15 +68,15 @@ public:
     // port scan TCP
     port_status portScan_tcp(std::string ip, int port, long timeout_sec, long timeout_usec);
     //Overload
-    bool portScan_tcp( Port *port_ptr, std::string ip, int port, long timeout_sec, long timeout_usec);
+    port_status portScan_tcp( Port *port_ptr, std::string ip, int port, long timeout_sec, long timeout_usec);
     
     //All ports all nodes
     void scan_all_TcpNodePorts(Session &session, long sec, long usec);
-    void aux_allNode_TcpPorts(const std::string* ip, Node* node, long timeout_sec, long timeout_usec);
+    void aux_allNode_TcpPorts(const std::string ip, Node* node, long timeout_sec, long timeout_usec);
     
     //Any ports all nodes 
     void scan_any_TcpNodePorts(Session &session, long sec, long usec);
-    void aux_any_TcpNodePorts(const std::string* ip, Node * node, long timeout_sec, long timeout_usec);
+    void aux_any_TcpNodePorts(const std::string ip, Node * node, long timeout_sec, long timeout_usec);
 
     //One node all ports or any ports - use flag ALL for all ports or use ANY for tatical tcp ports 
     void scan_OneNode_Tcp(Node &node, std::string flag, long sec, long usec);

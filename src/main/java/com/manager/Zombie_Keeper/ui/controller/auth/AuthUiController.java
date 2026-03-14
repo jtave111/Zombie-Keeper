@@ -46,14 +46,14 @@ public class AuthUiController {
         String password = txtPassword.getText();
 
         if (username.isEmpty() || password.isEmpty()) {
-            addTerminalLog("ERRO: INFORME OPERADOR E CHAVE.", true);
+            addTerminalLog("ERROR:", true);
             return;
         }
 
         txtUsername.setDisable(true);
         txtPassword.setDisable(true);
         btnConnect.setDisable(true);
-        btnConnect.setText("A ESTABELECER LIGAÇÃO...");
+        btnConnect.setText("NULL.");
         btnConnect.getStyleClass().add("btn-disabled");
 
         terminalOutput.getChildren().clear(); 
@@ -86,7 +86,7 @@ public class AuthUiController {
                             Platform.runLater(() -> {
                                 Authentication auth = new UsernamePasswordAuthenticationToken(userOptional.get(), null, userOptional.get().getAuthorities());
                                 SecurityContextHolder.getContext().setAuthentication(auth);
-                                sceneManager.changeScreen(ViewEnum.DASHBOARD);
+                                sceneManager.changeScreen(ViewEnum.MAIN_LAYOUT);
                             });
                         }).start();
 
@@ -97,7 +97,7 @@ public class AuthUiController {
                 });
 
             } catch (Exception e) {
-                Platform.runLater(() -> resetForm("ERRO DE SISTEMA"));
+                Platform.runLater(() -> resetForm("INTERNAL ERROR"));
             }
         }).start();
     }
@@ -108,7 +108,7 @@ public class AuthUiController {
         logLine.getStyleClass().add("terminal-text");
         if (isError) {
             logLine.setStyle("-fx-text-fill: #f43f5e;"); 
-        } else if (text.contains("CONCEDIDO")) {
+        } else if (text.contains("OK")) {
             logLine.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold;"); 
         }
         terminalOutput.getChildren().add(logLine);

@@ -19,36 +19,35 @@ PING_SRC := ../ping/Ping.cpp
 PING_OBJ := $(OBJ_DIR)/external/Ping.o
 
 # ===== Include flags =====
-
 INCLUDES := $(addprefix -I, $(INC_DIRS)) -I. -I../ping/h
 
 # ===== Default =====
 all: $(TARGET)
 
 # ===== Link =====
-
 $(TARGET): $(OBJS) $(PING_OBJ)
-	@echo "🔨 Link: $@"
+	@echo "[BUILD] Link: $@"
 	@$(CXX) $(CXXFLAGS) $(OBJS) $(PING_OBJ) -o $@
-	@echo "✅ Success!"
+	@echo "[*] Aplicando permissões de rede (Raw Sockets) via setcap..."
+	@sudo setcap cap_net_raw,cap_net_admin=eip $@
+	@echo "Success!"
 
 # ===== Compile Local Files =====
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	@echo "⚙️  Compiling $<"
+	@echo "[*] Compiling $<"
 	@$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 # ===== Compile External Ping =====
-
 $(PING_OBJ): $(PING_SRC)
 	@mkdir -p $(dir $@)
-	@echo "⚙️  Compiling External Ping..."
+	@echo "[*] Compiling External Ping..."
 	@$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 # ===== Clean =====
 clean:
 	@rm -rf $(OBJ_DIR) $(TARGET)
-	@echo "🧹 Clear."
+	@echo "[*] Clear."
 
 # ===== Phony =====
 .PHONY: all clean
