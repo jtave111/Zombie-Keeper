@@ -72,11 +72,9 @@ public:
     
     //All ports all nodes
     void scan_all_TcpNodePorts(Session &session, long sec, long usec);
-    void aux_allNode_TcpPorts(const std::string ip, Node* node, long timeout_sec, long timeout_usec);
     
     //Any ports all nodes 
     void scan_any_TcpNodePorts(Session &session, long sec, long usec);
-    void aux_any_TcpNodePorts(const std::string ip, Node * node, long timeout_sec, long timeout_usec);
 
     //One node all ports or any ports - use flag ALL for all ports or use ANY for tatical tcp ports 
     void scan_OneNode_Tcp(Node &node, std::string flag, long sec, long usec);
@@ -129,11 +127,13 @@ public:
     * UDP func
     */
     
-    //Port scan TCP
     int portScan_udp(std::string ip, int port, long timeout_sec, long timeout_usec);
     //OVerload
     port_status portScan_udp(Port *port_ptr, std::string ip, int port, long timeout_sec, long timeout_usec);
-    
+        
+    void scan_all_UdpNodePorts(Session &session, long sec, long usec);
+    void scan_any_UdpNodePorts(Session &session, long sec, long usec);
+
     void defineUDP_payload(int port, const char* &payload, int &payload_len);
 
    

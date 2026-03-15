@@ -234,16 +234,6 @@ port_status Scanner::portScan_udp(Port *port_ptr, std::string ip, int port, long
     target.sin_port = htons(port);
     inet_pton(AF_INET, ip.c_str(), &target.sin_addr);
 
-    struct servent *service_port = nullptr;
-    service_port = getservbyport(htons(port), "udp");
-
-    if(service_port != nullptr){
-        port_ptr->setService(service_port->s_name);
-        port_ptr->setProtocol(service_port->s_proto);
-    }else{
-        port_ptr->setService("unknown");
-        port_ptr->setProtocol("udp");
-    }
 
     if(connect(sock, (struct sockaddr*)&target, sizeof(target)) < 0){
         close(sock);
@@ -316,6 +306,144 @@ port_status Scanner::portScan_udp(Port *port_ptr, std::string ip, int port, long
 
 }
 
+
+void Scanner::scan_all_UdpNodePorts(Session &session, long sec, long usec){
+
+    std::vector<Node> &nodes = session.getMutableNodes();
+    if (nodes.empty()) return;
+
+    const int GLOBAL_WORKERS = 5000; 
+    std::vector<std::thread> workers;
+
+    uint64_t total_nodes = nodes.size();
+    uint64_t total_tasks = total_nodes * 65535; 
+
+    std::atomic<uint64_t>current_task(0);
+
+    for(int i = 0; i < GLOBAL_WORKERS; i ++){
+
+        workers.emplace_back([this, &nodes, total_tasks, sec, usec, &current_task] (){
+
+            while(true){
+                uint64_t task = current_task.fetch_add(1);
+
+                if(task >= total_tasks){
+                    break;
+                }
+
+                int node_index = task / 65535;
+                int port = (task % 65535) + 1;
+
+                Node* node_ptr = &nodes[node_index];
+                std::string ip = node_ptr->getIpAddress();
+                Port actualPort;
+                Port* port_ptr = &actualPort;
+
+                port_status result_scan = this->portScan_tcp(port_ptr, ip, port, sec, usec);
+
+                if(result_scan == port_status::OPEN){
+                    actualPort.setNumber(port);
+                    actualPort.setStatus(Scanner::setStatusToString(result_scan));
+                
+                    {
+                        std::lock_guard<std::mutex> serv_lock(getserv_mutex);
+                        struct servent *service_port = getservbyport(htons(port), "udp");
+
+                        if(service_port != nullptr){
+                            actualPort.setService(service_port->s_name);
+                            actualPort.setProtocol(service_port->s_proto);
+                        }else{
+                            actualPort.setProtocol("udp");
+                            actualPort.setService("unknown");
+                        }
+                    }
+
+                    std::lock_guard<std::mutex> lock(port_mutex);
+                    node_ptr->addPort(actualPort);
+                }
+
+            }
+
+        });
+
+        for(auto& t : workers) {
+            if(t.joinable()) t.join();
+        }
+
+    }
+
+}
+
+void Scanner::scan_any_UdpNodePorts(Session &session, long sec, long usec){
+
+   std::vector<Node> &nodes = session.getMutableNodes();   
+   std::vector<int> tacticalPorts = Scanner::getTacticalUdpPorts();
+
+    if(nodes.empty() || tacticalPorts.empty() ) return;
+
+    const int GLOBAL_WORKERS = 1000;
+    std::vector<std::thread> workers;
+    uint64_t total_nodes = nodes.size();
+    uint64_t total_ports = tacticalPorts.size();
+    uint64_t total_tasks = total_nodes * total_ports;
+
+
+    std::atomic<uint64_t> current_task(0);
+
+
+    for (int i = 0; i < GLOBAL_WORKERS; i++) {
+        workers.emplace_back([this, &nodes, &tacticalPorts, total_tasks, total_ports, sec, usec, &current_task]() {
+            
+            while (true) {
+                uint64_t task = current_task.fetch_add(1);
+                
+                if (task >= total_tasks) {
+                    break; 
+                }
+
+                size_t node_index = task / total_ports;
+                size_t port_index = task % total_ports;
+
+                Node* node_ptr = &nodes[node_index];
+                std::string ip = node_ptr->getIpAddress();
+                int target_port = tacticalPorts[port_index];
+
+                Port actualPort;
+                Port* port_ptr = &actualPort;
+
+                port_status result_scan = this->portScan_tcp(port_ptr, ip, target_port, sec, usec);
+                
+                if (result_scan == port_status::OPEN  ||
+                    result_scan == port_status::FILTERED ||
+                    result_scan == port_status::OPEN_FILTERED) {
+                 
+                    actualPort.setNumber(target_port);
+                    actualPort.setStatus(Scanner::setStatusToString(result_scan));
+                    
+                    {
+                        std::lock_guard<std::mutex> serv_lock(getserv_mutex);
+                        struct servent *service_port = getservbyport(htons(target_port), "tcp");
+
+                        if(service_port != nullptr){
+                            actualPort.setService(service_port->s_name);
+                            actualPort.setProtocol(service_port->s_proto);
+                        }else{
+                            actualPort.setProtocol("udp");
+                            actualPort.setService("unknown");
+                        }
+                    }
+
+                    std::lock_guard<std::mutex> lock(port_mutex);
+                    node_ptr->addPort(actualPort);
+                }
+            }
+        });
+    }
+
+    for (auto& t : workers) {
+        if (t.joinable()) t.join();
+    }
+}
 
 /*
 * TCP funcs  
@@ -567,72 +695,76 @@ void Scanner::scan_all_TcpNodePorts(Session &session, long sec, long usec) {
     }
 }
 
-// Refatorar para o memsmo metodo do all 
 //Make scan any ports --Any ports all nodes 
 void Scanner::scan_any_TcpNodePorts(Session &session, long sec, long usec) {
-    std::vector<std::thread> threads;
+
     std::vector<Node> &nodes = session.getMutableNodes();
-
-    for (int i = 0; i < nodes.size(); i++) {
-        Node* node_ptr = &nodes[i];
-        
-        std::string ip_cpy = node_ptr->getIpAddress();
-
-        threads.emplace_back(&Scanner::aux_any_TcpNodePorts, this, ip_cpy, node_ptr, sec, usec);
-    }
-
-    for (auto& t : threads) {
-        if (t.joinable()) t.join();
-    }
-}
-
-void Scanner::aux_any_TcpNodePorts(std::string ip, Node* node_ptr, long timeout_sec, long timeout_usec) {
+    std::vector<int> tacticalPorts = Scanner::getTacticalTcpPorts();
     
-    std::vector<int> taticalPorts = Scanner::getTacticalTcpPorts();
-    std::vector<std::thread> port_threads;
-    
-    for (int i = 0; i < taticalPorts.size(); i++) {
-        
-        int target_port = taticalPorts[i]; 
+    if(nodes.empty() || tacticalPorts.empty() ) return;
 
-        port_threads.emplace_back([this, ip, target_port, node_ptr, timeout_sec, timeout_usec]() {
-            Port actualPort;
-            Port* port_ptr = &actualPort;
+    const int GLOBAL_WORKERS = 1000;
+    std::vector<std::thread> workers;
+
+    uint64_t total_nodes = nodes.size();
+    uint64_t total_ports = tacticalPorts.size();
+    uint64_t total_tasks = total_nodes * total_ports;
+
+    std::atomic<uint64_t> current_task(0);
+
+    for (int i = 0; i < GLOBAL_WORKERS; i++) {
+        workers.emplace_back([this, &nodes, &tacticalPorts, total_tasks, total_ports, sec, usec, &current_task]() {
             
-            port_status result_scan = this->portScan_tcp(port_ptr, ip, target_port, timeout_sec, timeout_usec);
-            
-            if (result_scan == port_status::OPEN  ||
-                result_scan == port_status::FILTERED ||
-                result_scan == port_status::OPEN_FILTERED
-                ) {
-             
-                actualPort.setNumber(target_port);
-                actualPort.setStatus(Scanner::setStatusToString(result_scan));
+            while (true) {
+                uint64_t task = current_task.fetch_add(1);
                 
-                {
-                    std::lock_guard<std::mutex> serv_lock(getserv_mutex);
-                    struct servent *service_port = getservbyport(htons(target_port), "tcp");
-
-                    if(service_port != nullptr){
-                        actualPort.setService(service_port->s_name);
-                        actualPort.setProtocol(service_port->s_proto);
-                    }else{
-                        actualPort.setProtocol("tcp");
-                        actualPort.setService("unknown");
-                    }
+                if (task >= total_tasks) {
+                    break; 
                 }
 
-                std::lock_guard<std::mutex> lock(port_mutex);
-                node_ptr->addPort(actualPort);
+                size_t node_index = task / total_ports;
+                size_t port_index = task % total_ports;
+
+                Node* node_ptr = &nodes[node_index];
+                std::string ip = node_ptr->getIpAddress();
+                int target_port = tacticalPorts[port_index];
+
+                Port actualPort;
+                Port* port_ptr = &actualPort;
+
+                port_status result_scan = this->portScan_tcp(port_ptr, ip, target_port, sec, usec);
+                
+                if (result_scan == port_status::OPEN  ||
+                    result_scan == port_status::FILTERED ||
+                    result_scan == port_status::OPEN_FILTERED) {
+                 
+                    actualPort.setNumber(target_port);
+                    actualPort.setStatus(Scanner::setStatusToString(result_scan));
+                    
+                    {
+                        std::lock_guard<std::mutex> serv_lock(getserv_mutex);
+                        struct servent *service_port = getservbyport(htons(target_port), "tcp");
+
+                        if(service_port != nullptr){
+                            actualPort.setService(service_port->s_name);
+                            actualPort.setProtocol(service_port->s_proto);
+                        }else{
+                            actualPort.setProtocol("tcp");
+                            actualPort.setService("unknown");
+                        }
+                    }
+
+                    std::lock_guard<std::mutex> lock(port_mutex);
+                    node_ptr->addPort(actualPort);
+                }
             }
         });
     }
 
-    for (auto& t : port_threads) {
+    for (auto& t : workers) {
         if (t.joinable()) t.join();
     }
 }
-
 
 
 // Make scan all or any --One node all ports or any ports 

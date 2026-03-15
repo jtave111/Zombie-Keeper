@@ -169,10 +169,6 @@ public class AgentsService {
 
 
 
-    public void authenticateUser(LoginRequest dto, HttpServletRequest request) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'authenticateUser'");
-    }
-
+    
 
 }

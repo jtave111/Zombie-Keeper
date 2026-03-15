@@ -23,12 +23,10 @@ public class SecurityConfig {
            
             .csrf(csrf -> csrf.disable())
             
-            // Configuramos a sessão para ser criada quando necessário, ex login no JavaFX
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             
             .authorizeHttpRequests(auth -> auth
                 
-                // 1. ROTAS PÚBLICAS (Operador tentando logar)
                 .requestMatchers("/api/auth/login").permitAll()
                 
                 // TODO definir ROTAS DOS ZUMBIS Malwares precisam conectar sem fazer login

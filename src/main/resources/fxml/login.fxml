@@ -6,8 +6,6 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
@@ -62,26 +60,6 @@
                     <PasswordField fx:id="txtPassword"
                                    styleClass="input-field"
                                    promptText="••••••••" />
-                </VBox>
-
-                <VBox spacing="5">
-                    <Label styleClass="field-label" text="ROLE" />
-                    <HBox spacing="8">
-                        <ToggleButton fx:id="btnOperator"
-                                      styleClass="role-btn"
-                                      text="Operator"
-                                      selected="true"
-                                      HBox.hgrow="ALWAYS" maxWidth="Infinity">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="roleGroup" />
-                            </toggleGroup>
-                        </ToggleButton>
-                        <ToggleButton fx:id="btnAdmin"
-                                      styleClass="role-btn"
-                                      text="Admin"
-                                      toggleGroup="$roleGroup"
-                                      HBox.hgrow="ALWAYS" maxWidth="Infinity" />
-                    </HBox>
                 </VBox>
 
                 <VBox.margin><Insets bottom="4"/></VBox.margin>

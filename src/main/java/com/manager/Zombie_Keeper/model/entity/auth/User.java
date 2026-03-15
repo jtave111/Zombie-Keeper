@@ -32,18 +32,17 @@ public class User implements UserDetails {
     private String username;
 
     @NotBlank
-    @Column(length = 500, nullable = false) // Removido o unique=true (Senhas não devem ser únicas!)
+    @Column(length = 500, nullable = false) 
     private String password;
     
     @NotBlank
-    @Column(nullable = false) // Removido o unique=true (Nomes comuns podem se repetir)
+    @Column(nullable = false)
     private String name; 
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    // --- GETTERS E SETTERS ---
 
     public Long getId() { return this.id; }
     public void setId(Long id) { this.id = id; }
@@ -60,18 +59,14 @@ public class User implements UserDetails {
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
 
-    // --- MÉTODOS DO SPRING SECURITY (UserDetails) ---
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.role == null) {
             return Collections.emptyList();
         }
-        // Como o seeder já salva como "ROLE_ADMIN", não precisamos concatenar "ROLE_" aqui novamente
         return Collections.singletonList(new SimpleGrantedAuthority(this.role.getName()));
     }
 
-    // Estes 4 métodos são vitais para o Spring Security não bloquear o login
     @Override
     public boolean isAccountNonExpired() { return true; }
 
@@ -84,7 +79,6 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() { return true; }
 
-    // --- EQUALS & HASHCODE ---
 
     @Override
     public boolean equals(Object o) {

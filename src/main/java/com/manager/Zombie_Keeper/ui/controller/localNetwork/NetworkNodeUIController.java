@@ -1,7 +1,7 @@
 package com.manager.Zombie_Keeper.ui.controller.localNetwork;
 
 import com.manager.Zombie_Keeper.model.entity.localNetwork.NetworkNode;
-// import com.manager.Zombie_Keeper.service.localNetwork.NetworkNodeService; // Ajuste para o seu Service/Repo
+// import com.manager.Zombie_Keeper.service.localNetwork.NetworkNodeService; 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

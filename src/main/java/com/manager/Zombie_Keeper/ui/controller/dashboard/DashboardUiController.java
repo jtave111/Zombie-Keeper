@@ -31,36 +31,26 @@ public class DashboardUiController implements Initializable {
         this.sceneManager = sceneManager;
     }
 
-    // ── Topbar ────────────────────────────────────────────────────────
     @FXML private Label clockLabel;
     @FXML private Label bcCur;
 
-    // ── O BURACO NEGRO ────────────────────────────────────────────────
     @FXML private StackPane contentStack;
-
-    // ── Nav items (Menu Lateral) ──────────────────────────────────────
     @FXML private HBox navDashboard;
     @FXML private HBox navAgents;
     @FXML private HBox navNetwork;
     @FXML private HBox navShell;
     @FXML private HBox navPayloads;
-    // Removido o navScanner fantasma daqui!
     @FXML private HBox navLogs;
     @FXML private HBox navSettings;
 
-    // ═════════════════════════════════════════════════════════════════
-    //  INIT
-    // ═════════════════════════════════════════════════════════════════
-
+  
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         startClock();
         showDashboard(); 
     }
 
-    // ═════════════════════════════════════════════════════════════════
-    //  CLOCK
-    // ═════════════════════════════════════════════════════════════════
+
 
     private void startClock() {
         Timeline tl = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
@@ -72,9 +62,6 @@ public class DashboardUiController implements Initializable {
         tl.play();
     }
 
-    // ═════════════════════════════════════════════════════════════════
-    //  INJEÇÃO DE TELAS (A MÁGICA DO CACHE)
-    // ═════════════════════════════════════════════════════════════════
 
     private void injectView(ViewEnum viewEnum, String title, HBox activeNav) {
         Node view = sceneManager.loadPane(viewEnum);
@@ -87,11 +74,11 @@ public class DashboardUiController implements Initializable {
     }
 
     private void setActiveNav(HBox active) {
-        // Removido o navScanner daqui e adicionada a trava anti-nulo
+        
         List.of(navDashboard, navAgents, navNetwork, navShell,
                 navPayloads, navLogs, navSettings)
             .forEach(n -> {
-                if (n != null) { // Blindagem para não explodir
+                if (n != null) { 
                     n.getStyleClass().remove("nav-active");
                 }
             });
@@ -101,9 +88,7 @@ public class DashboardUiController implements Initializable {
         }
     }
 
-    // ═════════════════════════════════════════════════════════════════
-    //  BOTÕES DO MENU
-    // ═════════════════════════════════════════════════════════════════
+   
 
     @FXML private void showDashboard() { injectView(ViewEnum.HOME,     "Overview",    navDashboard); }
     @FXML private void showAgents()    { injectView(ViewEnum.AGENTS,   "Agents",      navAgents); }
