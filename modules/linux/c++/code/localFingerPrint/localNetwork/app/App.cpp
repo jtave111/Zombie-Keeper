@@ -11,19 +11,34 @@ void App::linkingNode_inPointer(Session &session, Node *node_ptr, std::string ip
 
 
 
-void App::scannSession(Session *ptr_session, std::string flags, long sec, long usec){
+void App::scannSession(Session *ptr_session, std::string flag_1, std::string flag_2, long sec, long usec){
 
     scanner.setSession(ptr_session);
 
 
-    if(flags == "-all-ports"){
+    if(flag_1 == "-tcp"){
         
-        scanner.scan_all_TcpNodePorts( *ptr_session,  sec,  usec);
-       
-    }else if(flags == "-any-ports"){
+        if(flag_2 == "-all-ports"){
+            
+            scanner.scan_all_TcpNodePorts( *ptr_session,  sec,  usec);
+        
+        }else if(flag_2 == "-any-ports"){
 
-        scanner.scan_any_TcpNodePorts( *ptr_session, sec, usec);
-    
+            scanner.scan_any_TcpNodePorts( *ptr_session, sec, usec);
+        
+        }   
+
+    }else if(flag_1 == "-udp"){
+        
+        if(flag_2 == "-all-ports"){
+            
+            scanner.scan_all_UdpNodePorts( *ptr_session,  sec,  usec);
+        
+        }else if(flag_2 == "-any-ports"){
+
+            scanner.scan_any_UdpNodePorts( *ptr_session, sec, usec);
+        
+        }   
     }
 
 }

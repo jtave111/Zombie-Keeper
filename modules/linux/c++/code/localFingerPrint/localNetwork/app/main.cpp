@@ -137,6 +137,8 @@ std::cout << "{";
 // =========================================================
 // MAIN EXECUTABLE (Requires cap_net_raw,cap_net_admin=eip)
 // =========================================================
+
+//TODO: criar resposta de scanner alem do json para integrar com a Ui javaFx
 int main(int argc, char* argv[]) {
     struct rlimit rl;
     if (getrlimit(RLIMIT_NOFILE, &rl) == 0) {
@@ -169,9 +171,10 @@ int main(int argc, char* argv[]) {
 
         try {
             std::cout << "[DEBUG] 1. Entrou no bloco e leu argumentos...\n";
-            std::string scan_opt_flags = argv[2];
-            long sec = std::stol(argv[3]);
-            long usec = std::stol(argv[4]);
+            std::string scan_opt_flag_1 = argv[2];
+            std::string scan_opt_flag_2 = argv[3];
+            long sec = std::stol(argv[4]);
+            long usec = std::stol(argv[5]);
 
             Session session;
             Session* ptr_session = &session;
@@ -180,7 +183,7 @@ int main(int argc, char* argv[]) {
             appInit.createSession(ptr_session);
             
             std::cout << "[DEBUG] 3. createSession() sobreviveu! Chamando appInit.scannSession()...\n";
-            appInit.scannSession(ptr_session, scan_opt_flags, sec, usec);
+            appInit.scannSession(ptr_session, scan_opt_flag_1, scan_opt_flag_2, sec, usec);
             
             std::cout << "[DEBUG] 4. scannSession() sobreviveu! Imprimindo JSON...\n";
             printSessionJson(ptr_session);

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox stylesheets="/static/css/scanner_manager.css"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.manager.Zombie_Keeper.ui.controller.localNetwork.ScannerManagerController"
+      VBox.vgrow="ALWAYS">
+
+    <!-- ═══════════════════════════════════
+         LEFT — Config Panel
+    ════════════════════════════════════ -->
+    <VBox styleClass="sm-config" minWidth="280" maxWidth="280">
+
+        <!-- Target -->
+        <VBox styleClass="cfg-section" spacing="0">
+            <Label styleClass="cfg-title" text="TARGET" />
+            <Label styleClass="cfg-label" text="SUBNET / CIDR">
+                <VBox.margin><Insets bottom="5"/></VBox.margin>
+            </Label>
+            <TextField fx:id="txtTarget" styleClass="cfg-input"
+                       promptText="192.168.1.0/24" text="192.168.1.0/24"/>
+            <Label styleClass="cfg-label" text="NETWORK SESSION">
+                <VBox.margin><Insets top="10" bottom="5"/></VBox.margin>
+            </Label>
+            <ComboBox fx:id="cmbSession" styleClass="cfg-combo" maxWidth="Infinity"
+                      promptText="Select session..." />
+        </VBox>
+
+        <!-- Scan Type -->
+        <VBox styleClass="cfg-section" spacing="0">
+            <Label styleClass="cfg-title" text="SCAN TYPE" />
+            <HBox spacing="6">
+                <fx:define><ToggleGroup fx:id="tgType"/></fx:define>
+                <ToggleButton fx:id="btnTcp" text="TCP" selected="true"
+                              styleClass="scan-type-btn" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <ToggleButton fx:id="btnUdp" text="UDP"
+                              styleClass="scan-type-btn" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            </HBox>
+            <HBox spacing="6">
+                <VBox.margin><Insets top="6"/></VBox.margin>
+                <ToggleButton fx:id="btnOs" text="OS Detect"
+                              styleClass="scan-type-btn" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <ToggleButton fx:id="btnSvc" text="Svc Probe" selected="true"
+                              styleClass="scan-type-btn" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            </HBox>
+        </VBox>
+
+        <!-- Port Scope -->
+        <VBox styleClass="cfg-section" spacing="0">
+            <Label styleClass="cfg-title" text="PORT SCOPE" />
+            <HBox spacing="6">
+                <fx:define><ToggleGroup fx:id="tgScope"/></fx:define>
+                <ToggleButton fx:id="scopeCommon" text="Common" selected="true"
+                              toggleGroup="$tgScope" styleClass="scope-btn"
+                              HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <ToggleButton fx:id="scopeFull" text="Full 0-65535"
+                              toggleGroup="$tgScope" styleClass="scope-btn"
+                              HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <ToggleButton fx:id="scopeCustom" text="Custom"
+                              toggleGroup="$tgScope" styleClass="scope-btn"
+                              HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                              onAction="#onScopeCustom"/>
+            </HBox>
+            <VBox fx:id="customPortsBox" visible="false" managed="false" spacing="4">
+                <VBox.margin><Insets top="8"/></VBox.margin>
+                <Label styleClass="cfg-label" text="PORTS (ex: 22,80,443)" />
+                <TextField fx:id="txtCustomPorts" styleClass="cfg-input"
+                           promptText="22,80,443,3389..." />
+            </VBox>
+        </VBox>
+
+        <!-- Aggression -->
+        <VBox styleClass="cfg-section" spacing="0">
+            <Label styleClass="cfg-title" text="AGRESSIVIDADE" />
+            <HBox spacing="6">
+                <fx:define><ToggleGroup fx:id="tgAggr"/></fx:define>
+                <ToggleButton fx:id="aggrStealth" text="STEALTH" selected="true"
+                              toggleGroup="$tgAggr" styleClass="scope-btn"
+                              HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                              onAction="#onAggrChange"/>
+                <ToggleButton fx:id="aggrStd" text="STD"
+                              toggleGroup="$tgAggr" styleClass="scope-btn"
+                              HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                              onAction="#onAggrChange"/>
+                <ToggleButton fx:id="aggrAggr" text="AGGR"
+                              toggleGroup="$tgAggr" styleClass="scope-btn"
+                              HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                              onAction="#onAggrChange"/>
+            </HBox>
+            <Label fx:id="lblAggrDesc" styleClass="cfg-desc"
+                   text="Lento · Menos detecção · SYN scan">
+                <VBox.margin><Insets top="6"/></VBox.margin>
+            </Label>
+        </VBox>
+
+        <!-- Automation -->
+        <VBox styleClass="cfg-section" spacing="0">
+            <Label styleClass="cfg-title" text="AUTOMATION" />
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <VBox HBox.hgrow="ALWAYS" spacing="2">
+                    <Label styleClass="cfg-sublabel" text="Persistent Scanner" />
+                    <Label styleClass="cfg-desc" text="Roda continuamente em loop" />
+                </VBox>
+                <ToggleButton fx:id="btnAutoToggle" styleClass="auto-toggle"
+                              text="OFF" onAction="#onAutoToggle"/>
+            </HBox>
+
+            <VBox fx:id="autoOptionsBox" spacing="0">
+                <VBox.margin><Insets top="10"/></VBox.margin>
+                <Label styleClass="cfg-label" text="INTERVALO">
+                    <VBox.margin><Insets bottom="6"/></VBox.margin>
+                </Label>
+                <HBox spacing="6">
+                    <fx:define><ToggleGroup fx:id="tgInterval"/></fx:define>
+                    <ToggleButton text="30s" selected="true" toggleGroup="$tgInterval"
+                                  styleClass="scope-btn" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <ToggleButton text="1m"  toggleGroup="$tgInterval"
+                                  styleClass="scope-btn" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <ToggleButton text="5m"  toggleGroup="$tgInterval"
+                                  styleClass="scope-btn" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <ToggleButton text="15m" toggleGroup="$tgInterval"
+                                  styleClass="scope-btn" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                </HBox>
+            </VBox>
+
+            <!-- Status row -->
+            <HBox styleClass="auto-status" alignment="CENTER_LEFT" spacing="7">
+                <VBox.margin><Insets top="10"/></VBox.margin>
+                <StackPane fx:id="autoDot" styleClass="auto-dot"
+                           minWidth="6" maxWidth="6" minHeight="6" maxHeight="6"/>
+                <Label fx:id="lblAutoStatus" styleClass="cfg-desc"
+                       text="Automation: INACTIVE" />
+            </HBox>
+        </VBox>
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+        <!-- Launch -->
+        <Button fx:id="btnLaunch" styleClass="launch-btn"
+                text="▶  LAUNCH LOCAL SCAN"
+                maxWidth="Infinity" onAction="#onLaunch">
+            <VBox.margin><Insets top="8" bottom="16" left="16" right="16"/></VBox.margin>
+        </Button>
+
+    </VBox>
+
+    <!-- ═══════════════════════════════════
+         RIGHT — Output Panel
+    ════════════════════════════════════ -->
+    <VBox HBox.hgrow="ALWAYS" styleClass="sm-output">
+
+        <!-- Output top bar -->
+        <HBox styleClass="out-bar" alignment="CENTER_LEFT" minHeight="38" maxHeight="38">
+            <Label styleClass="out-title" text="SCAN OUTPUT" />
+            <HBox alignment="CENTER_LEFT" spacing="6">
+                <HBox.margin><Insets left="12"/></HBox.margin>
+                <StackPane fx:id="phaseDot" styleClass="phase-dot"
+                           minWidth="5" maxWidth="5" minHeight="5" maxHeight="5"/>
+                <Label fx:id="lblPhase" styleClass="phase-txt" text="Idle" />
+            </HBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <HBox spacing="8">
+                <Button styleClass="out-action" text="Clear"  onAction="#onClear"/>
+                <Button styleClass="out-action" text="Export" onAction="#onExport"/>
+            </HBox>
+        </HBox>
+
+        <!-- Progress bar -->
+        <ProgressBar fx:id="scanProgress" styleClass="scan-progress"
+                     progress="0" maxWidth="Infinity"
+                     minHeight="2" maxHeight="2"/>
+
+        <!-- Terminal + Nodes grid -->
+        <HBox VBox.vgrow="ALWAYS">
+
+            <!-- Terminal -->
+            <ScrollPane fx:id="terminalScroll" styleClass="terminal-scroll"
+                        fitToWidth="true" HBox.hgrow="ALWAYS"
+                        hbarPolicy="NEVER">
+                <VBox fx:id="terminalOutput" styleClass="terminal-body" spacing="0">
+                    <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
+                </VBox>
+            </ScrollPane>
+
+            <!-- Discovered nodes -->
+            <VBox styleClass="nodes-panel" minWidth="300" maxWidth="300">
+                <HBox styleClass="nodes-header" alignment="CENTER_LEFT">
+                    <Label styleClass="out-title" text="DISCOVERED NODES" />
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="lblNodeCount" styleClass="cfg-desc" text="0 hosts" />
+                </HBox>
+                <ScrollPane styleClass="terminal-scroll" fitToWidth="true"
+                            VBox.vgrow="ALWAYS" hbarPolicy="NEVER">
+                    <VBox fx:id="nodeList" spacing="0"/>
+                </ScrollPane>
+            </VBox>
+
+        </HBox>
+
+        <!-- Stats bar -->
+        <HBox styleClass="stats-bar" alignment="CENTER_LEFT" spacing="24"
+              minHeight="36" maxHeight="36">
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <Label fx:id="sHosts"  styleClass="stat-val-sm" text="0"/>
+                <Label styleClass="stat-lbl-sm" text="hosts up"/>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <Label fx:id="sPorts"  styleClass="stat-val-sm" text="0"/>
+                <Label styleClass="stat-lbl-sm" text="ports open"/>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <Label fx:id="sVulns"  styleClass="stat-val-sm" text="0"/>
+                <Label styleClass="stat-lbl-sm" text="vulns"/>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <Label fx:id="sAgents" styleClass="stat-val-sm" text="0"/>
+                <Label styleClass="stat-lbl-sm" text="agents"/>
+            </HBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblDuration" styleClass="cfg-desc" text="--" />
+        </HBox>
+
+    </VBox>
+
+</HBox>

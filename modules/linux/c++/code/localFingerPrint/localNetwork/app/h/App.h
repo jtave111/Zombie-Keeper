@@ -18,7 +18,7 @@ public:
     void createSession(Session *session);
     void createHeaderSession(Session *ptr_session);
 
-    void scannSession(Session *ptr_session, std::string flags, long sec, long usec);
+    void scannSession(Session *ptr_session, std::string flag_1, std::string flag_2, long sec, long usec);
     void scanNode(Node *ptr, std::string flags, long sec, long usec);
     //Linking pointers 
     void linkingNode_inPointer(Session &session, Node *node_ptr, std::string ip, std::string mac);

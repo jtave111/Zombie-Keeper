@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javafx.event.ActionEvent;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,7 +31,7 @@ public class NetworkSessionUIController {
     @FXML private ToggleButton tabScanner;
     @FXML private HBox viewTopology;
     @FXML private VBox viewScannerManager;
-    @FXML private Button btnRunScan;
+    
     @FXML private Label netInfo;
 
  
@@ -38,12 +39,10 @@ public class NetworkSessionUIController {
     public void initialize() {
         logger.info("Inicializando o painel Tático de Network Sessions...");
 
-        
         if (colNodeIpv4 != null) colNodeIpv4.setCellValueFactory(new PropertyValueFactory<>("ipv4"));
         if (colNodeMac != null)  colNodeMac.setCellValueFactory(new PropertyValueFactory<>("macAddress"));
         if (colNodeOs != null)   colNodeOs.setCellValueFactory(new PropertyValueFactory<>("os"));
 
-       
         if (sessionListView != null) {
             sessionListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
@@ -61,12 +60,18 @@ public class NetworkSessionUIController {
             });
         }
 
+        if (tabMap != null) {
+            tabMap.setOnAction(event -> switchTab());
+        }
+        if (tabScanner != null) {
+            tabScanner.setOnAction(event -> switchTab());
+        }
         
+
         switchTab();
         loadAllSessions();
     }
 
-    
     @FXML
     public void switchTab() {
         if (tabMap != null && tabScanner != null) {
@@ -86,17 +91,7 @@ public class NetworkSessionUIController {
         }
     }
 
-    
-    @FXML
-    public void runFullScan() {
-        if (btnRunScan != null) {
-            btnRunScan.setText("⟳ NULL");
-            btnRunScan.setDisable(true);
-        }
-        logger.info("NULL");
-        
-       
-    }
+   
 
  
     private void loadAllSessions() {

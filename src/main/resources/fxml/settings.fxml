@@ -1,0 +1,735 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox stylesheets="/static/css/settings.css"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.manager.Zombie_Keeper.ui.controller.settings.SettingsUiController"
+      VBox.vgrow="ALWAYS">
+
+    <!-- ═══════════════════════════════════
+         LEFT — Settings Nav
+    ════════════════════════════════════ -->
+    <VBox styleClass="settings-nav" minWidth="200" maxWidth="200">
+
+        <Label styleClass="settings-nav-header" text="SETTINGS" />
+
+        <!-- Nav items -->
+        <HBox styleClass="s-nav-item s-nav-active" fx:id="navGeneral"
+              alignment="CENTER_LEFT" spacing="9" onMouseClicked="#showGeneral">
+            <Label styleClass="s-nav-indicator" />
+            <Label styleClass="s-nav-icon" text="⬛" />
+            <Label styleClass="s-nav-text" text="General" />
+        </HBox>
+
+        <HBox styleClass="s-nav-item" fx:id="navServer"
+              alignment="CENTER_LEFT" spacing="9" onMouseClicked="#showServer">
+            <Label styleClass="s-nav-indicator" />
+            <Label styleClass="s-nav-icon" text="◈" />
+            <Label styleClass="s-nav-text" text="C2 Server" />
+        </HBox>
+
+        <HBox styleClass="s-nav-item" fx:id="navUsers"
+              alignment="CENTER_LEFT" spacing="9" onMouseClicked="#showUsers">
+            <Label styleClass="s-nav-indicator" />
+            <Label styleClass="s-nav-icon" text="◎" />
+            <Label styleClass="s-nav-text" text="Users &amp; RBAC" />
+        </HBox>
+
+        <HBox styleClass="s-nav-item" fx:id="navDatabase"
+              alignment="CENTER_LEFT" spacing="9" onMouseClicked="#showDatabase">
+            <Label styleClass="s-nav-indicator" />
+            <Label styleClass="s-nav-icon" text="≡" />
+            <Label styleClass="s-nav-text" text="Database" />
+        </HBox>
+
+        <HBox styleClass="s-nav-item" fx:id="navNetwork"
+              alignment="CENTER_LEFT" spacing="9" onMouseClicked="#showNetwork">
+            <Label styleClass="s-nav-indicator" />
+            <Label styleClass="s-nav-icon" text="⬡" />
+            <Label styleClass="s-nav-text" text="Network" />
+        </HBox>
+
+        <HBox styleClass="s-nav-item" fx:id="navLogging"
+              alignment="CENTER_LEFT" spacing="9" onMouseClicked="#showLogging">
+            <Label styleClass="s-nav-indicator" />
+            <Label styleClass="s-nav-icon" text="▣" />
+            <Label styleClass="s-nav-text" text="Logging" />
+        </HBox>
+
+        <!-- Separator -->
+        <Region styleClass="s-nav-sep" minHeight="1" maxHeight="1"/>
+
+        <HBox styleClass="s-nav-item" fx:id="navAbout"
+              alignment="CENTER_LEFT" spacing="9" onMouseClicked="#showAbout">
+            <Label styleClass="s-nav-indicator" />
+            <Label styleClass="s-nav-icon" text="☣" />
+            <Label styleClass="s-nav-text" text="About" />
+        </HBox>
+
+        <!-- Spacer -->
+        <Region VBox.vgrow="ALWAYS" />
+
+        <!-- Danger zone at bottom -->
+        <Region styleClass="s-nav-sep" minHeight="1" maxHeight="1"/>
+        <HBox styleClass="s-nav-item s-nav-danger" fx:id="navDanger"
+              alignment="CENTER_LEFT" spacing="9" onMouseClicked="#showDanger">
+            <Label styleClass="s-nav-indicator" />
+            <Label styleClass="s-nav-icon s-nav-icon-danger" text="⚠" />
+            <Label styleClass="s-nav-text s-nav-text-danger" text="Danger Zone" />
+        </HBox>
+
+    </VBox>
+
+    <!-- ═══════════════════════════════════
+         RIGHT — Content Stack
+    ════════════════════════════════════ -->
+    <StackPane fx:id="contentStack" HBox.hgrow="ALWAYS" styleClass="settings-content-stack">
+
+        <!-- ══ GENERAL ══ -->
+        <ScrollPane fx:id="viewGeneral" styleClass="settings-scroll" fitToWidth="true" hbarPolicy="NEVER">
+            <VBox styleClass="settings-content" spacing="0">
+
+                <VBox styleClass="s-section-header" spacing="3">
+                    <Label styleClass="s-title" text="General" />
+                    <Label styleClass="s-subtitle" text="Configurações gerais do sistema Zombie Keeper" />
+                </VBox>
+
+                <!-- Interface group -->
+                <VBox styleClass="setting-group">
+                    <Label styleClass="group-title" text="INTERFACE" />
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Operador atual" />
+                            <Label styleClass="setting-desc" text="Usuário autenticado nesta sessão" />
+                        </VBox>
+                        <Label fx:id="lblCurrentUser" styleClass="s-badge" text="ROOT_ADMIN" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Nome do framework" />
+                            <Label styleClass="setting-desc" text="Exibido na barra de título e nos logs" />
+                        </VBox>
+                        <TextField fx:id="txtFrameworkName" styleClass="s-input"
+                                   text="ZOMBIE_KEEPER" prefWidth="200" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Versão exibida" />
+                            <Label styleClass="setting-desc" text="Label exibido no sidebar" />
+                        </VBox>
+                        <TextField fx:id="txtVersion" styleClass="s-input"
+                                   text="C2 Framework v3.0.1" prefWidth="200" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Relógio UTC no topbar" />
+                            <Label styleClass="setting-desc" text="Mostra o relógio em tempo real no canto superior direito" />
+                        </VBox>
+                        <ToggleButton fx:id="togClock" styleClass="s-toggle"
+                                      text="ON" selected="true" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Notificações de agente" />
+                            <Label styleClass="setting-desc" text="Alerta quando um novo agente se conecta" />
+                        </VBox>
+                        <ToggleButton fx:id="togNotifications" styleClass="s-toggle"
+                                      text="ON" selected="true" />
+                    </HBox>
+                </VBox>
+
+                <!-- Session group -->
+                <VBox styleClass="setting-group">
+                    <Label styleClass="group-title" text="SESSÃO" />
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Timeout de sessão" />
+                            <Label styleClass="setting-desc" text="Tempo inativo antes de deslogar automaticamente" />
+                        </VBox>
+                        <ComboBox fx:id="cmbSessionTimeout" styleClass="s-combo" prefWidth="160">
+                        </ComboBox>
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Lock automático" />
+                            <Label styleClass="setting-desc" text="Bloqueia a tela ao atingir o timeout" />
+                        </VBox>
+                        <ToggleButton fx:id="togAutoLock" styleClass="s-toggle" text="OFF" />
+                    </HBox>
+                </VBox>
+
+                <HBox alignment="CENTER_RIGHT" spacing="8">
+                    <HBox.margin><Insets top="4" bottom="20"/></HBox.margin>
+                    <Button styleClass="s-btn" text="Cancelar" onAction="#onCancelGeneral" />
+                    <Button styleClass="s-btn-primary" text="Salvar alterações" onAction="#onSaveGeneral" />
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <!-- ══ C2 SERVER ══ -->
+        <ScrollPane fx:id="viewServer" styleClass="settings-scroll" fitToWidth="true"
+                    hbarPolicy="NEVER" visible="false" managed="false">
+            <VBox styleClass="settings-content" spacing="0">
+
+                <VBox styleClass="s-section-header" spacing="3">
+                    <Label styleClass="s-title" text="C2 Server" />
+                    <Label styleClass="s-subtitle" text="Configurações do servidor de comando e controle" />
+                </VBox>
+
+                <VBox styleClass="setting-group">
+                    <Label styleClass="group-title" text="STATUS" />
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="C2 Status" />
+                            <Label styleClass="setting-desc" text="Estado atual do servidor principal" />
+                        </VBox>
+                        <HBox alignment="CENTER_LEFT" spacing="7">
+                            <StackPane fx:id="c2StatusDot" styleClass="status-dot dot-green"
+                                       minWidth="6" maxWidth="6" minHeight="6" maxHeight="6"/>
+                            <Label fx:id="lblC2Status" styleClass="s-badge s-badge-green" text="ONLINE" />
+                        </HBox>
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Listener port" />
+                            <Label styleClass="setting-desc" text="Porta que os agentes se conectam" />
+                        </VBox>
+                        <TextField fx:id="txtListenerPort" styleClass="s-input"
+                                   text="4444" prefWidth="100" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Bind address" />
+                            <Label styleClass="setting-desc" text="Endereço de escuta do servidor" />
+                        </VBox>
+                        <TextField fx:id="txtBindAddress" styleClass="s-input"
+                                   text="0.0.0.0" prefWidth="160" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Protocolo" />
+                            <Label styleClass="setting-desc" text="Protocolo de comunicação com os agentes" />
+                        </VBox>
+                        <ComboBox fx:id="cmbProtocol" styleClass="s-combo" prefWidth="140" />
+                    </HBox>
+                </VBox>
+
+                <VBox styleClass="setting-group">
+                    <Label styleClass="group-title" text="HEARTBEAT" />
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Intervalo de heartbeat" />
+                            <Label styleClass="setting-desc" text="Frequência de ping entre servidor e agentes" />
+                        </VBox>
+                        <ComboBox fx:id="cmbHeartbeat" styleClass="s-combo" prefWidth="120" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Timeout de agente" />
+                            <Label styleClass="setting-desc" text="Tempo sem resposta para marcar agente como LOST" />
+                        </VBox>
+                        <ComboBox fx:id="cmbAgentTimeout" styleClass="s-combo" prefWidth="120" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Reconexão automática" />
+                            <Label styleClass="setting-desc" text="Tenta reconectar agentes perdidos automaticamente" />
+                        </VBox>
+                        <ToggleButton fx:id="togReconnect" styleClass="s-toggle"
+                                      text="ON" selected="true" />
+                    </HBox>
+                </VBox>
+
+                <HBox alignment="CENTER_RIGHT" spacing="8">
+                    <HBox.margin><Insets top="4" bottom="20"/></HBox.margin>
+                    <Button styleClass="s-btn" text="Cancelar" />
+                    <Button styleClass="s-btn-primary" text="Aplicar e reiniciar listener"
+                            onAction="#onSaveServer" />
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <!-- ══ USERS & RBAC ══ -->
+        <ScrollPane fx:id="viewUsers" styleClass="settings-scroll" fitToWidth="true"
+                    hbarPolicy="NEVER" visible="false" managed="false">
+            <VBox styleClass="settings-content" spacing="0">
+
+                <VBox styleClass="s-section-header" spacing="3">
+                    <Label styleClass="s-title" text="Users &amp; RBAC" />
+                    <Label styleClass="s-subtitle" text="Gerenciamento de operadores e controle de acesso baseado em roles" />
+                </VBox>
+
+                <!-- Users table panel -->
+                <VBox styleClass="setting-group">
+                    <HBox styleClass="group-title" alignment="CENTER_LEFT">
+                        <Label styleClass="group-title-text" text="OPERADORES" HBox.hgrow="ALWAYS"/>
+                        <Button styleClass="s-btn" text="+ Novo operador"
+                                onAction="#onNewUser" />
+                    </HBox>
+                    <TableView fx:id="userTable" styleClass="zk-table" prefHeight="180">
+                        <columns>
+                            <TableColumn fx:id="colUsername"  text="USERNAME"     prefWidth="130" />
+                            <TableColumn fx:id="colName"      text="NOME"         prefWidth="160" />
+                            <TableColumn fx:id="colRole"      text="ROLE"         prefWidth="100" />
+                            <TableColumn fx:id="colLastLogin" text="ÚLTIMO LOGIN" prefWidth="120" />
+                            <TableColumn fx:id="colUserStatus" text="STATUS"      prefWidth="90"  />
+                            <TableColumn fx:id="colActions"   text=""             prefWidth="80"  />
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <!-- RBAC policies -->
+                <VBox styleClass="setting-group">
+                    <Label styleClass="group-title" text="POLÍTICAS DE RBAC" />
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Operators podem ver agentes" />
+                            <Label styleClass="setting-desc" text="Role OPERATOR tem acesso read-only à lista de agentes" />
+                        </VBox>
+                        <ToggleButton fx:id="rbacViewAgents" styleClass="s-toggle"
+                                      text="ON" selected="true" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Operators podem abrir shell" />
+                            <Label styleClass="setting-desc" text="Permite OPERATOR executar comandos remotos via shell" />
+                        </VBox>
+                        <ToggleButton fx:id="rbacShell" styleClass="s-toggle" text="OFF" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Operators podem rodar scanner" />
+                            <Label styleClass="setting-desc" text="Permite OPERATOR iniciar scans de rede" />
+                        </VBox>
+                        <ToggleButton fx:id="rbacScanner" styleClass="s-toggle"
+                                      text="ON" selected="true" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Somente ADMIN gerencia usuários" />
+                            <Label styleClass="setting-desc" text="Bloqueia OPERATOR de criar/editar outros operadores" />
+                        </VBox>
+                        <ToggleButton fx:id="rbacUserMgmt" styleClass="s-toggle"
+                                      text="ON" selected="true" />
+                    </HBox>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <!-- ══ DATABASE ══ -->
+        <ScrollPane fx:id="viewDatabase" styleClass="settings-scroll" fitToWidth="true"
+                    hbarPolicy="NEVER" visible="false" managed="false">
+            <VBox styleClass="settings-content" spacing="0">
+
+                <VBox styleClass="s-section-header" spacing="3">
+                    <Label styleClass="s-title" text="Database" />
+                    <Label styleClass="s-subtitle" text="Configurações de conexão e manutenção do banco de dados" />
+                </VBox>
+
+                <VBox styleClass="setting-group">
+                    <Label styleClass="group-title" text="CONEXÃO" />
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Status" />
+                            <Label styleClass="setting-desc" text="Estado atual da conexão com o banco" />
+                        </VBox>
+                        <HBox alignment="CENTER_LEFT" spacing="7">
+                            <StackPane fx:id="dbStatusDot" styleClass="status-dot dot-green"
+                                       minWidth="6" maxWidth="6" minHeight="6" maxHeight="6"/>
+                            <Label fx:id="lblDbStatus" styleClass="s-badge s-badge-green" text="CONNECTED" />
+                        </HBox>
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Host" />
+                            <Label styleClass="setting-desc" text="Endereço do servidor MySQL" />
+                        </VBox>
+                        <TextField fx:id="txtDbHost" styleClass="s-input"
+                                   text="localhost" prefWidth="180" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Porta" />
+                        </VBox>
+                        <TextField fx:id="txtDbPort" styleClass="s-input"
+                                   text="3306" prefWidth="100" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Database" />
+                        </VBox>
+                        <TextField fx:id="txtDbName" styleClass="s-input"
+                                   text="zombie_keeper_db" prefWidth="200" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Usuário" />
+                        </VBox>
+                        <TextField fx:id="txtDbUser" styleClass="s-input"
+                                   text="zk_admin" prefWidth="180" />
+                    </HBox>
+                </VBox>
+
+                <VBox styleClass="setting-group">
+                    <Label styleClass="group-title" text="MANUTENÇÃO" />
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Auto-limpeza de logs" />
+                            <Label styleClass="setting-desc" text="Remove logs de sessão com mais de X dias automaticamente" />
+                        </VBox>
+                        <ComboBox fx:id="cmbLogRetention" styleClass="s-combo" prefWidth="140" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Backup automático" />
+                            <Label styleClass="setting-desc" text="Exporta dump do banco diariamente" />
+                        </VBox>
+                        <ToggleButton fx:id="togBackup" styleClass="s-toggle" text="OFF" />
+                    </HBox>
+                </VBox>
+
+                <HBox alignment="CENTER_RIGHT" spacing="8">
+                    <HBox.margin><Insets top="4" bottom="20"/></HBox.margin>
+                    <Button styleClass="s-btn" text="Testar conexão" onAction="#onTestDb" />
+                    <Button styleClass="s-btn-primary" text="Salvar" onAction="#onSaveDb" />
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <!-- ══ NETWORK ══ -->
+        <ScrollPane fx:id="viewNetwork" styleClass="settings-scroll" fitToWidth="true"
+                    hbarPolicy="NEVER" visible="false" managed="false">
+            <VBox styleClass="settings-content" spacing="0">
+
+                <VBox styleClass="s-section-header" spacing="3">
+                    <Label styleClass="s-title" text="Network" />
+                    <Label styleClass="s-subtitle" text="Configurações de rede e scanner padrão" />
+                </VBox>
+
+                <VBox styleClass="setting-group">
+                    <Label styleClass="group-title" text="SCANNER PADRÃO" />
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Subnet padrão" />
+                            <Label styleClass="setting-desc" text="CIDR usado como padrão ao abrir o Scanner Manager" />
+                        </VBox>
+                        <TextField fx:id="txtDefaultSubnet" styleClass="s-input"
+                                   text="192.168.1.0/24" prefWidth="180" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Interface padrão" />
+                            <Label styleClass="setting-desc" text="Interface de rede para scans locais" />
+                        </VBox>
+                        <ComboBox fx:id="cmbInterface" styleClass="s-combo" prefWidth="140" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Perfil de scan padrão" />
+                            <Label styleClass="setting-desc" text="Agressividade padrão ao iniciar um scan" />
+                        </VBox>
+                        <ComboBox fx:id="cmbScanProfile" styleClass="s-combo" prefWidth="140" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Nmap path" />
+                            <Label styleClass="setting-desc" text="Caminho do binário nmap no sistema" />
+                        </VBox>
+                        <TextField fx:id="txtNmapPath" styleClass="s-input"
+                                   text="/usr/bin/nmap" prefWidth="200" />
+                    </HBox>
+                </VBox>
+
+                <VBox styleClass="setting-group">
+                    <Label styleClass="group-title" text="AUTOMATION" />
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Persistent scanner no boot" />
+                            <Label styleClass="setting-desc" text="Inicia o scanner automático quando o C2 sobe" />
+                        </VBox>
+                        <ToggleButton fx:id="togScanOnBoot" styleClass="s-toggle" text="OFF" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Intervalo padrão" />
+                            <Label styleClass="setting-desc" text="Frequência do loop de automação" />
+                        </VBox>
+                        <ComboBox fx:id="cmbScanInterval" styleClass="s-combo" prefWidth="120" />
+                    </HBox>
+                </VBox>
+
+                <HBox alignment="CENTER_RIGHT" spacing="8">
+                    <HBox.margin><Insets top="4" bottom="20"/></HBox.margin>
+                    <Button styleClass="s-btn-primary" text="Salvar" onAction="#onSaveNetwork" />
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <!-- ══ LOGGING ══ -->
+        <ScrollPane fx:id="viewLogging" styleClass="settings-scroll" fitToWidth="true"
+                    hbarPolicy="NEVER" visible="false" managed="false">
+            <VBox styleClass="settings-content" spacing="0">
+
+                <VBox styleClass="s-section-header" spacing="3">
+                    <Label styleClass="s-title" text="Logging" />
+                    <Label styleClass="s-subtitle" text="Nível de log e destinos de saída" />
+                </VBox>
+
+                <VBox styleClass="setting-group">
+                    <Label styleClass="group-title" text="NÍVEL DE LOG" />
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Log level" />
+                            <Label styleClass="setting-desc" text="Nível mínimo de mensagens registradas" />
+                        </VBox>
+                        <ComboBox fx:id="cmbLogLevel" styleClass="s-combo" prefWidth="140" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Log de autenticação" />
+                            <Label styleClass="setting-desc" text="Registra todos os logins e falhas de autenticação" />
+                        </VBox>
+                        <ToggleButton fx:id="togLogAuth" styleClass="s-toggle"
+                                      text="ON" selected="true" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Log de comandos shell" />
+                            <Label styleClass="setting-desc" text="Registra todos os comandos executados via shell nos agentes" />
+                        </VBox>
+                        <ToggleButton fx:id="togLogShell" styleClass="s-toggle"
+                                      text="ON" selected="true" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Log de scan" />
+                            <Label styleClass="setting-desc" text="Registra resultados de cada scan de rede" />
+                        </VBox>
+                        <ToggleButton fx:id="togLogScan" styleClass="s-toggle"
+                                      text="ON" selected="true" />
+                    </HBox>
+                </VBox>
+
+                <VBox styleClass="setting-group">
+                    <Label styleClass="group-title" text="DESTINO" />
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Log em arquivo" />
+                            <Label styleClass="setting-desc" text="Caminho do arquivo de log no servidor" />
+                        </VBox>
+                        <TextField fx:id="txtLogPath" styleClass="s-input"
+                                   text="/var/log/zombie_keeper.log" prefWidth="240" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Rotação de log" />
+                            <Label styleClass="setting-desc" text="Frequência de rotação do arquivo de log" />
+                        </VBox>
+                        <ComboBox fx:id="cmbLogRotation" styleClass="s-combo" prefWidth="160" />
+                    </HBox>
+                </VBox>
+
+                <HBox alignment="CENTER_RIGHT" spacing="8">
+                    <HBox.margin><Insets top="4" bottom="20"/></HBox.margin>
+                    <Button styleClass="s-btn-primary" text="Salvar" onAction="#onSaveLogging" />
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <!-- ══ ABOUT ══ -->
+        <ScrollPane fx:id="viewAbout" styleClass="settings-scroll" fitToWidth="true"
+                    hbarPolicy="NEVER" visible="false" managed="false">
+            <VBox styleClass="settings-content" spacing="0">
+
+                <VBox styleClass="s-section-header" spacing="3">
+                    <Label styleClass="s-title" text="About" />
+                    <Label styleClass="s-subtitle" text="Informações do sistema Zombie Keeper C2" />
+                </VBox>
+
+                <!-- About cards grid -->
+                <HBox spacing="12">
+                    <HBox.margin><Insets bottom="14"/></HBox.margin>
+                    <VBox styleClass="about-card" HBox.hgrow="ALWAYS">
+                        <Label styleClass="about-card-label" text="FRAMEWORK" />
+                        <Label styleClass="about-card-val"   text="ZOMBIE_KEEPER">
+                            <VBox.margin><Insets top="6" bottom="2"/></VBox.margin>
+                        </Label>
+                        <Label styleClass="about-card-sub"   text="C2 Framework" />
+                    </VBox>
+                    <VBox styleClass="about-card" HBox.hgrow="ALWAYS">
+                        <Label styleClass="about-card-label" text="VERSÃO" />
+                        <Label styleClass="about-card-val"   text="v3.0.1">
+                            <VBox.margin><Insets top="6" bottom="2"/></VBox.margin>
+                        </Label>
+                        <Label styleClass="about-card-sub"   text="Build de desenvolvimento" />
+                    </VBox>
+                    <VBox styleClass="about-card" HBox.hgrow="ALWAYS">
+                        <Label styleClass="about-card-label" text="BACKEND" />
+                        <Label styleClass="about-card-val"   text="Java 21">
+                            <VBox.margin><Insets top="6" bottom="2"/></VBox.margin>
+                        </Label>
+                        <Label styleClass="about-card-sub"   text="Spring Boot · Hibernate · MySQL" />
+                    </VBox>
+                    <VBox styleClass="about-card" HBox.hgrow="ALWAYS">
+                        <Label styleClass="about-card-label" text="FRONTEND" />
+                        <Label styleClass="about-card-val"   text="JavaFX 21">
+                            <VBox.margin><Insets top="6" bottom="2"/></VBox.margin>
+                        </Label>
+                        <Label styleClass="about-card-sub"   text="FXML · CSS · JetBrains Mono" />
+                    </VBox>
+                </HBox>
+
+                <!-- Modules -->
+                <VBox styleClass="setting-group">
+                    <Label styleClass="group-title" text="MÓDULOS" />
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <Label styleClass="setting-label" text="Agent Management" HBox.hgrow="ALWAYS"/>
+                        <Label styleClass="s-badge s-badge-green" text="ATIVO" />
+                    </HBox>
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <Label styleClass="setting-label" text="Network Recon (SpiderNETx)" HBox.hgrow="ALWAYS"/>
+                        <Label styleClass="s-badge s-badge-green" text="ATIVO" />
+                    </HBox>
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <Label styleClass="setting-label" text="Shell Module" HBox.hgrow="ALWAYS"/>
+                        <Label styleClass="s-badge" text="EM DESENVOLVIMENTO" />
+                    </HBox>
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <Label styleClass="setting-label" text="Payload Generator" HBox.hgrow="ALWAYS"/>
+                        <Label styleClass="s-badge" text="EM DESENVOLVIMENTO" />
+                    </HBox>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <!-- ══ DANGER ZONE ══ -->
+        <ScrollPane fx:id="viewDanger" styleClass="settings-scroll" fitToWidth="true"
+                    hbarPolicy="NEVER" visible="false" managed="false">
+            <VBox styleClass="settings-content" spacing="0">
+
+                <VBox styleClass="s-section-header" spacing="3">
+                    <Label styleClass="s-title s-title-danger" text="Danger Zone" />
+                    <Label styleClass="s-subtitle" text="Ações irreversíveis — use com cautela" />
+                </VBox>
+
+                <VBox styleClass="setting-group-danger">
+                    <Label styleClass="group-title group-title-danger" text="AGENTES" />
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Desconectar todos os agentes" />
+                            <Label styleClass="setting-desc" text="Encerra todas as sessões ativas de agentes imediatamente" />
+                        </VBox>
+                        <Button styleClass="s-btn-danger" text="Desconectar todos"
+                                onAction="#onDisconnectAll" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Limpar tabela de agentes" />
+                            <Label styleClass="setting-desc" text="Remove todos os registros de agentes do banco de dados" />
+                        </VBox>
+                        <Button styleClass="s-btn-danger" text="Limpar agentes"
+                                onAction="#onClearAgents" />
+                    </HBox>
+                </VBox>
+
+                <VBox styleClass="setting-group-danger">
+                    <Label styleClass="group-title group-title-danger" text="DADOS DE REDE" />
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Limpar histórico de scans" />
+                            <Label styleClass="setting-desc" text="Remove todas as NetworkSessions e NetworkNodes do banco" />
+                        </VBox>
+                        <Button styleClass="s-btn-danger" text="Limpar scans"
+                                onAction="#onClearScans" />
+                    </HBox>
+                </VBox>
+
+                <VBox styleClass="setting-group-danger">
+                    <Label styleClass="group-title group-title-danger" text="SISTEMA" />
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Reiniciar C2 Server" />
+                            <Label styleClass="setting-desc" text="Reinicia o listener e todos os módulos do servidor" />
+                        </VBox>
+                        <Button styleClass="s-btn-danger" text="Reiniciar"
+                                onAction="#onRestartServer" />
+                    </HBox>
+
+                    <HBox styleClass="setting-row" alignment="CENTER_LEFT">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label styleClass="setting-label" text="Reset de fábrica" />
+                            <Label styleClass="setting-desc" text="Apaga todos os dados e restaura configurações padrão. Irreversível." />
+                        </VBox>
+                        <Button styleClass="s-btn-danger-hard" text="Factory Reset"
+                                onAction="#onFactoryReset" />
+                    </HBox>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+
+    </StackPane>
+
+</HBox>

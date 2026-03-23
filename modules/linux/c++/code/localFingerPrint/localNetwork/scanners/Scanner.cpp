@@ -219,6 +219,7 @@ int Scanner::portScan_udp(std::string ip, int port, long timeout_sec, long timeo
     OPEN_FILTERED = 3,   
     INTERNAL_ERROR = 4
 */
+//TODO MELHOR A PRECISAO DO FILTERED = 2 OPEN_FILTERED = 3, INTERNAL_ERROR = 4
 port_status Scanner::portScan_udp(Port *port_ptr, std::string ip, int port, long timeout_sec, long timeout_usec){
 
     int sock = socket(AF_INET, SOCK_DGRAM, 0);
@@ -246,7 +247,7 @@ port_status Scanner::portScan_udp(Port *port_ptr, std::string ip, int port, long
 
     this->defineUDP_payload(port, payload, payload_len);
 
-    if(send(sock, payload, payload_len, 0) < 0){
+    if(send(sock, payload, payload_len, 0) <= 0){
         close(sock);
         port_ptr->setStatus(std::to_string(port_status::INTERNAL_ERROR));
         return port_status::INTERNAL_ERROR;
@@ -268,12 +269,12 @@ port_status Scanner::portScan_udp(Port *port_ptr, std::string ip, int port, long
         char buffer[1024];
         memset(&buffer, 0, sizeof(buffer));
 
-        ssize_t recv_len = recv(sock, buffer, sizeof(buffer) -1, 0);
+        ssize_t recv_len = recv(sock, buffer, sizeof(buffer) -1, MSG_DONTWAIT);
 
         
         if(recv_len < 0){
            
-            if(errno == ECONNREFUSED){
+            if(errno == ECONNREFUSED || errno == EWOULDBLOCK){
 
                 close(sock); 
                 port_ptr->setStatus(std::to_string(port_status::CLOSED));
@@ -306,7 +307,6 @@ port_status Scanner::portScan_udp(Port *port_ptr, std::string ip, int port, long
 
 }
 
-
 void Scanner::scan_all_UdpNodePorts(Session &session, long sec, long usec){
 
     std::vector<Node> &nodes = session.getMutableNodes();
@@ -330,17 +330,24 @@ void Scanner::scan_all_UdpNodePorts(Session &session, long sec, long usec){
                 if(task >= total_tasks){
                     break;
                 }
+                
+                if (task % 10000 == 0) {
+                    std::cout << "[HEARTBEAT] Varredura em andamento: " << task << " / " << total_tasks << std::endl;
+                }
 
-                int node_index = task / 65535;
-                int port = (task % 65535) + 1;
+                //achatamento de matriz, divisao inteira para achar o node
+                size_t node_index = task / 65535;
+                // o modulo define o reset das portas para os proximos dispositivos
+                size_t port = (task % 65535) + 1;
 
                 Node* node_ptr = &nodes[node_index];
                 std::string ip = node_ptr->getIpAddress();
                 Port actualPort;
                 Port* port_ptr = &actualPort;
 
-                port_status result_scan = this->portScan_tcp(port_ptr, ip, port, sec, usec);
-
+                port_status result_scan = this->portScan_udp(port_ptr, ip, port, sec, usec);
+                
+                
                 if(result_scan == port_status::OPEN){
                     actualPort.setNumber(port);
                     actualPort.setStatus(Scanner::setStatusToString(result_scan));
@@ -349,6 +356,7 @@ void Scanner::scan_all_UdpNodePorts(Session &session, long sec, long usec){
                         std::lock_guard<std::mutex> serv_lock(getserv_mutex);
                         struct servent *service_port = getservbyport(htons(port), "udp");
 
+                        
                         if(service_port != nullptr){
                             actualPort.setService(service_port->s_name);
                             actualPort.setProtocol(service_port->s_proto);
@@ -366,11 +374,13 @@ void Scanner::scan_all_UdpNodePorts(Session &session, long sec, long usec){
 
         });
 
-        for(auto& t : workers) {
-            if(t.joinable()) t.join();
-        }
-
+        
     }
+    std::cout << "[DEBUG] " << GLOBAL_WORKERS << " operarias despachadas. Aguardando retorno (join)..." << std::endl;
+    for(auto& t : workers) {
+        if(t.joinable()) t.join();
+    }
+    std::cout << "[DEBUG] Scan massivo finalizado com sucesso!" << std::endl;
 
 }
 
@@ -401,6 +411,7 @@ void Scanner::scan_any_UdpNodePorts(Session &session, long sec, long usec){
                     break; 
                 }
 
+                
                 size_t node_index = task / total_ports;
                 size_t port_index = task % total_ports;
 
@@ -411,7 +422,7 @@ void Scanner::scan_any_UdpNodePorts(Session &session, long sec, long usec){
                 Port actualPort;
                 Port* port_ptr = &actualPort;
 
-                port_status result_scan = this->portScan_tcp(port_ptr, ip, target_port, sec, usec);
+                port_status result_scan = this->portScan_udp(port_ptr, ip, target_port, sec, usec);
                 
                 if (result_scan == port_status::OPEN  ||
                     result_scan == port_status::FILTERED ||
@@ -422,7 +433,7 @@ void Scanner::scan_any_UdpNodePorts(Session &session, long sec, long usec){
                     
                     {
                         std::lock_guard<std::mutex> serv_lock(getserv_mutex);
-                        struct servent *service_port = getservbyport(htons(target_port), "tcp");
+                        struct servent *service_port = getservbyport(htons(target_port), "udp");
 
                         if(service_port != nullptr){
                             actualPort.setService(service_port->s_name);
@@ -439,9 +450,9 @@ void Scanner::scan_any_UdpNodePorts(Session &session, long sec, long usec){
             }
         });
     }
-
-    for (auto& t : workers) {
-        if (t.joinable()) t.join();
+    
+    for(auto& t : workers) {
+        if(t.joinable()) t.join();
     }
 }
 

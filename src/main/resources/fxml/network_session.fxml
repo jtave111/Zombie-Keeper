@@ -16,10 +16,10 @@
         <fx:define>
             <ToggleGroup fx:id="networkTabsGroup"/>
         </fx:define>
-        <ToggleButton fx:id="tabMap" text="TOPOLOGY MAP" toggleGroup="$networkTabsGroup" 
-                      selected="true" styleClass="ag-filter" onAction="#switchTab"/>
+       <ToggleButton fx:id="tabMap" text="TOPOLOGY" toggleGroup="$networkTabsGroup" 
+                      selected="true" styleClass="ag-filter" />
         <ToggleButton fx:id="tabScanner" text="SCANNER MANAGER" toggleGroup="$networkTabsGroup" 
-                      styleClass="ag-filter" onAction="#switchTab"/>
+                      styleClass="ag-filter" />
         <Region HBox.hgrow="ALWAYS" />
         <Label fx:id="netInfo" styleClass="net-info" text="Last scan: --:--:-- UTC" />
     </HBox>
@@ -71,15 +71,8 @@
 
         </HBox>
 
-        <VBox fx:id="viewScannerManager" styleClass="panel" visible="false" managed="false" alignment="CENTER" spacing="20">
-            <Label styleClass="ph-icon" text="⟳" />
-            <Label styleClass="ph-title" text="TACTICAL SCANNER UPLINK" style="-fx-font-size: 14px;"/>
-            <Label styleClass="ph-sub" text="Configure the SpiderNETx module to probe the current network session." />
-            
-            <HBox alignment="CENTER" spacing="15">
-                <Button fx:id="btnRunScan" styleClass="scan-btn" text="▶ LAUNCH LOCAL SCAN" onAction="#runFullScan"/>
-                <Button styleClass="act-btn" text="⚙ ADVANCED OPTIONS" />
-            </HBox>
+        <VBox fx:id="viewScannerManager" visible="false" managed="false" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+            <fx:include source="ScannerManager.fxml" />
         </VBox>
 
     </StackPane>

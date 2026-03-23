@@ -1,0 +1,482 @@
+/* ═══════════════════════════════════════════════
+   ZOMBIE_KEEPER — settings.css  (JavaFX CSS 2.x)
+   Padrão visual idêntico ao dashboard.css
+   ═══════════════════════════════════════════════ */
+
+/* ══ LEFT NAV ═══════════════════════════════════ */
+
+.settings-nav {
+    -fx-background-color: #0d0d10;
+    -fx-border-color: transparent #222228 transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 20 0 0 0;
+}
+
+.settings-nav-header {
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #44444e;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-padding: 0 16 12 16;
+    -fx-border-color: transparent transparent #18181e transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Nav item */
+.s-nav-item {
+    -fx-background-color: transparent;
+    -fx-padding: 9 16 9 0;
+    -fx-cursor: hand;
+    -fx-min-height: 36;
+}
+
+.s-nav-item:hover {
+    -fx-background-color: rgba(255,255,255,0.025);
+}
+
+.s-nav-active {
+    -fx-background-color: rgba(225,29,72,0.07);
+}
+
+/* Indicator line */
+.s-nav-indicator {
+    -fx-min-width: 2;
+    -fx-max-width: 2;
+    -fx-min-height: 36;
+    -fx-max-height: 36;
+    -fx-background-color: transparent;
+}
+
+.s-nav-active .s-nav-indicator {
+    -fx-background-color: #e11d48;
+}
+
+.s-nav-icon {
+    -fx-font-size: 11px;
+    -fx-text-fill: #44444e;
+    -fx-min-width: 14;
+    -fx-max-width: 14;
+    -fx-alignment: CENTER;
+}
+
+.s-nav-active .s-nav-icon {
+    -fx-text-fill: #e11d48;
+}
+
+.s-nav-icon-danger {
+    -fx-text-fill: rgba(225,29,72,0.5);
+}
+
+.s-nav-text {
+    -fx-font-size: 10px;
+    -fx-text-fill: #666672;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+.s-nav-active .s-nav-text {
+    -fx-text-fill: #e8e8f0;
+}
+
+.s-nav-item:hover .s-nav-text {
+    -fx-text-fill: #a0a0b0;
+}
+
+.s-nav-text-danger {
+    -fx-text-fill: rgba(225,29,72,0.6);
+}
+
+.s-nav-danger:hover .s-nav-text-danger {
+    -fx-text-fill: #e11d48;
+}
+
+/* Separator */
+.s-nav-sep {
+    -fx-background-color: #18181e;
+    -fx-margin: 8 16 8 16;
+}
+
+/* ══ CONTENT AREA ════════════════════════════════ */
+
+.settings-content-stack {
+    -fx-background-color: #070709;
+}
+
+.settings-scroll {
+    -fx-background-color: #070709;
+    -fx-control-inner-background: #070709;
+}
+
+.settings-scroll .viewport {
+    -fx-background-color: #070709;
+}
+
+.settings-content {
+    -fx-background-color: #070709;
+    -fx-padding: 24 28 24 28;
+}
+
+/* ══ SECTION HEADER ══════════════════════════════ */
+
+.s-section-header {
+    -fx-padding: 0 0 16 0;
+    -fx-border-color: transparent transparent #222228 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.s-section-header VBox.margin {
+    -fx-margin: 0 0 24 0;
+}
+
+.s-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e8e8f0;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+.s-title-danger {
+    -fx-text-fill: #e11d48;
+}
+
+.s-subtitle {
+    -fx-font-size: 9px;
+    -fx-text-fill: #666672;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+/* ══ SETTING GROUPS ══════════════════════════════ */
+
+.setting-group {
+    -fx-background-color: #0d0d10;
+    -fx-border-color: #222228;
+    -fx-border-width: 1;
+    -fx-spacing: 0;
+}
+
+/* Margin helper — apply in FXML via VBox.margin */
+
+.setting-group-danger {
+    -fx-background-color: #0d0d10;
+    -fx-border-color: rgba(225,29,72,0.2);
+    -fx-border-width: 1;
+    -fx-spacing: 0;
+}
+
+.group-title {
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #666672;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-background-color: #111115;
+    -fx-border-color: transparent transparent #18181e transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 9 16 9 16;
+}
+
+.group-title-danger {
+    -fx-text-fill: #e11d48;
+    -fx-background-color: rgba(225,29,72,0.04);
+    -fx-border-color: transparent transparent rgba(225,29,72,0.15) transparent;
+}
+
+.group-title-text {
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #666672;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+/* ══ SETTING ROWS ════════════════════════════════ */
+
+.setting-row {
+    -fx-padding: 13 16 13 16;
+    -fx-border-color: transparent transparent #18181e transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-spacing: 16;
+}
+
+.setting-row:hover {
+    -fx-background-color: rgba(255,255,255,0.01);
+}
+
+.setting-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #e8e8f0;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+.setting-desc {
+    -fx-font-size: 8px;
+    -fx-text-fill: #666672;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+/* ══ CONTROLS ════════════════════════════════════ */
+
+/* Input */
+.s-input {
+    -fx-background-color: #070709;
+    -fx-border-color: #222228;
+    -fx-border-width: 1;
+    -fx-text-fill: #e8e8f0;
+    -fx-prompt-text-fill: #44444e;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-padding: 7 10 7 10;
+}
+
+.s-input:focused {
+    -fx-border-color: #e11d48;
+    -fx-background-color: rgba(225,29,72,0.04);
+}
+
+/* ComboBox */
+.s-combo {
+    -fx-background-color: #070709;
+    -fx-border-color: #222228;
+    -fx-border-width: 1;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-font-size: 10px;
+}
+
+.s-combo .list-cell {
+    -fx-background-color: #070709;
+    -fx-text-fill: #a0a0b0;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-padding: 5 10 5 10;
+}
+
+.s-combo-popup .list-view {
+    -fx-background-color: #0d0d10;
+    -fx-border-color: #222228;
+}
+
+/* Toggle button */
+.s-toggle {
+    -fx-background-color: #070709;
+    -fx-border-color: #222228;
+    -fx-border-width: 1;
+    -fx-text-fill: #44444e;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 14 5 14;
+    -fx-cursor: hand;
+    -fx-min-width: 50;
+}
+
+.s-toggle:selected {
+    -fx-background-color: rgba(16,185,129,0.07);
+    -fx-border-color: rgba(16,185,129,0.3);
+    -fx-text-fill: #10b981;
+}
+
+.s-toggle:hover {
+    -fx-text-fill: #a0a0b0;
+}
+
+/* Badges */
+.s-badge {
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-background-color: #111115;
+    -fx-border-color: #222228;
+    -fx-border-width: 1;
+    -fx-text-fill: #666672;
+    -fx-padding: 3 10 3 10;
+}
+
+.s-badge-green {
+    -fx-background-color: rgba(16,185,129,0.07);
+    -fx-border-color: rgba(16,185,129,0.2);
+    -fx-text-fill: #10b981;
+}
+
+.s-badge-red {
+    -fx-background-color: rgba(225,29,72,0.07);
+    -fx-border-color: rgba(225,29,72,0.2);
+    -fx-text-fill: #e11d48;
+}
+
+/* Buttons */
+.s-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #222228;
+    -fx-border-width: 1;
+    -fx-text-fill: #666672;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 16 7 16;
+    -fx-cursor: hand;
+}
+
+.s-btn:hover {
+    -fx-text-fill: #e8e8f0;
+    -fx-border-color: #44444e;
+}
+
+.s-btn-primary {
+    -fx-background-color: #e11d48;
+    -fx-border-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 16 7 16;
+    -fx-cursor: hand;
+}
+
+.s-btn-primary:hover {
+    -fx-background-color: #c81941;
+    -fx-effect: dropshadow(three-pass-box, rgba(225,29,72,0.3), 10, 0, 0, 0);
+}
+
+.s-btn-danger {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(225,29,72,0.3);
+    -fx-border-width: 1;
+    -fx-text-fill: #e11d48;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 16 7 16;
+    -fx-cursor: hand;
+}
+
+.s-btn-danger:hover {
+    -fx-background-color: rgba(225,29,72,0.07);
+}
+
+.s-btn-danger-hard {
+    -fx-background-color: rgba(225,29,72,0.07);
+    -fx-border-color: rgba(225,29,72,0.4);
+    -fx-border-width: 1;
+    -fx-text-fill: #e11d48;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 16 7 16;
+    -fx-cursor: hand;
+    -fx-opacity: 0.8;
+}
+
+.s-btn-danger-hard:hover {
+    -fx-opacity: 1.0;
+    -fx-background-color: rgba(225,29,72,0.12);
+}
+
+/* Status dots */
+.status-dot {
+    -fx-background-radius: 50%;
+}
+
+.dot-green {
+    -fx-background-color: #10b981;
+    -fx-effect: dropshadow(three-pass-box, rgba(16,185,129,0.5), 6, 0, 0, 0);
+}
+
+.dot-red {
+    -fx-background-color: #e11d48;
+    -fx-effect: dropshadow(three-pass-box, rgba(225,29,72,0.5), 6, 0, 0, 0);
+}
+
+.dot-muted {
+    -fx-background-color: #44444e;
+}
+
+/* ══ TABLE (users) ═══════════════════════════════ */
+
+.zk-table {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-border-color: transparent;
+    -fx-table-cell-border-color: #18181e;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-font-size: 10px;
+}
+
+.zk-table .column-header-background {
+    -fx-background-color: #111115;
+    -fx-border-color: transparent transparent #222228 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.zk-table .column-header {
+    -fx-background-color: transparent;
+    -fx-size: 32px;
+}
+
+.zk-table .column-header .label {
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #44444e;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 4;
+}
+
+.zk-table .filler {
+    -fx-background-color: #111115;
+    -fx-border-color: transparent transparent #222228 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.zk-table .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #18181e transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.zk-table .table-row-cell:hover {
+    -fx-background-color: rgba(255,255,255,0.018);
+}
+
+.zk-table .table-row-cell:selected {
+    -fx-background-color: rgba(225,29,72,0.07);
+}
+
+.zk-table .table-cell {
+    -fx-text-fill: #a0a0b0;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-padding: 9 14 9 14;
+    -fx-border-color: transparent;
+}
+
+/* Role pills */
+.role-admin { -fx-background-color: rgba(225,29,72,0.07); -fx-text-fill: #e11d48; -fx-border-color: rgba(225,29,72,0.2); -fx-border-width:1; -fx-padding:2 7 2 7; -fx-font-size:8px; -fx-font-weight:bold; }
+.role-op    { -fx-background-color: #111115; -fx-text-fill: #666672; -fx-border-color: #222228; -fx-border-width:1; -fx-padding:2 7 2 7; -fx-font-size:8px; -fx-font-weight:bold; }
+
+/* ══ ABOUT CARDS ═════════════════════════════════ */
+
+.about-card {
+    -fx-background-color: #0d0d10;
+    -fx-border-color: #222228;
+    -fx-border-width: 1;
+    -fx-padding: 14 16 14 16;
+    -fx-spacing: 0;
+}
+
+.about-card-label {
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #666672;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+.about-card-val {
+    -fx-font-size: 16px;
+    -fx-font-weight: 300;
+    -fx-text-fill: #e8e8f0;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+.about-card-sub {
+    -fx-font-size: 8px;
+    -fx-text-fill: #44444e;
+    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+}
