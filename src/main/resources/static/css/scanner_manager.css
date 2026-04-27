@@ -1,98 +1,92 @@
 /* ═══════════════════════════════════════════════
    ZOMBIE_KEEPER — scanner_manager.css
-   Padrão visual idêntico ao dashboard.css
+   Redesign v2 — compatível 100% com os fx:id existentes
    ═══════════════════════════════════════════════ */
 
 /* ══ LEFT CONFIG PANEL ══════════════════════════ */
 
 .sm-config {
-    -fx-background-color: #0d0d10;
-    -fx-border-color: transparent #222228 transparent transparent;
+    -fx-background-color: #0c0c10;
+    -fx-border-color: transparent #1e1e28 transparent transparent;
     -fx-border-width: 0 1 0 0;
 }
 
 .cfg-section {
     -fx-padding: 14 16 14 16;
-    -fx-border-color: transparent transparent #18181e transparent;
+    -fx-border-color: transparent transparent #1e1e28 transparent;
     -fx-border-width: 0 0 1 0;
 }
 
 .cfg-title {
     -fx-font-size: 8px;
     -fx-font-weight: bold;
-    -fx-text-fill: #44444e;
+    -fx-text-fill: #303038;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
     -fx-padding: 0 0 10 0;
+    -fx-letter-spacing: 1.0;
 }
 
-/* Small line before title — simulated via padding+border trick */
 .cfg-label {
-    -fx-font-size: 8px;
+    -fx-font-size: 9px;
     -fx-font-weight: bold;
-    -fx-text-fill: #666672;
+    -fx-text-fill: #585868;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
 }
 
 .cfg-sublabel {
-    -fx-font-size: 10px;
-    -fx-text-fill: #a0a0b0;
+    -fx-font-size: 11px;
+    -fx-text-fill: #9898b0;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
 }
 
 .cfg-desc {
-    -fx-font-size: 8px;
-    -fx-text-fill: #44444e;
+    -fx-font-size: 9px;
+    -fx-text-fill: #303038;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
 }
 
-/* ── Inputs ── */
+/* Inputs */
 .cfg-input {
-    -fx-background-color: #070709;
-    -fx-border-color: #222228;
+    -fx-background-color: #050507;
+    -fx-border-color: #1e1e28;
     -fx-border-width: 1;
-    -fx-text-fill: #e8e8f0;
-    -fx-prompt-text-fill: #44444e;
+    -fx-text-fill: #f0f0f8;
+    -fx-prompt-text-fill: #303038;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
     -fx-font-size: 11px;
     -fx-padding: 7 10 7 10;
 }
 
 .cfg-input:focused {
-    -fx-border-color: #e11d48;
-    -fx-background-color: rgba(225,29,72,0.04);
+    -fx-border-color: rgba(225,29,72,0.5);
+    -fx-background-color: rgba(225,29,72,0.03);
 }
 
-/* ── ComboBox ── */
+/* ComboBox */
 .cfg-combo {
-    -fx-background-color: #070709;
-    -fx-border-color: #222228;
+    -fx-background-color: #050507;
+    -fx-border-color: #1e1e28;
     -fx-border-width: 1;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
     -fx-font-size: 10px;
-    -fx-text-fill: #e8e8f0;
+    -fx-text-fill: #f0f0f8;
     -fx-padding: 2 0 2 0;
 }
 
 .cfg-combo .list-cell {
-    -fx-background-color: #070709;
-    -fx-text-fill: #a0a0b0;
+    -fx-background-color: #050507;
+    -fx-text-fill: #9898b0;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
     -fx-font-size: 10px;
     -fx-padding: 5 10 5 10;
 }
 
-.cfg-combo-popup .list-view {
-    -fx-background-color: #0d0d10;
-    -fx-border-color: #222228;
-    -fx-border-width: 1;
-}
-
-/* ── Scan type buttons (independent toggles) ── */
+/* Scan type buttons */
 .scan-type-btn {
-    -fx-background-color: #070709;
-    -fx-border-color: #222228;
+    -fx-background-color: #050507;
+    -fx-border-color: #1e1e28;
     -fx-border-width: 1;
-    -fx-text-fill: #666672;
+    -fx-text-fill: #585868;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
     -fx-font-size: 9px;
     -fx-font-weight: bold;
@@ -101,21 +95,22 @@
 }
 
 .scan-type-btn:hover {
-    -fx-text-fill: #a0a0b0;
+    -fx-text-fill: #9898b0;
+    -fx-background-color: rgba(255,255,255,0.02);
 }
 
 .scan-type-btn:selected {
-    -fx-background-color: rgba(225,29,72,0.07);
-    -fx-border-color: rgba(225,29,72,0.3);
+    -fx-background-color: rgba(225,29,72,0.06);
+    -fx-border-color: rgba(225,29,72,0.25);
     -fx-text-fill: #e11d48;
 }
 
-/* ── Scope / interval / aggr buttons (toggle group) ── */
+/* Scope / interval / aggr buttons */
 .scope-btn {
-    -fx-background-color: #070709;
-    -fx-border-color: #222228;
+    -fx-background-color: #050507;
+    -fx-border-color: #1e1e28;
     -fx-border-width: 1;
-    -fx-text-fill: #666672;
+    -fx-text-fill: #585868;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
     -fx-font-size: 8px;
     -fx-font-weight: bold;
@@ -124,23 +119,24 @@
 }
 
 .scope-btn:hover {
-    -fx-text-fill: #a0a0b0;
+    -fx-text-fill: #9898b0;
+    -fx-background-color: rgba(255,255,255,0.02);
 }
 
 .scope-btn:selected {
-    -fx-background-color: rgba(225,29,72,0.07);
-    -fx-border-color: rgba(225,29,72,0.3);
+    -fx-background-color: rgba(225,29,72,0.06);
+    -fx-border-color: rgba(225,29,72,0.25);
     -fx-text-fill: #e11d48;
 }
 
-/* ── Auto toggle button ── */
+/* Auto toggle */
 .auto-toggle {
-    -fx-background-color: #070709;
-    -fx-border-color: #222228;
+    -fx-background-color: #050507;
+    -fx-border-color: #1e1e28;
     -fx-border-width: 1;
-    -fx-text-fill: #666672;
+    -fx-text-fill: #585868;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
-    -fx-font-size: 8px;
+    -fx-font-size: 9px;
     -fx-font-weight: bold;
     -fx-padding: 5 12 5 12;
     -fx-cursor: hand;
@@ -148,30 +144,29 @@
 }
 
 .auto-toggle:selected {
-    -fx-background-color: rgba(16,185,129,0.08);
-    -fx-border-color: rgba(16,185,129,0.3);
+    -fx-background-color: rgba(16,185,129,0.07);
+    -fx-border-color: rgba(16,185,129,0.25);
     -fx-text-fill: #10b981;
 }
 
-/* ── Auto status row ── */
+/* Auto status row */
 .auto-status {
-    -fx-background-color: #070709;
-    -fx-border-color: #18181e;
+    -fx-background-color: #050507;
+    -fx-border-color: #1e1e28;
     -fx-border-width: 1;
     -fx-padding: 7 10 7 10;
 }
 
 .auto-dot {
-    -fx-background-color: #44444e;
+    -fx-background-color: #303038;
     -fx-background-radius: 50%;
 }
 
 .auto-dot.running {
     -fx-background-color: #10b981;
-    -fx-effect: dropshadow(three-pass-box, rgba(16,185,129,0.5), 6, 0, 0, 0);
 }
 
-/* ── Launch button ── */
+/* Launch button */
 .launch-btn {
     -fx-background-color: #e11d48;
     -fx-border-color: transparent;
@@ -179,35 +174,35 @@
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
     -fx-font-size: 11px;
     -fx-font-weight: bold;
-    -fx-padding: 11 0 11 0;
+    -fx-padding: 12 0 12 0;
     -fx-cursor: hand;
-    -fx-min-height: 40;
+    -fx-min-height: 42;
 }
 
 .launch-btn:hover {
-    -fx-background-color: #c81941;
-    -fx-effect: dropshadow(three-pass-box, rgba(225,29,72,0.3), 14, 0, 0, 0);
+    -fx-background-color: #c91840;
 }
 
 .launch-btn:pressed {
     -fx-translate-y: 1;
+    -fx-background-color: #b01638;
 }
 
 .launch-btn:disabled {
-    -fx-background-color: #44444e;
-    -fx-text-fill: #222228;
+    -fx-background-color: #2a2a38;
+    -fx-text-fill: #303038;
 }
 
 /* ══ RIGHT OUTPUT PANEL ══════════════════════════ */
 
 .sm-output {
-    -fx-background-color: #070709;
+    -fx-background-color: #050507;
 }
 
-/* ── Output top bar ── */
+/* Output top bar */
 .out-bar {
-    -fx-background-color: #0d0d10;
-    -fx-border-color: transparent transparent #222228 transparent;
+    -fx-background-color: #0c0c10;
+    -fx-border-color: transparent transparent #1e1e28 transparent;
     -fx-border-width: 0 0 1 0;
     -fx-padding: 0 14 0 14;
 }
@@ -215,48 +210,49 @@
 .out-title {
     -fx-font-size: 8px;
     -fx-font-weight: bold;
-    -fx-text-fill: #666672;
+    -fx-text-fill: #585868;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-letter-spacing: 0.6;
 }
 
 .phase-dot {
-    -fx-background-color: #44444e;
+    -fx-background-color: #303038;
     -fx-background-radius: 50%;
 }
 
 .phase-dot.active {
     -fx-background-color: #10b981;
-    -fx-effect: dropshadow(three-pass-box, rgba(16,185,129,0.5), 5, 0, 0, 0);
 }
 
 .phase-txt {
     -fx-font-size: 9px;
-    -fx-text-fill: #44444e;
+    -fx-text-fill: #303038;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
 }
 
 .out-action {
     -fx-background-color: transparent;
-    -fx-border-color: #222228;
+    -fx-border-color: #1e1e28;
     -fx-border-width: 1;
-    -fx-text-fill: #44444e;
+    -fx-text-fill: #303038;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
-    -fx-font-size: 8px;
+    -fx-font-size: 9px;
     -fx-font-weight: bold;
-    -fx-padding: 3 10 3 10;
+    -fx-padding: 4 10 4 10;
     -fx-cursor: hand;
 }
 
 .out-action:hover {
     -fx-text-fill: #e11d48;
     -fx-border-color: rgba(225,29,72,0.3);
+    -fx-background-color: rgba(225,29,72,0.04);
 }
 
-/* ── Progress bar ── */
+/* Progress bar */
 .scan-progress {
     -fx-accent: #e11d48;
-    -fx-control-inner-background: #18181e;
-    -fx-background-color: #18181e;
+    -fx-control-inner-background: #1e1e28;
+    -fx-background-color: #1e1e28;
 }
 
 .scan-progress .bar {
@@ -267,109 +263,108 @@
 }
 
 .scan-progress .track {
-    -fx-background-color: #18181e;
+    -fx-background-color: #1e1e28;
     -fx-background-radius: 0;
     -fx-background-insets: 0;
 }
 
-/* ── Terminal ── */
+/* Terminal */
 .terminal-scroll {
     -fx-background-color: transparent;
-    -fx-control-inner-background: #070709;
+    -fx-control-inner-background: #050507;
     -fx-border-color: transparent;
 }
 
 .terminal-scroll .viewport {
-    -fx-background-color: #070709;
+    -fx-background-color: #050507;
 }
 
 .terminal-body {
-    -fx-background-color: #070709;
+    -fx-background-color: #050507;
 }
 
-/* Terminal line labels — applied via setCellFactory / addLog in controller */
-.tl-time { -fx-font-size: 9px;  -fx-text-fill: #44444e; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
+/* Terminal line labels */
+.tl-time { -fx-font-size: 9px;  -fx-text-fill: #303038; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
 .tl-tag  { -fx-font-size: 9px;  -fx-font-weight: bold;  -fx-font-family: "JetBrains Mono","Consolas",monospace; -fx-min-width: 44; }
-.tl-msg  { -fx-font-size: 10px; -fx-text-fill: #666672; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
+.tl-msg  { -fx-font-size: 11px; -fx-text-fill: #585868; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
 
-.tag-sys  { -fx-text-fill: #666672; }
+.tag-sys  { -fx-text-fill: #585868; }
 .tag-ok   { -fx-text-fill: #10b981; }
 .tag-warn { -fx-text-fill: #f59e0b; }
 .tag-err  { -fx-text-fill: #e11d48; }
-.tag-find { -fx-text-fill: #60a5fa; }
+.tag-find { -fx-text-fill: #3b82f6; }
 
-/* ── Nodes panel ── */
+/* Nodes panel */
 .nodes-panel {
-    -fx-background-color: #0d0d10;
-    -fx-border-color: transparent transparent transparent #18181e;
+    -fx-background-color: #0c0c10;
+    -fx-border-color: transparent transparent transparent #1e1e28;
     -fx-border-width: 0 0 0 1;
 }
 
 .nodes-header {
-    -fx-background-color: #0d0d10;
-    -fx-border-color: transparent transparent #222228 transparent;
+    -fx-background-color: #111116;
+    -fx-border-color: transparent transparent #1e1e28 transparent;
     -fx-border-width: 0 0 1 0;
     -fx-padding: 10 14 10 14;
 }
 
-/* Node cards — built in controller */
+/* Node cards */
 .node-card {
     -fx-background-color: transparent;
-    -fx-border-color: transparent transparent #18181e transparent;
+    -fx-border-color: transparent transparent #1e1e28 transparent;
     -fx-border-width: 0 0 1 0;
     -fx-padding: 10 14 10 14;
     -fx-cursor: hand;
 }
 
 .node-card:hover {
-    -fx-background-color: rgba(255,255,255,0.018);
+    -fx-background-color: rgba(255,255,255,0.015);
 }
 
 .node-card.selected {
-    -fx-background-color: rgba(225,29,72,0.07);
+    -fx-background-color: rgba(225,29,72,0.06);
 }
 
-.nc-ip    { -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #e8e8f0; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
-.nc-mac   { -fx-font-size: 8px;  -fx-text-fill: #44444e; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
-.nc-os    { -fx-font-size: 9px;  -fx-text-fill: #666672; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
-.nc-ports { -fx-font-size: 8px;  -fx-text-fill: #44444e; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
+.nc-ip    { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #f0f0f8; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
+.nc-mac   { -fx-font-size: 8px;  -fx-text-fill: #303038; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
+.nc-os    { -fx-font-size: 9px;  -fx-text-fill: #585868; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
+.nc-ports { -fx-font-size: 8px;  -fx-text-fill: #303038; -fx-font-family: "JetBrains Mono","Consolas",monospace; }
 
 /* Badges */
 .badge       { -fx-font-size: 7px; -fx-font-weight: bold; -fx-font-family: "JetBrains Mono","Consolas",monospace; -fx-padding: 1 5 1 5; }
-.badge-agent { -fx-background-color: rgba(225,29,72,0.07); -fx-text-fill: #e11d48; -fx-border-color: rgba(225,29,72,0.2); -fx-border-width: 1; }
-.badge-on    { -fx-background-color: rgba(16,185,129,0.07); -fx-text-fill: #10b981; -fx-border-color: rgba(16,185,129,0.2); -fx-border-width: 1; }
-.badge-warn  { -fx-background-color: rgba(245,158,11,0.07); -fx-text-fill: #f59e0b; -fx-border-color: rgba(245,158,11,0.2); -fx-border-width: 1; }
-.badge-off   { -fx-background-color: #111115; -fx-text-fill: #44444e; -fx-border-color: #222228; -fx-border-width: 1; }
+.badge-agent { -fx-background-color: rgba(225,29,72,0.06);  -fx-text-fill: #e11d48; -fx-border-color: rgba(225,29,72,0.18);  -fx-border-width: 1; }
+.badge-on    { -fx-background-color: rgba(16,185,129,0.06); -fx-text-fill: #10b981; -fx-border-color: rgba(16,185,129,0.18); -fx-border-width: 1; }
+.badge-warn  { -fx-background-color: rgba(245,158,11,0.06); -fx-text-fill: #f59e0b; -fx-border-color: rgba(245,158,11,0.18); -fx-border-width: 1; }
+.badge-off   { -fx-background-color: #111116; -fx-text-fill: #303038; -fx-border-color: #1e1e28; -fx-border-width: 1; }
 
 /* Port tags */
-.port-tag      { -fx-font-size: 7px; -fx-font-weight: bold; -fx-font-family: "JetBrains Mono","Consolas",monospace; -fx-padding: 1 5 1 5; -fx-background-color: #111115; -fx-border-color: #222228; -fx-border-width: 1; -fx-text-fill: #666672; }
+.port-tag      { -fx-font-size: 7px; -fx-font-weight: bold; -fx-font-family: "JetBrains Mono","Consolas",monospace; -fx-padding: 1 5 1 5; -fx-background-color: #111116; -fx-border-color: #1e1e28; -fx-border-width: 1; -fx-text-fill: #585868; }
 .port-tag-open { -fx-border-color: rgba(16,185,129,0.2); -fx-text-fill: #10b981; -fx-background-color: rgba(16,185,129,0.05); }
 .port-tag-risk { -fx-border-color: rgba(225,29,72,0.2);  -fx-text-fill: #e11d48; -fx-background-color: rgba(225,29,72,0.05); }
 
 /* Vuln bar */
-.vuln-bar      { -fx-background-color: #222228; -fx-min-height: 2; -fx-max-height: 2; -fx-pref-height: 2; }
-.vuln-low      { -fx-background-color: #10b981; -fx-min-height: 2; -fx-max-height: 2; }
-.vuln-medium   { -fx-background-color: #f59e0b; -fx-min-height: 2; -fx-max-height: 2; }
-.vuln-high     { -fx-background-color: #e11d48; -fx-min-height: 2; -fx-max-height: 2; }
+.vuln-bar    { -fx-background-color: #1e1e28; -fx-min-height: 2; -fx-max-height: 2; }
+.vuln-low    { -fx-background-color: #10b981; -fx-min-height: 2; -fx-max-height: 2; }
+.vuln-medium { -fx-background-color: #f59e0b; -fx-min-height: 2; -fx-max-height: 2; }
+.vuln-high   { -fx-background-color: #e11d48; -fx-min-height: 2; -fx-max-height: 2; }
 
-/* ══ STATS BAR ══════════════════════════════════ */
-
+/* Stats bar */
 .stats-bar {
-    -fx-background-color: #0d0d10;
-    -fx-border-color: #222228 transparent transparent transparent;
+    -fx-background-color: #0c0c10;
+    -fx-border-color: #1e1e28 transparent transparent transparent;
     -fx-border-width: 1 0 0 0;
     -fx-padding: 0 16 0 16;
 }
 
 .stat-val-sm {
-    -fx-font-size: 11px;
+    -fx-font-size: 12px;
     -fx-font-weight: bold;
-    -fx-text-fill: #e8e8f0;
+    -fx-text-fill: #f0f0f8;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
 }
 
 .stat-lbl-sm {
-    -fx-font-size: 8px;
-    -fx-text-fill: #44444e;
+    -fx-font-size: 9px;
+    -fx-text-fill: #303038;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
 }

@@ -104,10 +104,6 @@ public class SettingsUiController implements Initializable {
     @FXML private TextField    txtLogPath;
     @FXML private ComboBox<String> cmbLogRotation;
 
-    // ═════════════════════════════════════════════════════════════════
-    //  INIT
-    // ═════════════════════════════════════════════════════════════════
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         populateCombos();
@@ -182,12 +178,10 @@ public class SettingsUiController implements Initializable {
     @FXML private void showAbout()    { showView(viewAbout,    navAbout); }
     @FXML private void showDanger()   { showView(viewDanger,   navDanger); }
 
-    // ═════════════════════════════════════════════════════════════════
-    //  SAVE HANDLERS
-    // ═════════════════════════════════════════════════════════════════
 
     @FXML private void onCancelGeneral() { /* restaura valores originais */ }
 
+    // TODO: criar as interações reais
     @FXML
     private void onSaveGeneral() {
         // TODO: salvar no banco / application.properties via service

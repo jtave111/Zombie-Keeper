@@ -83,9 +83,6 @@ public class ScannerManagerController implements Initializable {
     private boolean autoActive = false;
     private Timeline autoTimeline;
 
-    // ═════════════════════════════════════════════════════════════════
-    //  INIT
-    // ═════════════════════════════════════════════════════════════════
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -94,9 +91,6 @@ public class ScannerManagerController implements Initializable {
         addLog("SYS", "tag-sys", "Scanner ready. Configure and launch.");
     }
 
-    // ═════════════════════════════════════════════════════════════════
-    //  HANDLERS
-    // ═════════════════════════════════════════════════════════════════
 
     @FXML
     private void onScopeCustom() {
@@ -146,9 +140,6 @@ public class ScannerManagerController implements Initializable {
         addLog("SYS", "tag-sys", "Export: results.json — saved.");
     }
 
-    // ═════════════════════════════════════════════════════════════════
-    //  SCAN LOGIC
-    // ═════════════════════════════════════════════════════════════════
 
     private void startScan() {
         scanning = true;
@@ -164,7 +155,6 @@ public class ScannerManagerController implements Initializable {
         String target = txtTarget.getText();
         long startMs  = System.currentTimeMillis();
 
-        // Sequence of timed phases — replace delays with real nmap/socket calls
         schedule(300,  () -> {
             lblPhase.setText("Phase 1 — Host Discovery");
             scanProgress.setProgress(0.05);
@@ -206,8 +196,6 @@ public class ScannerManagerController implements Initializable {
             btnLaunch.setText("▶  LAUNCH LOCAL SCAN");
             scanning = false;
 
-            // populate node list (replace with real data)
-            // nodeList.getChildren().add(buildNodeCard(node));
         });
     }
 
@@ -223,10 +211,6 @@ public class ScannerManagerController implements Initializable {
         return "Common top-1000";
     }
 
-    // ═════════════════════════════════════════════════════════════════
-    //  TERMINAL HELPER
-    // ═════════════════════════════════════════════════════════════════
-
     private void addLog(String tag, String tagCls, String msg) {
         String time = ZonedDateTime.now(ZoneOffset.UTC)
             .format(DateTimeFormatter.ofPattern("HH:mm:ss"));
@@ -239,14 +223,11 @@ public class ScannerManagerController implements Initializable {
         row.getChildren().addAll(lTime, lTag, lMsg);
         terminalOutput.getChildren().add(row);
 
-        // auto-scroll
         terminalScroll.layout();
         terminalScroll.setVvalue(1.0);
     }
 
-    // ═════════════════════════════════════════════════════════════════
     //  NODE CARD BUILDER (chame com dados reais do NetworkNode)
-    // ═════════════════════════════════════════════════════════════════
 
     /*
     private VBox buildNodeCard(NetworkNode n) {

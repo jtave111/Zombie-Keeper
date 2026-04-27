@@ -62,7 +62,7 @@ public class ReconRestController {
     public ResponseEntity<String> sessionRecon(@PathVariable String binaryName, @PathVariable String flag, 
         @PathVariable String sec, @PathVariable String usec){
 
-        String json = localNetFp.excLocalNetFingerPrint(binaryName, flag, sec, usec);
+        String json = localNetFp.localNetFingerPrintToJson(binaryName, flag, sec, usec);
 
         try {
        

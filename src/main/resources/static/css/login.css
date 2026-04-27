@@ -1,30 +1,32 @@
+/* ═══════════════════════════════════════════════
+   ZOMBIE_KEEPER — login.css  (JavaFX CSS 2.x)
+   Redesign v2
+   ═══════════════════════════════════════════════ */
 
 .root-pane {
-    -fx-background-color: #070709;
+    -fx-background-color: #050507;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
 }
 
-/* ═══════════════════════════════════════════════
-   LEFT COLUMN
-   ═══════════════════════════════════════════════ */
-
+/* ── Left column ── */
 .col-left {
-    -fx-background-color: #0d0d10;
-    -fx-border-color: transparent #222228 transparent transparent;
+    -fx-background-color: #0c0c10;
+    -fx-border-color: transparent #1e1e28 transparent transparent;
     -fx-border-width: 0 1 0 0;
-    -fx-padding: 24 28 24 28;
+    -fx-padding: 26 30 26 30;
 }
 
-/* ── Status bar ── */
+/* Status bar */
 .status-bar {
-    -fx-padding: 0 0 12 0;
+    -fx-padding: 0 0 14 0;
 }
 
 .status-offline {
     -fx-font-size: 8px;
     -fx-font-weight: bold;
-    -fx-text-fill: #44444e;
+    -fx-text-fill: #303038;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-letter-spacing: 1.0;
 }
 
 .status-channel {
@@ -34,31 +36,30 @@
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
 }
 
-/* ── Glass panel ── */
+/* Glass panel */
 .glass-panel {
-    -fx-background-color: #0d0d10;
-    -fx-border-color: #222228;
+    -fx-background-color: #0c0c10;
+    -fx-border-color: #1e1e28;
     -fx-border-width: 1;
-    -fx-padding: 28 28 28 28;
+    -fx-padding: 30 30 30 30;
 }
 
-/* ── Brand ── */
+/* Brand */
 .brand-icon {
-    -fx-background-color: rgba(225,29,72,0.07);
-    -fx-border-color: rgba(225,29,72,0.2);
+    -fx-background-color: rgba(225,29,72,0.06);
+    -fx-border-color: rgba(225,29,72,0.18);
     -fx-border-width: 1;
 }
 
 .brand-icon-glyph {
-    -fx-font-size: 26px;
+    -fx-font-size: 24px;
     -fx-text-fill: #e11d48;
-    -fx-effect: dropshadow(three-pass-box, rgba(225,29,72,0.4), 8, 0, 0, 0);
 }
 
 .brand-name {
-    -fx-font-size: 18px;
+    -fx-font-size: 17px;
     -fx-font-weight: bold;
-    -fx-text-fill: #e8e8f0;
+    -fx-text-fill: #f0f0f8;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
 }
 
@@ -69,69 +70,47 @@
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
 }
 
-/* ── Error box ── */
+/* Error box */
 .error-box {
     -fx-background-color: rgba(225,29,72,0.05);
     -fx-border-color: rgba(225,29,72,0.2);
     -fx-border-width: 1;
-    -fx-padding: 8 12 8 12;
+    -fx-padding: 9 12 9 12;
 }
 
 .error-text {
-    -fx-font-size: 9px;
+    -fx-font-size: 10px;
     -fx-text-fill: #e11d48;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
 }
 
-/* ── Field labels ── */
+/* Field labels */
 .field-label {
     -fx-font-size: 8px;
     -fx-font-weight: bold;
-    -fx-text-fill: #666672;
+    -fx-text-fill: #585868;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
+    -fx-letter-spacing: 0.8;
 }
 
-/* ── Inputs ── */
+/* Inputs */
 .input-field {
-    -fx-background-color: #070709;
-    -fx-border-color: #222228;
+    -fx-background-color: #050507;
+    -fx-border-color: #1e1e28;
     -fx-border-width: 1;
-    -fx-text-fill: #e8e8f0;
-    -fx-prompt-text-fill: #44444e;
+    -fx-text-fill: #f0f0f8;
+    -fx-prompt-text-fill: #303038;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
-    -fx-font-size: 11px;
-    -fx-padding: 8 12 8 12;
+    -fx-font-size: 12px;
+    -fx-padding: 9 12 9 12;
 }
 
 .input-field:focused {
-    -fx-border-color: #e11d48;
-    -fx-background-color: rgba(225,29,72,0.04);
+    -fx-border-color: rgba(225,29,72,0.5);
+    -fx-background-color: rgba(225,29,72,0.03);
 }
 
-/* ── Role buttons ── */
-.role-btn {
-    -fx-background-color: #070709;
-    -fx-border-color: #222228;
-    -fx-border-width: 1;
-    -fx-text-fill: #666672;
-    -fx-font-family: "JetBrains Mono", "Consolas", monospace;
-    -fx-font-size: 9px;
-    -fx-font-weight: bold;
-    -fx-padding: 8 12 8 12;
-    -fx-cursor: hand;
-}
-
-.role-btn:selected {
-    -fx-background-color: rgba(225,29,72,0.07);
-    -fx-border-color: rgba(225,29,72,0.3);
-    -fx-text-fill: #e11d48;
-}
-
-.role-btn:hover {
-    -fx-text-fill: #e8e8f0;
-}
-
-/* ── Connect button ── */
+/* Connect button */
 .btn-connect {
     -fx-background-color: #e11d48;
     -fx-border-color: transparent;
@@ -139,34 +118,34 @@
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
     -fx-font-size: 11px;
     -fx-font-weight: bold;
-    -fx-padding: 10 0 10 0;
+    -fx-padding: 11 0 11 0;
     -fx-cursor: hand;
 }
 
 .btn-connect:hover {
-    -fx-background-color: #c81941;
-    -fx-effect: dropshadow(three-pass-box, rgba(225,29,72,0.3), 14, 0, 0, 0);
+    -fx-background-color: #c91840;
 }
 
 .btn-connect:pressed {
     -fx-translate-y: 1;
+    -fx-background-color: #b01638;
 }
 
 .btn-connect:disabled {
-    -fx-background-color: #44444e;
-    -fx-text-fill: #222228;
+    -fx-background-color: #2a2a38;
+    -fx-text-fill: #303038;
 }
 
-/* ── Terminal box ── */
+/* Terminal box */
 .terminal-box {
-    -fx-background-color: #070709;
-    -fx-border-color: #222228;
+    -fx-background-color: #050507;
+    -fx-border-color: #1e1e28;
     -fx-border-width: 1;
 }
 
 .terminal-header {
     -fx-background-color: transparent;
-    -fx-border-color: transparent transparent #18181e transparent;
+    -fx-border-color: transparent transparent #1e1e28 transparent;
     -fx-border-width: 0 0 1 0;
     -fx-padding: 8 12 8 12;
     -fx-min-height: 32;
@@ -176,17 +155,17 @@
 .terminal-title {
     -fx-font-size: 8px;
     -fx-font-weight: bold;
-    -fx-text-fill: #44444e;
+    -fx-text-fill: #303038;
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
 }
 
 .t-dot {
-    -fx-background-color: #222228;
+    -fx-background-color: #1e1e28;
     -fx-background-radius: 50%;
 }
 
 .t-dot-red {
-    -fx-background-color: rgba(225,29,72,0.4);
+    -fx-background-color: rgba(225,29,72,0.35);
 }
 
 .terminal-scroll {
@@ -203,71 +182,66 @@
     -fx-padding: 10 12 10 12;
 }
 
-.t-line     { -fx-font-family: "JetBrains Mono","Consolas",monospace; -fx-font-size:10px; -fx-text-fill: #44444e; }
+.t-line     { -fx-font-family: "JetBrains Mono","Consolas",monospace; -fx-font-size: 10px; -fx-text-fill: #303038; }
 .t-line-ok  { -fx-text-fill: #10b981; }
 .t-line-err { -fx-text-fill: #e11d48; }
-.t-line-sys { -fx-text-fill: #666672; }
+.t-line-sys { -fx-text-fill: #585868; }
 
-/* ═══════════════════════════════════════════════
-   RIGHT COLUMN — Quote
-   ═══════════════════════════════════════════════ */
-
+/* ── Right column — Quote ── */
 .col-right {
-    -fx-background-color: #070709;
+    -fx-background-color: #050507;
 }
 
 .col-right-divider {
     -fx-fill: linear-gradient(
         to bottom,
         transparent 0%,
-        #222228 20%,
-        #222228 80%,
+        #1e1e28 20%,
+        #1e1e28 80%,
         transparent 100%
     );
 }
 
 .quote-skull {
-    -fx-font-size: 26px;
+    -fx-font-size: 24px;
     -fx-text-fill: #e11d48;
-    -fx-effect: dropshadow(three-pass-box, rgba(225,29,72,0.35), 10, 0, 0, 0);
 }
 
 .quote-mark {
-    -fx-font-size: 72px;
-    -fx-text-fill: rgba(225,29,72,0.06);
+    -fx-font-size: 66px;
+    -fx-text-fill: rgba(225,29,72,0.05);
     -fx-font-style: italic;
 }
 
 .quote-line-dim {
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
-    -fx-font-size: 14px;
-    -fx-text-fill: #44444e;
+    -fx-font-size: 13px;
+    -fx-text-fill: #303038;
     -fx-font-style: italic;
 }
 
 .quote-line-hl {
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
-    -fx-font-size: 14px;
+    -fx-font-size: 13px;
     -fx-text-fill: #e11d48;
     -fx-font-style: italic;
-    -fx-effect: dropshadow(three-pass-box, rgba(225,29,72,0.2), 8, 0, 0, 0);
 }
 
 .quote-spacer { -fx-text-fill: transparent; }
 
 .quote-divider {
-    -fx-background-color: rgba(225,29,72,0.3);
+    -fx-background-color: rgba(225,29,72,0.25);
 }
 
 .quote-attr {
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
     -fx-font-size: 8px;
     -fx-font-weight: bold;
-    -fx-text-fill: #44444e;
+    -fx-text-fill: #1e1e28;
 }
 
 .watermark {
     -fx-font-family: "JetBrains Mono", "Consolas", monospace;
     -fx-font-size: 8px;
-    -fx-text-fill: #18181e;
+    -fx-text-fill: #111116;
 }

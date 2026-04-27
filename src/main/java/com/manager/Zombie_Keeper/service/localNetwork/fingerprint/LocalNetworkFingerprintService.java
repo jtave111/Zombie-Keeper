@@ -7,11 +7,16 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.stereotype.Service;
+
+import com.manager.Zombie_Keeper.model.entity.localNetwork.NetworkSession;
+
+import tools.jackson.databind.ObjectMapper;
 
 
 @Service
@@ -59,6 +64,95 @@ public class LocalNetworkFingerprintService {
         
     }
 
+
+    //TODO: implementar sobrescritas dos metodos 
+    public NetworkSession localNetworkFingerprint(Consumer<String> onProgress, String binaryName, String flag, String sec, String usec){
+        
+        NetworkSession session = new NetworkSession();
+
+        List<String> command = new ArrayList<>();
+
+        StringBuilder builder =  new StringBuilder();
+
+
+        try {
+            
+            File root = getRootPath();
+
+            File binaryFile = new File(root, "modules/linux/c++/code/localFingerPrint/" + binaryName );
+
+            if(!binaryFile.exists() ) throw new FileNotFoundException();
+
+            if(!binaryFile.canExecute()) binaryFile.setExecutable(true);
+
+
+            command.add(binaryFile.getAbsolutePath());
+            
+            if(flag.equalsIgnoreCase("all")) {
+                command.add("--create_session");
+                command.add("-all-ports");
+            } else if(flag.equalsIgnoreCase("any")) {
+                command.add("--create_session");
+                command.add("-any-ports");
+            }
+
+            command.add(sec);
+            command.add(usec);
+
+            ProcessBuilder pb = new ProcessBuilder(command);
+
+            pb.redirectErrorStream(true);
+
+            Process process = pb.start();
+
+
+            boolean isParsingJson = false;
+            try(
+                BufferedReader buffer = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            ) {
+                
+                String line;
+
+                //Possivel logica 
+                while ((line = buffer.readLine()) != null) {
+                    
+                    if (line.trim().equals("[ZK_JSON_START]")) {
+                        isParsingJson = true;
+                        continue; 
+                    }
+
+                    if (isParsingJson) {
+                        
+                        builder.append(line).append("\n");
+                    } else {
+                        onProgress.accept(line);
+                    }
+                }
+
+
+            } catch (Exception e) {
+            
+            }
+
+
+            String outputJson = extractJson(builder.toString());
+
+            if (outputJson.length() > 0) {
+                ObjectMapper mapper = new ObjectMapper();
+                
+                session = mapper.readValue(outputJson.toString(), NetworkSession.class);
+            } else {
+                onProgress.accept("[ERRO] Nenhum dado JSON retornado ");
+            }
+
+        } catch (Exception e) {
+            
+        }
+
+
+        return  session;
+    }
 
 
     //C++ binaries 
@@ -143,7 +237,6 @@ public class LocalNetworkFingerprintService {
     public int excLocalPortScan(String binaryName, String networkIdentfier, String mac, String ip, String port, String sec, String usec){
 
         List<String> comand = new ArrayList<>();
-        
 
         try {
 
@@ -198,7 +291,7 @@ public class LocalNetworkFingerprintService {
     }
 
     // "./Binary --create_session '-all-ports' or 'any-ports' "
-    public String excLocalNetFingerPrint(String binaryName, String flag, String sec, String usec){
+    public String localNetFingerPrintToJson(String binaryName, String flag, String sec, String usec){
 
         List<String> command = new ArrayList<>();
         
