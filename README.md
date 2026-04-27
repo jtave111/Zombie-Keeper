@@ -1,10 +1,10 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0d0d0d&height=260&section=header&text=ZOMBIE%20KEEPER&fontSize=76&fontColor=cc0000&animation=fadeIn&fontAlign=50&fontAlignY=38&desc=Command%20%26%20Control%20Platform&descSize=22&descAlignY=60&descFontColor=666666" alt="Zombie Keeper Header" />
+![Zombie Keeper Header](https://capsule-render.vercel.app/api?type=waving&color=0d0d0d&height=260&section=header&text=ZOMBIE%20KEEPER&fontSize=76&fontColor=cc0000&animation=fadeIn&fontAlign=50&fontAlignY=38&desc=Command%20%26%20Control%20Platform&descSize=22&descAlignY=60&descFontColor=666666)
 
 <br/>
 
-<img src="https://readme-typing-svg.demolab.com?font=Share+Tech+Mono&size=22&duration=1&pause=999999&color=CC0000&background=0D0D0D00&center=true&vCenter=true&multiline=true&width=900&height=130&lines=███████╗+██████╗+███╗+++███╗██████╗+██╗███████╗++++██╗++██╗███████╗███████╗██████╗+███████╗██████╗;╚══███╔╝██╔═══██╗████╗+████║██╔══██╗██║██╔════╝++++██║+██╔╝██╔════╝██╔════╝██╔══██╗██╔════╝██╔══██╗;++███╔╝+██║+++██║██╔████╔██║██████╔╝██║█████╗++++++█████╔╝+█████╗++█████╗++██████╔╝█████╗++██████╔╝;+███╔╝++██║+++██║██║╚██╔╝██║██╔══██╗██║██╔══╝++++++██╔═██╗+██╔══╝++██╔══╝++██╔═══╝+██╔══╝++██╔══██╗;███████╗╚██████╔╝██║+╚═╝+██║██████╔╝██║███████╗++++██║++██╗███████╗███████╗██║+++++███████╗██║++██║;╚══════╝+╚═════╝+╚═╝+++++╚═╝╚═════╝+╚═╝╚══════╝++++╚═╝++╚═╝╚══════╝╚══════╝╚═╝+++++╚══════╝╚═╝++╚═╝" alt="ZOMBIE KEEPER ASCII" />
+![ZOMBIE KEEPER ASCII](https://readme-typing-svg.demolab.com?font=Share+Tech+Mono&size=22&duration=1&pause=999999&color=CC0000&background=0D0D0D00&center=true&vCenter=true&multiline=true&width=900&height=130&lines=███████╗+██████╗+███╗+++███╗██████╗+██╗███████╗++++██╗++██╗███████╗███████╗██████╗+███████╗██████╗;╚══███╔╝██╔═══██╗████╗+████║██╔══██╗██║██╔════╝++++██║+██╔╝██╔════╝██╔════╝██╔══██╗██╔════╝██╔══██╗;++███╔╝+██║+++██║██╔████╔██║██████╔╝██║█████╗++++++█████╔╝+█████╗++█████╗++██████╔╝█████╗++██████╔╝;+███╔╝++██║+++██║██║╚██╔╝██║██╔══██╗██║██╔══╝++++++██╔═██╗+██╔══╝++██╔══╝++██╔═══╝+██╔══╝++██╔══██╗;███████╗╚██████╔╝██║+╚═╝+██║██████╔╝██║███████╗++++██║++██╗███████╗███████╗██║+++++███████╗██║++██║;╚══════╝+╚═════╝+╚═╝+++++╚═╝╚═════╝+╚═╝╚══════╝++++╚═╝++╚═╝╚══════╝╚══════╝╚═╝+++++╚══════╝╚═╝++╚═╝)
 
 <br/>
 
@@ -14,6 +14,7 @@
 [![Python](https://img.shields.io/badge/Automation-Python%203-3776AB?style=for-the-badge&logo=python&logoColor=white)](#)
 [![Maven](https://img.shields.io/badge/Build-Apache%20Maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)](#)
 [![Spring Security](https://img.shields.io/badge/Auth-Spring%20Security%20%2B%20JWT-4CA154?style=for-the-badge&logo=springsecurity&logoColor=white)](#)
+
 <br/>
 
 > ⚠️ **USO EXCLUSIVO EM AMBIENTES CONTROLADOS** — Pentest labs, Red Team com autorização escrita, CTFs e pesquisa em segurança ofensiva. O uso não autorizado desta ferramenta é crime. Leia o [Aviso Legal](#-aviso-legal).
