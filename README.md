@@ -43,3 +43,4 @@ A plataforma permite simular comportamentos de *Threat Actors* reais para valida
 ---
 
 ## 🧠 Arquitetura de Controle
+## Atualização de Arquitetura -
