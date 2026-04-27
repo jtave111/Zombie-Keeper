@@ -1,12 +1,15 @@
 package com.manager.Zombie_Keeper;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication; // Import do Enum
+import org.springframework.context.ConfigurableApplicationContext;
+
 import com.manager.Zombie_Keeper.ui.manager.SceneManager;
-import com.manager.Zombie_Keeper.ui.manager.ViewEnum; // Import do Enum
+import com.manager.Zombie_Keeper.ui.manager.ViewEnum;
+
+import atlantafx.base.theme.PrimerDark;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 public class C2ServerApplication extends Application {
@@ -20,6 +23,7 @@ public class C2ServerApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
         SceneManager sceneManager = springContext.getBean(SceneManager.class);
         sceneManager.setPrimaryStage(primaryStage);
         

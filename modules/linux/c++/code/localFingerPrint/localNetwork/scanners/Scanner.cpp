@@ -331,9 +331,6 @@ void Scanner::scan_all_UdpNodePorts(Session &session, long sec, long usec){
                     break;
                 }
                 
-                if (task % 10000 == 0) {
-                    std::cout << "[HEARTBEAT] Varredura em andamento: " << task << " / " << total_tasks << std::endl;
-                }
 
                 //achatamento de matriz, divisao inteira para achar o node
                 size_t node_index = task / 65535;
@@ -376,12 +373,10 @@ void Scanner::scan_all_UdpNodePorts(Session &session, long sec, long usec){
 
         
     }
-    std::cout << "[DEBUG] " << GLOBAL_WORKERS << " operarias despachadas. Aguardando retorno (join)..." << std::endl;
     for(auto& t : workers) {
         if(t.joinable()) t.join();
     }
-    std::cout << "[DEBUG] Scan massivo finalizado com sucesso!" << std::endl;
-
+    
 }
 
 void Scanner::scan_any_UdpNodePorts(Session &session, long sec, long usec){
@@ -647,7 +642,7 @@ void Scanner::scan_all_TcpNodePorts(Session &session, long sec, long usec) {
     std::vector<Node> &nodes = session.getMutableNodes();
     if (nodes.empty()) return;
 
-    const int GLOBAL_WORKERS = 5000; 
+    const size_t GLOBAL_WORKERS = 5000; 
     std::vector<std::thread> workers;
 
     uint64_t total_nodes = nodes.size();
@@ -791,7 +786,7 @@ void Scanner::scan_OneNode_Tcp(Node &node, std::string flag, long sec, long usec
         targetPorts = Scanner::getTacticalTcpPorts();
     }
 
-    int max_concurrent_threads = 1000; 
+    size_t max_concurrent_threads = 1000; 
 
     for (int portInt : targetPorts) {
 
@@ -825,9 +820,6 @@ void Scanner::scan_OneNode_Tcp(Node &node, std::string flag, long sec, long usec
         if (t.joinable()) t.join();
     }
 }
-
-
-
 
 
 //TODO Refatorar para especificar uma forçada de obtenção de banner

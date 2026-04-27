@@ -6,10 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.Map;
 
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.stereotype.Service;
@@ -113,7 +113,7 @@ public class LocalNetworkFingerprintService {
             ) {
                 
                 String line;
-
+                //TODO: implementar isso no bonario(c++)
                 //Possivel logica 
                 while ((line = buffer.readLine()) != null) {
                     
@@ -149,8 +149,6 @@ public class LocalNetworkFingerprintService {
         } catch (Exception e) {
             
         }
-
-
         return  session;
     }
 
