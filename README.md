@@ -1,20 +1,19 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0d0d0d&height=260&section=header&text=ZOMBIE%20KEEPER&fontSize=76&fontColor=cc0000&animation=fadeIn&fontAlign=50&fontAlignY=38&desc=Command%20%26%20Control%20Platform&descSize=22&descAlignY=60&descFontColor=666666" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0d0d0d&height=260&section=header&text=ZOMBIE%20KEEPER&fontSize=76&fontColor=cc0000&animation=fadeIn&fontAlign=50&fontAlignY=38&desc=Command%20%26%20Control%20Platform&descSize=22&descAlignY=60&descFontColor=666666" alt="Zombie Keeper Header" />
 
 <br/>
 
-<img src="https://readme-typing-svg.demolab.com?font=Share+Tech+Mono&size=22&duration=1&pause=999999&color=CC0000&background=0D0D0D00&center=true&vCenter=true&multiline=true&width=900&height=130&lines=███████╗+██████╗+███╗+++███╗██████╗+██╗███████╗++++██╗++██╗███████╗███████╗██████╗+███████╗██████╗;╚══███╔╝██╔═══██╗████╗+████║██╔══██╗██║██╔════╝++++██║+██╔╝██╔════╝██╔════╝██╔══██╗██╔════╝██╔══██╗;++███╔╝+██║+++██║██╔████╔██║██████╔╝██║█████╗++++++█████╔╝+█████╗++█████╗++██████╔╝█████╗++██████╔╝;+███╔╝++██║+++██║██║╚██╔╝██║██╔══██╗██║██╔══╝++++++██╔═██╗+██╔══╝++██╔══╝++██╔═══╝+██╔══╝++██╔══██╗;███████╗╚██████╔╝██║+╚═╝+██║██████╔╝██║███████╗++++██║++██╗███████╗███████╗██║+++++███████╗██║++██║;╚══════╝+╚═════╝+╚═╝+++++╚═╝╚═════╝+╚═╝╚══════╝++++╚═╝++╚═╝╚══════╝╚══════╝╚═╝+++++╚══════╝╚═╝++╚═╝" alt="ZOMBIE KEEPER" />
+<img src="https://readme-typing-svg.demolab.com?font=Share+Tech+Mono&size=22&duration=1&pause=999999&color=CC0000&background=0D0D0D00&center=true&vCenter=true&multiline=true&width=900&height=130&lines=███████╗+██████╗+███╗+++███╗██████╗+██╗███████╗++++██╗++██╗███████╗███████╗██████╗+███████╗██████╗;╚══███╔╝██╔═══██╗████╗+████║██╔══██╗██║██╔════╝++++██║+██╔╝██╔════╝██╔════╝██╔══██╗██╔════╝██╔══██╗;++███╔╝+██║+++██║██╔████╔██║██████╔╝██║█████╗++++++█████╔╝+█████╗++█████╗++██████╔╝█████╗++██████╔╝;+███╔╝++██║+++██║██║╚██╔╝██║██╔══██╗██║██╔══╝++++++██╔═██╗+██╔══╝++██╔══╝++██╔═══╝+██╔══╝++██╔══██╗;███████╗╚██████╔╝██║+╚═╝+██║██████╔╝██║███████╗++++██║++██╗███████╗███████╗██║+++++███████╗██║++██║;╚══════╝+╚═════╝+╚═╝+++++╚═╝╚═════╝+╚═╝╚══════╝++++╚═╝++╚═╝╚══════╝╚══════╝╚═╝+++++╚══════╝╚═╝++╚═╝" alt="ZOMBIE KEEPER ASCII" />
 
 <br/>
 
-[![Java](https://img.shields.io/badge/Server-Java%2017%20%2B%20Spring%20Boot-cc0000?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/)
-[![JavaFX](https://img.shields.io/badge/UI-JavaFX%20%2B%20FXML-8b0000?style=for-the-badge&logo=java&logoColor=white)](#)
-[![C++](https://img.shields.io/badge/Agent-C%2B%2B17%20%2B%20Raw%20Sockets-cc0000?style=for-the-badge&logo=cplusplus&logoColor=white)](https://isocpp.org/)
-[![Python](https://img.shields.io/badge/Automation-Python%203-8b0000?style=for-the-badge&logo=python&logoColor=white)](#)
-[![Maven](https://img.shields.io/badge/Build-Apache%20Maven-cc0000?style=for-the-badge&logo=apachemaven&logoColor=white)](#)
-[![Spring Security](https://img.shields.io/badge/Auth-Spring%20Security%20%2B%20JWT-8b0000?style=for-the-badge&logo=springsecurity&logoColor=white)](#)
-
+[![Java](https://img.shields.io/badge/Server-Java%2017%20%2B%20Spring%20Boot-6DB33F?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/)
+[![JavaFX](https://img.shields.io/badge/UI-JavaFX%20%2B%20FXML-ED8B00?style=for-the-badge&logo=java&logoColor=white)](#)
+[![C++](https://img.shields.io/badge/Agent-C%2B%2B17%20%2B%20Raw%20Sockets-00599C?style=for-the-badge&logo=cplusplus&logoColor=white)](https://isocpp.org/)
+[![Python](https://img.shields.io/badge/Automation-Python%203-3776AB?style=for-the-badge&logo=python&logoColor=white)](#)
+[![Maven](https://img.shields.io/badge/Build-Apache%20Maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)](#)
+[![Spring Security](https://img.shields.io/badge/Auth-Spring%20Security%20%2B%20JWT-4CA154?style=for-the-badge&logo=springsecurity&logoColor=white)](#)
 <br/>
 
 > ⚠️ **USO EXCLUSIVO EM AMBIENTES CONTROLADOS** — Pentest labs, Red Team com autorização escrita, CTFs e pesquisa em segurança ofensiva. O uso não autorizado desta ferramenta é crime. Leia o [Aviso Legal](#-aviso-legal).
