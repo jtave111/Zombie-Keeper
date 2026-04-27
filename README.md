@@ -1,13 +1,11 @@
 <div align="center">
 
-![Zombie Keeper Header](https://capsule-render.vercel.app/api?type=waving&color=0d0d0d&height=260&section=header&text=ZOMBIE%20KEEPER&fontSize=76&fontColor=cc0000&animation=fadeIn&fontAlign=50&fontAlignY=38&desc=Command%20%26%20Control%20Platform&descSize=22&descAlignY=60&descFontColor=666666)
+ <img src="https://capsule-render.vercel.app/api?type=waving&color=333333&height=220&section=header&text=Zombie%20Keeper&fontSize=80&fontColor=ff0000&animation=fadeIn&fontAlign=50" alt="Zombie Keeper Header" />
 
-<br/>
-
-![ZOMBIE KEEPER ASCII](https://readme-typing-svg.demolab.com?font=Share+Tech+Mono&size=22&duration=1&pause=999999&color=CC0000&background=0D0D0D00&center=true&vCenter=true&multiline=true&width=900&height=130&lines=███████╗+██████╗+███╗+++███╗██████╗+██╗███████╗++++██╗++██╗███████╗███████╗██████╗+███████╗██████╗;╚══███╔╝██╔═══██╗████╗+████║██╔══██╗██║██╔════╝++++██║+██╔╝██╔════╝██╔════╝██╔══██╗██╔════╝██╔══██╗;++███╔╝+██║+++██║██╔████╔██║██████╔╝██║█████╗++++++█████╔╝+█████╗++█████╗++██████╔╝█████╗++██████╔╝;+███╔╝++██║+++██║██║╚██╔╝██║██╔══██╗██║██╔══╝++++++██╔═██╗+██╔══╝++██╔══╝++██╔═══╝+██╔══╝++██╔══██╗;███████╗╚██████╔╝██║+╚═╝+██║██████╔╝██║███████╗++++██║++██╗███████╗███████╗██║+++++███████╗██║++██║;╚══════╝+╚═════╝+╚═╝+++++╚═╝╚═════╝+╚═╝╚══════╝++++╚═╝++╚═╝╚══════╝╚══════╝╚═╝+++++╚══════╝╚═╝++╚═╝)
-
-<br/>
-
+  # Zombie Keeper – Command & Control System
+   
+  **Dual-Purpose Command & Control: Infrastructure Monitoring & Offensive Operations**
+  
 [![Java](https://img.shields.io/badge/Server-Java%2017%20%2B%20Spring%20Boot-6DB33F?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/)
 [![JavaFX](https://img.shields.io/badge/UI-JavaFX%20%2B%20FXML-ED8B00?style=for-the-badge&logo=java&logoColor=white)](#)
 [![C++](https://img.shields.io/badge/Agent-C%2B%2B17%20%2B%20Raw%20Sockets-00599C?style=for-the-badge&logo=cplusplus&logoColor=white)](https://isocpp.org/)
