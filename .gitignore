@@ -49,4 +49,7 @@ application-dev.properties
 application-prod.properties
 application-test.properties
 .env
+.env.local
+.env.development
+.env.production 
 application.properties
