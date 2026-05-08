@@ -1,21 +1,20 @@
 package com.manager.Zombie_Keeper.service.agents;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import com.manager.Zombie_Keeper.dtos.agent.AgentDtos;
+import com.manager.Zombie_Keeper.dtos.agent.AgentGeoDto;
+import com.manager.Zombie_Keeper.model.entity.agent.AgentLocation;
 import org.springframework.stereotype.Service;
 
-import com.manager.Zombie_Keeper.dtos.auth.LoginRequest;
 import com.manager.Zombie_Keeper.model.entity.agent.Agent;
 import com.manager.Zombie_Keeper.model.enums.agent.Tags;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 
 @Service
 public class AgentsService {
-  
+
+
 
 
     public Agent setPreInformation(Agent agent){
@@ -32,8 +31,6 @@ public class AgentsService {
 
             tags.add(Tags.MAC);
         }
-        
-
 
         agent.setTags(tags);
 

@@ -1,78 +1,70 @@
 package com.manager.Zombie_Keeper.service.auth;
 
-import com.manager.Zombie_Keeper.dtos.auth.CreateAcRequest;
-import com.manager.Zombie_Keeper.dtos.auth.LoginRequest;
-import com.manager.Zombie_Keeper.model.entity.auth.Role;
+import com.manager.Zombie_Keeper.dtos.auth.LoginDtos;
 import com.manager.Zombie_Keeper.model.entity.auth.User;
-import com.manager.Zombie_Keeper.repository.auth.RoleRepository;
 import com.manager.Zombie_Keeper.repository.auth.UserRepository;
-
+import com.manager.Zombie_Keeper.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
 
-    private final AuthenticationManager authenticationManager;
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
+
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
-    private final RoleRepository roleRepository;
+    private final JwtUtil jwtUtil;
 
-    public AuthService(
-            @Lazy AuthenticationManager authenticationManager,
-            UserRepository userRepository,
-            PasswordEncoder encoder,
-            RoleRepository roleRepository) {
-        this.authenticationManager = authenticationManager;
+    public AuthService(UserRepository userRepository, PasswordEncoder encoder, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.encoder = encoder;
-        this.roleRepository = roleRepository;
+        this.jwtUtil = jwtUtil;
     }
 
-    public void authenticateUser(LoginRequest dto, HttpServletRequest request) {
-      
-        UsernamePasswordAuthenticationToken token = 
-            new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
-        Authentication authentication = authenticationManager.authenticate(token);
+    public String authenticateUser(LoginDtos dto, HttpServletRequest request) {
+        User user = userRepository.findByUsername(dto.getUsername())
+                .orElseThrow(() -> {
+                    logger.warn("Login failed: User '{}' not found", dto.getUsername());
+                    return new UsernameNotFoundException("User not found");
+                });
 
+        if (!encoder.matches(dto.getPassword(), user.getPassword())) {
+            logger.warn("Login failed: Invalid password for user '{}'", dto.getUsername());
+            throw new BadCredentialsException("Invalid credentials");
+        }
+
+        String token = jwtUtil.generateToken(user);
+
+
+        Authentication authentication = new PreAuthenticatedAuthenticationToken(
+                user,
+                token,
+                user.getAuthorities()
+        );
+
+        // 4. Salva no SecurityContext
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
 
+        // 5. Salva na sessão HTTP
         HttpSession session = request.getSession(true);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
-    }
 
-    public void registerNewOperator(CreateAcRequest dto) {
-        if (!dto.getPassword().equals(dto.getRepeetPassword())) {
-            throw new IllegalArgumentException("Passwords do not match");
-        }
-        
-        if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
-            throw new IllegalArgumentException("Username already exists");
-        }
-        
-        Role role = roleRepository.findByName(dto.getRole()).get();
-        if (role == null) {
-            throw new IllegalArgumentException("Role not found");
-        }
+        logger.info("User '{}' authenticated successfully", user.getUsername());
 
-        User newUser = new User();
-        newUser.setName(dto.getName());
-        newUser.setUsername(dto.getUsername());
-        newUser.setPassword(encoder.encode(dto.getPassword()));
-        newUser.setRole(role);
-
-        userRepository.save(newUser);
+        return token;
     }
 }

@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface AgentRepository extends JpaRepository<Agent, UUID> {
+public interface    AgentRepository extends JpaRepository<Agent, UUID> {
 
     Optional<Agent> findByIpv4(String ipv4);
 

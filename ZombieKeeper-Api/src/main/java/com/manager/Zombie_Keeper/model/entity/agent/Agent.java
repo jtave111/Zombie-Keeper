@@ -1,5 +1,6 @@
 package com.manager.Zombie_Keeper.model.entity.agent;
 
+import com.manager.Zombie_Keeper.model.enums.agent.StatusAgent;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -49,8 +50,9 @@ public class Agent {
     @Column(length = 17)
     private String macAddress;
 
-    @Column(length = 20)
-    private String status = "ONLINE"; // TODO refactored to an Enum later
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    private StatusAgent status = StatusAgent.OLINE;
     
     private Integer sleepTime = 0; // Beacon interval in seconds (0 = interactive)
 
@@ -72,7 +74,36 @@ public class Agent {
     @Enumerated(EnumType.STRING)
     private Set<Tags> tags = new HashSet<>();
 
+
+    @OneToMany(
+            mappedBy      = "agent",
+            cascade       = CascadeType.ALL,   // salvar/deletar agent cascateia locations
+            orphanRemoval = true,              // remove locations órfãs automaticamente
+            fetch         = FetchType.LAZY     // não carrega locations a cada getAgent()
+    )
+    private List<AgentLocation> locations = new ArrayList<>();
+
     public Agent() {
+
+    }
+
+    public Agent(Integer sleepTime, LocalDateTime firstSeen, LocalDateTime lastSeen,
+                 String status, String macAddress, String ipv6, Boolean isElevated,
+                 String ipv4, String loggedUser, String architecture, String hostname, String os, Long publicId) {
+
+        this.sleepTime = sleepTime;
+        this.firstSeen = firstSeen;
+        this.lastSeen = lastSeen;
+        this.status = StatusAgent.valueOf(status);
+        this.macAddress = macAddress;
+        this.ipv6 = ipv6;
+        this.isElevated = isElevated;
+        this.ipv4 = ipv4;
+        this.loggedUser = loggedUser;
+        this.architecture = architecture;
+        this.hostname = hostname;
+        this.os = os;
+        this.publicId = publicId;
     }
 
     @PrePersist
@@ -86,6 +117,25 @@ public class Agent {
         if (this.lastSeen == null) {           
             this.lastSeen = LocalDateTime.now();
         }
+    }
+
+
+    // ── Getter & Setter ───────────────────────────────────────────────────────
+
+    public List<AgentLocation> getLocations() { return locations; }
+
+    public void setLocations(List<AgentLocation> locations) { this.locations = locations; }
+
+    // ── Helper methods ────────────────────────────────────────────────────────
+
+    public void addLocation(AgentLocation location) {
+        locations.add(location);
+        location.setAgent(this);
+    }
+
+    public void removeLocation(AgentLocation location) {
+        locations.remove(location);
+        location.setAgent(null);
     }
 
     @PreUpdate
@@ -124,8 +174,8 @@ public class Agent {
     public String getMacAddress() { return macAddress; }
     public void setMacAddress(String macAddress) { this.macAddress = macAddress; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public StatusAgent getStatus() { return status; }
+    public void setStatus(StatusAgent status) { this.status = status; }
 
     public Integer getSleepTime() { return sleepTime; }
     public void setSleepTime(Integer sleepTime) { this.sleepTime = sleepTime; }

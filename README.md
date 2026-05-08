@@ -1,402 +1,855 @@
 <div align="center">
 
- <img src="https://capsule-render.vercel.app/api?type=waving&color=333333&height=220&section=header&text=Zombie%20Keeper&fontSize=80&fontColor=ff0000&animation=fadeIn&fontAlign=50" alt="Zombie Keeper Header" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0d0d0d&height=220&section=header&text=Zombie%20Keeper&fontSize=80&fontColor=ff0000&animation=fadeIn&fontAlign=50" alt="Zombie Keeper" />
 
-  # Zombie Keeper – Command & Control System
-   
-  **Dual-Purpose Command & Control: Infrastructure Monitoring & Offensive Operations**
-  
-[![Java](https://img.shields.io/badge/Server-Java%2017%20%2B%20Spring%20Boot-6DB33F?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/)
-[![JavaFX](https://img.shields.io/badge/UI-JavaFX%20%2B%20FXML-ED8B00?style=for-the-badge&logo=java&logoColor=white)](#)
-[![C++](https://img.shields.io/badge/Agent-C%2B%2B17%20%2B%20Raw%20Sockets-00599C?style=for-the-badge&logo=cplusplus&logoColor=white)](https://isocpp.org/)
-[![Python](https://img.shields.io/badge/Automation-Python%203-3776AB?style=for-the-badge&logo=python&logoColor=white)](#)
-[![Maven](https://img.shields.io/badge/Build-Apache%20Maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)](#)
-[![Spring Security](https://img.shields.io/badge/Auth-Spring%20Security%20%2B%20JWT-4CA154?style=for-the-badge&logo=springsecurity&logoColor=white)](#)
+# Zombie Keeper — C2 Framework
+
+**Dual-purpose Command & Control platform for infrastructure monitoring and offensive security operations**
+
+[![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk/21/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Next.js](https://img.shields.io/badge/Next.js-15-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![C++](https://img.shields.io/badge/C++17-Raw%20Sockets-00599C?style=for-the-badge&logo=cplusplus&logoColor=white)](https://isocpp.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Spring Security](https://img.shields.io/badge/Spring%20Security-JWT-4CA154?style=for-the-badge&logo=springsecurity&logoColor=white)](#)
 
 <br/>
 
-> ⚠️ **USO EXCLUSIVO EM AMBIENTES CONTROLADOS** — Pentest labs, Red Team com autorização escrita, CTFs e pesquisa em segurança ofensiva. O uso não autorizado desta ferramenta é crime. Leia o [Aviso Legal](#-aviso-legal).
+> ⚠️ **FOR AUTHORIZED USE ONLY** — Pentest labs, Red Team engagements with written authorization, CTF competitions, and offensive security research. Unauthorized use is illegal. Read the [Legal Notice](#-legal-notice).
 
 </div>
 
 ---
 
-## 📌 Índice
+## Table of Contents
 
-- [Visão Geral](#-visão-geral)
-- [Arquitetura Real do Sistema](#-arquitetura-real-do-sistema)
-- [Módulos do Projeto](#-módulos-do-projeto)
-  - [Server — Spring Boot C2 (Java)](#1-server--spring-boot-c2-java)
-  - [Agent — Network Scanner (C++)](#2-agent--network-scanner-c)
-  - [Automation — Python Scripts](#3-automation--python-scripts)
-- [Stack Tecnológica](#-stack-tecnológica)
-- [Estrutura do Projeto](#-estrutura-do-projeto)
-- [Instalação e Setup](#-instalação-e-setup)
-- [Uso](#-uso)
+- [Overview](#-overview)
+- [Architecture](#-architecture)
+- [Modules](#-modules)
+  - [ZombieKeeper-Api — Spring Boot C2 Server](#zombiekeeper-api--spring-boot-c2-server)
+  - [ZombieKeeper-Web — Next.js Dashboard](#zombiekeeper-web--nextjs-dashboard)
+  - [Agent — C++ Network Scanner](#agent--c-network-scanner)
+  - [Automation — Python Scripts](#automation--python-scripts)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Installation & Setup](#-installation--setup)
+- [Usage](#-usage)
 - [Roadmap](#-roadmap)
-- [Aviso Legal](#-aviso-legal)
+- [Legal Notice](#-legal-notice)
 
 ---
 
-## 🧬 Visão Geral
+## Overview
 
-O **Zombie Keeper** é uma plataforma de **Command & Control (C2)** de uso dual — ofensivo e defensivo — desenvolvida do zero com foco em aprendizado de segurança ofensiva e operações controladas de Red/Blue Team.
+**Zombie Keeper** is a full-stack **Command & Control (C2)** platform built from scratch for offensive security learning and controlled Red/Blue Team operations.
 
-O sistema é composto por três camadas que operam em conjunto:
+The system operates in three layers:
 
-- **C2 Server** → Aplicação Spring Boot com interface JavaFX desktop, responsável por orquestrar agentes, receber telemetria de rede, gerenciar sessões e autenticar operadores.
-- **Network Agent** → Binário C++ compilado com Raw Sockets que realiza fingerprint local, mapeamento de topologia via ICMP/ARP e enumeração de portas na sub-rede do host comprometido.
-- **Automation Layer** → Scripts Python para automação de requisições e integração com o servidor C2.
+- **C2 Server** (`ZombieKeeper-Api`) — Spring Boot 4 REST API that orchestrates agents, receives network telemetry, manages sessions, and authenticates operators via JWT.
+- **Web Dashboard** (`ZombieKeeper-Web`) — Next.js 15 dark-terminal UI for real-time operator interaction: agent management, shell access, network topology, payload generation, and user administration.
+- **Network Agent** (`ZombieKeeper-Arsenal/cpp/`) — Native C++17 binary using Raw Sockets that performs local fingerprinting, ICMP host discovery, TCP port scanning, and reports results back to the C2 server via HTTP.
 
 ---
 
-## 🏗️ Arquitetura Real do Sistema
+## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                      ZOMBIE KEEPER C2 SERVER                        │
-│                     (Spring Boot 3 + JavaFX)                        │
-│                                                                     │
-│  ┌──────────────────┐    ┌──────────────────┐    ┌───────────────┐  │
-│  │  JavaFX UI Layer │    │   REST API Layer  │    │  Auth Layer   │  │
-│  │                  │    │                  │    │               │  │
-│  │  main_dashboard  │    │  AgentRestCtrl   │    │  Spring       │  │
-│  │  agents.fxml     │    │  ReconRestCtrl   │    │  Security +   │  │
-│  │  scanner.fxml    │    │  AuthRestCtrl    │    │  JWT / Roles  │  │
-│  │  network_session │    │  UserRestCtrl    │    │               │  │
-│  │  settings.fxml   │    └────────┬─────────┘    └───────────────┘  │
-│  └──────────────────┘             │                                  │
-│                                   │ JPA / Hibernate                  │
-│                          ┌────────▼─────────┐                        │
-│                          │   Service Layer  │                        │
-│                          │                  │                        │
-│                          │  AgentsService   │                        │
-│                          │  AuthService     │                        │
-│                          │  FingerprintSvc  │                        │
-│                          │  ProcessMgrSvc   │                        │
-│                          │  NetworkDB Mgr   │                        │
-│                          └────────┬─────────┘                        │
-│                                   │                                  │
-│                     ┌─────────────▼──────────────────────────────┐   │
-│                     │           Data Model (JPA Entities)         │   │
-│                     │  Agent · Loot · NetworkNode · NetworkSession │   │
-│                     │  Port · Vulnerability · User · Role         │   │
-│                     └─────────────────────────────────────────────┘  │
-└────────────────────────────────┬────────────────────────────────────┘
-                                 │ HTTP (register.cpp) / Raw Socket C2
-                    ┌────────────▼────────────┐
-                    │    C++ ZOMBIE AGENT      │
-                    │  (Linux / Windows)       │
-                    │                          │
-                    │  FingerPrintSession      │
-                    │  Scanner (Raw Sockets)   │
-                    │  Node · Port · Session   │
-                    │  Vulnerability Model     │
-                    │  Ping (ICMP Sweep)       │
-                    └──────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                  ZombieKeeper-Web                            │
+│              Next.js 15 · React 19 · TypeScript             │
+│                                                             │
+│  Dashboard · Agents · Shell · Network · Payloads            │
+│  Listeners · Scanner · Credentials · Users · Settings       │
+└───────────────────────┬─────────────────────────────────────┘
+                        │ HTTP/REST  (JWT Bearer)
+                        │ http://localhost:3000 → :8080
+┌───────────────────────▼─────────────────────────────────────┐
+│                  ZombieKeeper-Api                            │
+│              Spring Boot 4 · Java 21 · MySQL                │
+│                                                             │
+│  ┌─────────────────┐  ┌──────────────────┐  ┌───────────┐  │
+│  │  REST Controllers│  │  Service Layer   │  │  Security │  │
+│  │                 │  │                  │  │           │  │
+│  │  AgentRest      │  │  AgentsService   │  │  Spring   │  │
+│  │  AuthRest       │  │  AuthService     │  │  Security │  │
+│  │  ReconRest      │  │  FingerprintSvc  │  │  JWT      │  │
+│  └────────┬────────┘  │  ProcessMgrSvc   │  │  Roles    │  │
+│           │ JPA       │  AgentLocationSvc│  └───────────┘  │
+│  ┌────────▼────────────────────────────────────────────┐   │
+│  │               Data Model (JPA / MySQL)              │   │
+│  │  Agent · Loot · AgentLocation · NetworkSession      │   │
+│  │  NetworkNode · Port · Vulnerability · User · Role   │   │
+│  └─────────────────────────────────────────────────────┘   │
+└──────────────────────────┬──────────────────────────────────┘
+                           │ HTTP POST (scan results)
+              ┌────────────▼────────────┐
+              │     C++ Agent           │
+              │  Linux · Raw Sockets    │
+              │                         │
+              │  ICMP Sweep (Ping)      │
+              │  TCP Port Scanner       │
+              │  FingerPrint Session    │
+              │  Node · Port · Vuln     │
+              └─────────────────────────┘
 ```
 
 ---
 
-## 📦 Módulos do Projeto
+## Modules
 
-### 1. Server — Spring Boot C2 (Java)
+### ZombieKeeper-Api — Spring Boot C2 Server
 
-O servidor é o núcleo de controle da plataforma. Construído com **Spring Boot 3**, expõe tanto uma interface desktop via **JavaFX + FXML** quanto uma **REST API** para integração com agentes e scripts externos.
+The core of the platform. Built with **Spring Boot 4 + Java 21**, it exposes a full REST API consumed by the web dashboard and by agents.
 
-#### Camada de API REST (`src/main/java/.../api/controller/`)
+#### REST Controllers
 
-| Controller | Responsabilidade |
-|---|---|
-| `AgentRestController` | Registro, listagem e gestão de agentes ativos |
-| `ReconRestController` | Recebimento de dados de fingerprint enviados pelo agente C++ |
-| `AuthRestController` | Login e geração de tokens JWT |
-| `UserRestController` | Gestão de operadores da plataforma |
-
-#### Interface Desktop JavaFX (`src/main/java/.../ui/`)
-
-A navegação entre telas é gerenciada pelo `SceneManager` usando o `ViewEnum` como mapa de rotas. Cada tela FXML tem seu próprio controller dedicado:
-
-| Tela FXML | Controller | Função |
+| Controller | Path | Responsibility |
 |---|---|---|
-| `main_dashboard.fxml` | `DashboardUiController` | Painel central de operações |
-| `agents.fxml` | `AgentUIController` + `LootUIController` | Visualização de Zombies e dados coletados |
-| `ScannerManager.fxml` / `scanner.fxml` | `ScannerManagerController` | Disparo e gestão de sessões de scan |
-| `network_session.fxml` | `NetworkSessionUIController` + `NetworkNodeUIController` | Detalhamento de topologia descoberta |
-| `login.fxml` | `AuthUiController` | Autenticação de operadores |
-| `settings.fxml` | `SettingsUiController` | Configurações da plataforma |
-| `home.fxml` | `HomeUiController` | Tela inicial pós-login |
+| `AgentRestController` | `/api/c2-server/agents/**` | Agent registration, listing, status, ping, deletion |
+| `AuthRestController` | `/api/auth/**` | Login, user management, role management |
+| `ReconRestController` | `/api/recon/**` | Receives network scan data from C++ agents |
 
-#### Modelo de Dados (`src/main/java/.../model/`)
+#### Data Model
 
 ```
-Agent          → representa um host comprometido (Zombie)
-  └── Loot     → arquivos/credenciais extraídos do agente
+Agent           → compromised host (Zombie) with status, flags, tags, geo location
+  └── Loot      → files / credentials extracted from the agent
 
-NetworkSession → sessão completa de fingerprint de uma sub-rede
-  └── NetworkNode     → host descoberto na varredura
-        └── Port          → porta aberta identificada no host
-              └── Vulnerability → fraqueza associada à porta/serviço
+NetworkSession  → full fingerprint session of a subnet
+  └── NetworkNode     → discovered host in the scan
+        └── Port      → open port identified on the host
+              └── Vulnerability → weakness mapped to the port/service
 
-User  → operador da plataforma
-  └── Role → permissão de acesso (ex: ADMIN, OPERATOR)
+User  → platform operator
+  └── Role → access permission (ADMIN / OPERATOR)
 
 Enums:
-  Flags         → estados/flags de comportamento de um agente
-  Tags          → categorização de agentes por tipo/objetivo
-  SeverityLevel → classificação de vulnerabilidades (LOW / MEDIUM / HIGH / CRITICAL)
+  Flags         → agent behavior flags
+  Tags          → agent categorization
+  StatusAgent   → ONLINE / OFFLINE / IDLE
+  SeverityLevel → LOW / MEDIUM / HIGH / CRITICAL
+  LocationSource → IP_API / MANUAL / AGENT_REPORTED
 ```
 
-#### Serviços (`src/main/java/.../service/`)
+#### Services
 
-- **`AgentsService`** — Ciclo de vida dos agentes: registro, atualização de status, consulta de Loot
-- **`AuthService`** — Autenticação de operadores com Spring Security e controle de roles
-- **`LocalNetworkFingerprintService`** — Orquestra a execução do agente C++ e processa os resultados recebidos
-- **`LocalNetworkDatabaseManagerService`** — Persiste os dados de rede (Nodes, Ports, Vulnerabilities) no banco de dados
-- **`ProcessManagerService`** — Gerencia a execução de processos externos via `ProcessBuilder` (binário do agente C++)
+| Service | Responsibility |
+|---|---|
+| `AgentsService` | Agent lifecycle: registration, status updates, loot retrieval |
+| `AuthService` | Operator authentication with Spring Security + JWT + Roles |
+| `AgentLocationService` | Geolocation tracking and enrichment of agent IPs |
+| `LocalNetworkFingerprintService` | Orchestrates C++ agent execution and processes scan results |
+| `LocalNetworkDatabaseManagerService` | Persists network scan data (Nodes, Ports, Vulnerabilities) |
+| `ProcessManagerService` | Manages external process execution via `ProcessBuilder` |
 
-#### Segurança (`src/main/java/.../configuration/security/`)
+#### Security
 
-- **`SecurityConfig`** — Configuração central do Spring Security: filtros JWT, rotas protegidas e roles de acesso
-- **`CorsConfig`** — Política de CORS para comunicação cross-origin com agentes e automações externas
+- **JWT** — stateless authentication with configurable expiration
+- **Spring Security** — route protection with role-based access control
+- **CORS** — configured for the Next.js frontend origin
+- **Bcrypt** — password hashing with configurable strength
 
 ---
 
-### 2. Agent — Network Scanner (C++)
+### ZombieKeeper-Web — Next.js Dashboard
 
-O agente é um binário nativo compilado em **C++17** usando **Raw Sockets** (POSIX no Linux). Ele pode ser invocado diretamente pelo servidor via `ProcessManagerService` ou deployado manualmente em um host-alvo.
+Dark-terminal operator interface built with **Next.js 15 + React 19 + TypeScript + Tailwind CSS**.
 
-#### Estrutura (`modules/linux/c++/code/localNetwork/`)
+#### Views
+
+| View | Description |
+|---|---|
+| **Dashboard** | Stats overview with live agent counter and world map |
+| **Agents** | Agent table with filtering, status indicators, and detail panel |
+| **Shell** | Interactive command shell per agent |
+| **Network** | Network topology discovered by the C++ agent |
+| **Scanner** | Trigger and monitor network fingerprint sessions |
+| **Payloads** | Payload generator for agent deployment |
+| **Listeners** | C2 listener management |
+| **Credentials** | Credentials database from loot |
+| **Loot** | Exfiltrated data viewer |
+| **Reports** | Report builder |
+| **Users** | Operator account management (ADMIN only) |
+| **Settings** | Platform configuration |
+
+#### Key Implementation Details
+
+- All API calls are centralized in `src/lib/api.ts` with JWT injection
+- Token stored in `localStorage` under key `zk_token`
+- Agent list polls every 30 seconds via `setInterval`
+- World map uses Leaflet with SSR disabled via `next/dynamic`
+- Backend URL configured via `NEXT_PUBLIC_API_URL` (default: `http://localhost:8080`)
+
+---
+
+### Agent — C++ Network Scanner
+
+Native binary compiled in **C++17** using **POSIX Raw Sockets**. Invoked by the server via `ProcessManagerService` or deployed manually on a target host.
+
+#### Source Structure
 
 ```
-main.cpp                  → Entry point da aplicação
-App.cpp / App.h           → Controlador principal do agente
-
-FingerPrintSession.cpp    → Orquestra a sessão completa de fingerprint
-SessionBuild.cpp          → Constrói e serializa o objeto Session para envio HTTP
-
-model/
-├── Node.cpp/h            → Host descoberto na sub-rede
-├── Port.cpp/h            → Porta aberta e protocolo identificado
-├── Session.cpp/h         → Sessão agregada (contém lista de Nodes)
-└── Vulnerability.cpp/h  → Vulnerabilidade mapeada a uma porta
-
-scanners/
-└── Scanner.cpp/h        → Engine de varredura via Raw Sockets
-
-../ping/
-└── Ping.cpp/h            → ICMP sweep para host discovery
+ZombieKeeper-Arsenal/cpp/
+├── localFingerPrint/
+│   ├── localNetwork/
+│   │   ├── app/            → main.cpp, App.cpp — entry point
+│   │   ├── FingerPrintSession.cpp  → orchestrates the full scan
+│   │   ├── SessionBuild.cpp        → serializes and sends results via HTTP
+│   │   ├── model/          → Node, Port, Session, Vulnerability
+│   │   └── scanners/       → Scanner.cpp — Raw Socket TCP scan engine
+│   └── Makefile
+└── ping/
+    └── Ping.cpp            → ICMP sweep for host discovery
 ```
 
-#### Fluxo de Execução
+#### Execution Flow
 
 ```
-Início
-  │
-  ▼
 App::run()
   │
-  ▼
-FingerPrintSession::start()
-  │
-  ├──► Ping::sweep()
-  │         Envia pacotes ICMP para cada IP da sub-rede
-  │         Mapeia hosts ativos
-  │
-  ├──► Scanner::portScan()
-  │         Raw socket scan nas portas de cada host ativo
-  │         Identifica serviços e protocolos
-  │
-  ├──► Model::build()
-  │         Constrói Node → Port → Vulnerability para cada resultado
-  │
-  └──► SessionBuild::serialize()
-            Serializa a Session completa
-            Envia ao C2 Server via HTTP POST
+  ├─► Ping::sweep()       — ICMP packets to each IP in the subnet
+  ├─► Scanner::portScan() — Raw socket scan on active hosts
+  ├─► Model::build()      — Node → Port → Vulnerability per result
+  └─► SessionBuild::send() — HTTP POST of full Session to C2 Server
 ```
 
-#### Scripts de Deploy (`src/main/resources/static/auxScripts/`)
-
-| Arquivo | Função |
-|---|---|
-| `windows/c++/HTTP/register.cpp` | Código C++ executado no host Windows para registrar o agente no C2 via HTTP |
-| `linux/` | Diretório para scripts de deploy Linux (em desenvolvimento) |
-| `windows/python/` | Automação de deploy via Python no Windows (em desenvolvimento) |
+**Requires root / elevated privileges** (Raw Sockets need `CAP_NET_RAW`).
 
 ---
 
-### 3. Automation — Python Scripts
-
-Scripts para automação de fluxos de integração com o servidor C2.
+### Automation — Python Scripts
 
 ```
-modules/python/localFingerPrint/
-├── automation/           → Automação geral (em desenvolvimento)
+ZombieKeeper-Arsenal/python/LocalFingerPrint/
 └── requestAutomation/
-    └── request.py        → Automação de requisições HTTP ao C2 Server
+    └── request.py    — HTTP request automation for C2 server interaction
 ```
 
 ---
 
-## 🛠️ Stack Tecnológica
+## Tech Stack
 
-| Componente | Tecnologia |
+| Component | Technology |
 |---|---|
-| C2 Server | Java 17 + Spring Boot 3.x |
-| Interface Desktop | JavaFX + FXML |
-| ORM / Persistência | Spring Data JPA + Hibernate |
-| Banco de Dados | H2 (dev) / PostgreSQL (prod) |
-| Autenticação | Spring Security + JWT + Roles |
-| API REST | Spring Web MVC + Jackson |
-| Monitoramento | Spring Actuator + Micrometer |
-| Network Agent | C++17 + Raw Sockets (POSIX / WinSock2) |
-| Build Server | Apache Maven (mvnw wrapper incluso) |
-| Build Agent | GNU Make |
-| Automação | Python 3 |
+| C2 API Server | Java 21 + Spring Boot 4.0 |
+| ORM / Persistence | Spring Data JPA + Hibernate + Liquibase |
+| Database | MySQL 8 |
+| Authentication | Spring Security + JWT + Roles |
+| REST API | Spring Web MVC + Jackson |
+| Web Dashboard | Next.js 15 + React 19 + TypeScript |
+| UI Styling | Tailwind CSS + inline styles |
+| Map | Leaflet + Leaflet.markercluster |
+| Network Agent | C++17 + Raw Sockets (POSIX / Linux) |
+| Build (API) | Apache Maven 3 (mvnw wrapper) |
+| Build (Agent) | GNU Make |
+| Build (Web) | npm / Next.js |
+| Automation | Python 3 |
 
 ---
 
-## 📁 Estrutura do Projeto
+## Project Structure
 
 ```
-Zombie-Keeper/
+ZombieKeeper/
 │
-├── src/                                      # C2 Server (Spring Boot + JavaFX)
-│   └── main/
-│       ├── java/com/manager/Zombie_Keeper/
-│       │   ├── api/controller/               # REST: Agent, Auth, User, Recon
-│       │   ├── ui/controller/                # JavaFX: Dashboard, Agents, Scanner...
-│       │   ├── ui/manager/                   # SceneManager + ViewEnum
-│       │   ├── service/                      # Agents, Auth, Fingerprint, ProcessMgr
-│       │   ├── model/entity/                 # JPA: Agent, Loot, NetworkNode, Port...
-│       │   ├── model/enums/                  # Flags, Tags, SeverityLevel
-│       │   ├── repository/                   # Spring Data Repositories
-│       │   ├── configuration/security/       # SecurityConfig + CorsConfig
-│       │   ├── dtos/                         # DTOs de request/response
-│       │   └── exception/                    # DuplicateAgentException
-│       └── resources/
-│           ├── fxml/                         # Telas JavaFX
-│           ├── static/css/                   # Estilos das telas
-│           ├── static/imgs/                  # Assets visuais
-│           └── static/auxScripts/            # Scripts de deploy de agentes
+├── ZombieKeeper-Api/                     # Spring Boot C2 Server
+│   ├── src/main/java/com/manager/Zombie_Keeper/
+│   │   ├── controller/                   # REST: Agent, Auth, Recon
+│   │   ├── service/                      # Agents, Auth, Fingerprint, ProcessMgr, Location
+│   │   ├── model/entity/                 # JPA: Agent, Loot, NetworkNode, Port, Vulnerability...
+│   │   ├── model/enums/                  # Flags, Tags, StatusAgent, SeverityLevel
+│   │   ├── repository/                   # Spring Data repositories
+│   │   ├── dtos/                         # Request/response DTOs
+│   │   ├── configuration/security/       # SecurityConfig + CorsConfig
+│   │   ├── util/                         # JwtUtil
+│   │   └── exception/                    # DuplicateAgentException
+│   ├── src/main/resources/
+│   │   └── application.properties        # Server configuration
+│   ├── .env                              # Environment variables (gitignored)
+│   └── pom.xml
 │
-├── modules/                                  # Módulos nativos e automação
-│   ├── linux/c++/code/
-│   │   ├── localNetwork/                     # Agente C++: Scanner, FingerPrint, Models
-│   │   └── ping/                             # ICMP Ping via Raw Sockets
-│   ├── python/localFingerPrint/              # Automação Python
-│   └── windows/                              # Agente Windows (em desenvolvimento)
+├── ZombieKeeper-Web/                     # Next.js Dashboard
+│   ├── src/
+│   │   ├── app/                          # Next.js App Router (layout + root page)
+│   │   ├── components/                   # React components by feature
+│   │   │   ├── layout/                   # App, LoginPage, Menubar, Sidebar
+│   │   │   ├── agents/                   # AgentsView, AgentShell, AgentTableHeader
+│   │   │   ├── dashboard/                # DashboardView, WorldMap
+│   │   │   ├── network/                  # NetworkView
+│   │   │   ├── scanner/                  # ScannerView
+│   │   │   ├── payloads/                 # PayloadGenerator
+│   │   │   ├── listeners/                # ListenersView
+│   │   │   ├── intelligence/             # CredentialsView, LootView, ReportsView
+│   │   │   ├── users/                    # UsersView
+│   │   │   └── shared/                   # SettingsView
+│   │   ├── lib/                          # api.ts, data.ts, networkData.ts
+│   │   └── styles/                       # globals.css (Tailwind + CSS vars)
+│   ├── .env.local                        # NEXT_PUBLIC_API_URL (gitignored)
+│   └── package.json
 │
-├── pom.xml                                   # Maven build config
-└── mvnw / mvnw.cmd                           # Maven wrapper
+├── ZombieKeeper-Arsenal/                              # All native agents, exploits & automation
+│   ├── cpp/
+│   │   ├── LocalFingerPrint/             # C++17 network fingerprint agent
+│   │   │   ├── localNetwork/             # Scanner, FingerPrintSession, Models
+│   │   │   │   ├── app/                  # main.cpp, App.cpp — entry point
+│   │   │   │   ├── model/               # Node, Port, Session, Vulnerability
+│   │   │   │   └── scanners/            # Raw Socket TCP scan engine
+│   │   │   └── Makefile
+│   │   └── Ping/                         # ICMP sweep library (used by LocalFingerPrint)
+│   │       ├── Ping.cpp
+│   │       └── h/Ping.h
+│   ├── python/
+│   │   └── LocalFingerPrint/             # HTTP automation scripts
+│   │       └── requestAutomation/
+│   ├── go/                               # Go agent & tools (planned)
+│   ├── rust/                             # Rust implant & tools (planned)
+│   ├── assembly/                         # x86-64 shellcode & exploits (planned)
+│   └── windows/                          # Windows agent (planned)
+│
+├── pom.xml                               # Maven aggregator (monorepo root)
+├── start.sh                              # Startup script for all services
+└── README.md
 ```
 
 ---
 
-## 🚀 Instalação e Setup
+## Installation & Setup
 
-### Pré-requisitos
+### Prerequisites
 
-- **Java 17+** e **Maven 3.8+** (servidor)
-- **GCC 11+** com suporte a C++17 no Linux — ou **MSVC 2022** no Windows (agente)
-- **Python 3.10+** (scripts de automação)
-- Permissões **root/administrador** no host onde o agente será executado (Raw Sockets exigem privilégios elevados)
+| Tool | Version | Purpose |
+|---|---|---|
+| Java (JDK) | 21+ | C2 API Server |
+| Maven | 3.8+ | Build tool (or use `mvnw` wrapper) |
+| Node.js | 20+ | Web dashboard |
+| MySQL | 8+ | Database |
+| GCC / G++ | 11+ with C++17 | C++ agent (Linux) |
+| Python | 3.10+ | Automation scripts |
 
-### 1. Clonar o repositório
+> Raw Sockets require **root or `CAP_NET_RAW`** on the host running the C++ agent.
+
+---
+
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/jtave111/Zombie-Keeper.git
-cd Zombie-Keeper
+git clone https://github.com/jtave111/ZombieKeeper.git
+cd ZombieKeeper
 ```
 
-### 2. Iniciar o C2 Server
+### 2. Configure environment variables
 
 ```bash
+# Copy and edit the API environment file
+cp ZombieKeeper-Api/.env.example ZombieKeeper-Api/.env
+# Edit with your database credentials, JWT secret, etc.
+nano ZombieKeeper-Api/.env
+
+# Copy and edit the Web environment file
+cp ZombieKeeper-Web/.env.local.example ZombieKeeper-Web/.env.local
+# Set NEXT_PUBLIC_API_URL to your API server address
+nano ZombieKeeper-Web/.env.local
+```
+
+**Minimum required variables in `ZombieKeeper-Api/.env`:**
+
+```env
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=c2_db
+DB_USERNAME=your_db_user
+DB_PASSWORD=your_db_password
+JWT_SECRET=your-secret-key-at-least-32-chars
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=YourSecurePassword!
+```
+
+**Minimum required in `ZombieKeeper-Web/.env.local`:**
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8080
+```
+
+### 3. Start all services (recommended)
+
+```bash
+# Start API + Web dashboard
+./start.sh
+
+# Build API first, then start everything
+./start.sh --build
+
+# Start only the API
+./start.sh --api-only
+
+# Start only the Web dashboard
+./start.sh --web-only
+```
+
+### 4. Manual startup
+
+**API Server:**
+```bash
+cd ZombieKeeper-Api
 ./mvnw spring-boot:run
+# API available at http://localhost:8080
 ```
 
-A interface JavaFX abrirá automaticamente. O servidor REST fica disponível em `http://localhost:8080`.
+**Web Dashboard:**
+```bash
+cd ZombieKeeper-Web
+npm install
+npm run dev
+# Dashboard available at http://localhost:3000
+```
 
-### 3. Compilar o Agente C++ (Linux)
+### 5. Compile the C++ Agent (Linux)
 
 ```bash
-cd modules/linux/c++/code/localFingerPrint
+cd ZombieKeeper-Arsenal/cpp/LocalFingerPrint
 make
+# Binary: ./LocalFingerPrint
 ```
 
-O binário `LocalFingerPrint` será gerado no mesmo diretório.
-
-### 4. Executar o Agente
-
+**Run the agent** (requires root):
 ```bash
-# Raw Sockets requerem privilégios elevados
 sudo ./LocalFingerPrint
 ```
 
-O agente realizará o fingerprint da sub-rede local e enviará os resultados ao C2 Server via HTTP.
+---
+
+## Usage
+
+### Operator Workflow
+
+**1. Login** — Access `http://localhost:3000` and authenticate with your operator credentials.
+
+**2. Dashboard** — Overview panel showing active agent count, total agents, and a world map with agent geolocations.
+
+**3. Agents** — Full agent table with status (`ONLINE` / `OFFLINE` / `IDLE`), flags, tags, and last seen. Double-click an agent to open its shell.
+
+**4. Shell** — Interactive command interface for an active agent.
+
+**5. Scanner** — Trigger a local network fingerprint session. The server will invoke the C++ binary on the target agent, which scans the subnet and reports back.
+
+**6. Network** — Visualize the discovered topology: hosts, open ports, and mapped vulnerabilities with severity levels.
+
+**7. Payloads** — Generate deployment payloads for new agents.
+
+**8. Users** — (ADMIN only) Create, update, and remove operator accounts and manage role assignments.
 
 ---
 
-## 💻 Uso
+## Roadmap
 
-### Fluxo de Operação
-
-**1. Login** — Autentique-se na tela `login.fxml` com suas credenciais de operador.
-
-**2. Dashboard** — O `main_dashboard` exibe o panorama geral: agentes ativos, sessões de rede recentes e alertas.
-
-**3. Agentes (`agents.fxml`)** — Visualize todos os Zombies registrados com status, flags e tags. Acesse os Loots coletados de cada agente.
-
-**4. Scanner (`ScannerManager.fxml`)** — Inicie uma sessão de fingerprint em um agente ativo. O `ProcessManagerService` invoca o binário C++, que executa no host-alvo e retorna a topologia da sub-rede.
-
-**5. Sessão de Rede (`network_session.fxml`)** — Explore os resultados: hosts descobertos (`NetworkNode`), portas abertas (`Port`) e vulnerabilidades mapeadas (`Vulnerability`) com nível de severidade.
-
-**6. Settings (`settings.fxml`)** — Configure parâmetros do servidor e preferências da plataforma.
+> Legend: **[x]** Done · **[~]** In Progress (UI built, backend pending) · **[ ]** Planned
 
 ---
 
-## 🗺️ Roadmap
-
-**Servidor C2**
-- [x] Arquitetura Spring Boot + REST API + JavaFX UI
-- [x] Autenticação com Spring Security + Roles (ADMIN / OPERATOR)
-- [x] Modelo de dados completo: Agent, Loot, NetworkSession, NetworkNode, Port, Vulnerability
-- [x] `ProcessManagerService` para execução de binários externos
-- [x] Configuração de CORS e Spring Security
-- [ ] Canal C2 persistente via WebSocket (comunicação bidirecional em tempo real)
-- [ ] Mapa visual de topologia de rede no dashboard
-- [ ] Módulo de Loot: upload e visualização de arquivos exfiltrados
-- [ ] Exportação de relatórios de sessão (PDF/JSON)
-- [ ] Integração com MITRE ATT&CK Navigator
-
-**Agente C++**
-- [x] ICMP sweep para host discovery (`Ping.cpp`)
-- [x] Port scanner via Raw Sockets (`Scanner.cpp`)
-- [x] Modelo de dados: Session, Node, Port, Vulnerability
-- [x] Serialização e envio HTTP dos resultados ao C2
-- [x] Suporte Linux com build via Make
-- [ ] Suporte Windows completo (estrutura `modules/windows/` criada)
-- [ ] Canal C2 persistente (keep-alive com o servidor)
-- [ ] Banner grabbing para identificação de versões de serviços
-- [ ] Correlação automática com CVEs conhecidos
-- [ ] Módulos de post-exploitation
-
-**Automação Python**
-- [x] Script base de requisições HTTP (`request.py`)
-- [ ] Automação de fluxo completo de registro de agente
-- [ ] Parser de sessões de rede para análise offline
+**C2 Server (API)**
+- [x] Spring Boot 4 REST API + Spring Security + JWT + Roles
+- [x] Full data model: Agent, Loot, NetworkSession, NetworkNode, Port, Vulnerability
+- [x] Agent geolocation tracking (`AgentLocation` + `AgentLocationService`)
+- [x] `ProcessManagerService` for external binary execution
+- [x] Liquibase database migrations
+- [x] CORS + security configuration for web frontend
+- [ ] `GET /api/c2-server/sessions` — network session listing endpoint
+- [ ] WebSocket channel for real-time agent ↔ server communication
+- [ ] Loot: file upload, storage, and download endpoints
+- [ ] Listener management API (create, list, stop)
+- [ ] Credentials storage and retrieval API
+- [ ] Session report generation (PDF / JSON export)
+- [ ] Settings persistence API (server config, C2 parameters)
+- [ ] MITRE ATT&CK Navigator integration
+- [ ] CVE auto-correlation via NVD API
 
 ---
-## 📜 Aviso Legal
 
-Este projeto foi desenvolvido **exclusivamente para fins educacionais, pesquisa em segurança ofensiva e exercícios em ambientes controlados** — laboratórios de pentest, operações de Red Team com autorização escrita e explícita do proprietário da infraestrutura, e competições de CTF.
+**Web Dashboard**
+- [x] Dark terminal UI with full operator navigation (12 views)
+- [x] Login with JWT authentication
+- [x] Dashboard with live agent stats and Leaflet world map
+- [x] Agent table — real API, filtering, search, kill action
+- [x] User management — full CRUD with role assignment (real API)
+- [~] Agent Shell — terminal UI done, responses are hardcoded (need real command execution)
+- [~] Agent Shell tabs — Process List, File Manager, Port Forward, Sysinfo (UI built, no backend)
+- [~] Network Scanner view — UI + command builder done, scan execution is simulated
+- [~] Payload Generator — full config UI done, build output is fake (no real binary generation)
+- [~] Network Topology view — UI built, waiting for `GET /api/c2-server/sessions` endpoint
+- [~] Report Builder — section picker and format selector done, no actual report generation
+- [~] Settings — all tabs UI complete, no persistence (save/test buttons non-functional)
+- [ ] Listeners view — backend integration (UI is empty placeholder)
+- [ ] Credentials view — backend integration (UI is empty placeholder)
+- [ ] Loot file browser, preview, and download
+- [ ] Real-time operator feed via WebSocket
+- [ ] Network topology graph (D3.js or vis.js)
+- [ ] Shell — real command execution piped to agent
+- [ ] Payload download after generation
+- [ ] Report export (PDF / HTML)
 
-**O uso desta ferramenta contra sistemas sem autorização prévia é crime**, podendo violar:
-- **Brasil:** Lei nº 12.737/2012 (Lei Carolina Dieckmann) e art. 154-A do Código Penal
-- **EUA:** Computer Fraud and Abuse Act (CFAA)
-- Legislações equivalentes em outras jurisdições
+---
 
-O autor **não se responsabiliza** por qualquer uso indevido, ilegal ou dano causado pelo uso desta plataforma fora dos contextos autorizados descritos acima.
+**C++ Agent (Linux)**
+- [x] ICMP sweep for host discovery (`Ping.cpp`)
+- [x] TCP port scanner via Raw Sockets (`Scanner.cpp`)
+- [x] Session model: Node → Port → Vulnerability
+- [x] Session serialization and HTTP POST to C2 server
+- [x] Linux build via GNU Make
+- [ ] Service banner grabbing (identify service versions on open ports)
+- [ ] OS fingerprinting via TTL / TCP stack analysis
+- [ ] Keep-alive beacon with configurable check-in interval
+- [ ] Bi-directional C2 channel (receive and execute server commands)
+- [ ] File exfiltration module (read + HTTP POST loot)
+- [ ] Automated CVE correlation for discovered service versions
+- [ ] Post-exploitation: privilege escalation checks
+- [ ] Post-exploitation: persistence mechanisms (cron, systemd)
+
+---
+
+**C++ Agent (Windows)**
+- [ ] WinSock2 port of the network scanner
+- [ ] Windows service banner grabbing
+- [ ] Agent registration via HTTP (structure exists in `ZombieKeeper-Arsenal/windows/`)
+- [ ] Build via MSVC / CMake
+- [ ] Process hollowing — spawn a legitimate process and replace its memory
+- [ ] DLL injection via `CreateRemoteThread` + `LoadLibrary`
+- [ ] Reflective DLL injection (no disk write, in-memory only)
+- [ ] Token impersonation — steal tokens from high-privilege processes
+- [ ] UAC bypass techniques (fodhelper, CMSTPLUA, etc.)
+- [ ] Persistence: Registry (`Run` keys, service installation)
+- [ ] Persistence: Scheduled Tasks via COM (`ITaskService`)
+- [ ] Persistence: WMI event subscription
+- [ ] LSASS credential dump (Mimikatz-style, in-memory)
+- [ ] SAM / NTDS hash extraction
+- [ ] ETW (Event Tracing for Windows) patching to blind defenders
+- [ ] AMSI bypass techniques (patching `amsi.dll` in memory)
+- [ ] Windows Defender exclusion path abuse
+
+---
+
+**Go Modules** *(planned — `ZombieKeeper-Arsenal/go/`)*
+- [ ] High-performance concurrent port scanner (goroutine pool)
+- [ ] Agent beacon / implant — cross-compile to Linux / Windows / macOS
+- [ ] HTTP/S C2 comms with TLS + certificate pinning
+- [ ] mTLS mutual authentication between agent and server
+- [ ] DNS-over-HTTPS covert channel (DoH C2)
+- [ ] Domain fronting via CDN headers
+- [ ] Traffic obfuscation — HTTP C2 disguised as legitimate browsing
+- [ ] In-memory payload execution (no disk write, `memfd_create` on Linux)
+- [ ] SOCKS5 proxy pivot through compromised host
+- [ ] Port forwarding / reverse tunnel via SSH or raw TCP
+- [ ] Go-based implant with staged payload (stager → full agent)
+- [ ] Process injection via `ptrace` (Linux) / `NtWriteVirtualMemory` (Windows)
+- [ ] ELF / PE packer to reduce binary signatures
+- [ ] Polymorphic stub generator (randomize binary layout per build)
+
+---
+
+**Rust Modules** *(planned — `ZombieKeeper-Arsenal/rust/`)*
+- [ ] Memory-safe network scanner (replaces C++ scanner long-term)
+- [ ] Rust-based implant — minimal footprint, no runtime dependencies
+- [ ] BOF (Beacon Object File) compatible modules
+- [ ] Encrypted payload dropper
+- [ ] Anti-debug and anti-sandbox checks
+- [ ] Custom TLS stack with traffic fingerprint evasion
+- [ ] Kernel module / rootkit prototype (Linux LKM, lab only)
+
+---
+
+**PowerShell / .NET** *(planned — `ZombieKeeper-Arsenal/windows/powershell/`)*
+- [ ] PowerShell agent — runs entirely in memory (`IEX` / `Invoke-Expression`)
+- [ ] PowerShell AMSI bypass one-liners (lab reference)
+- [ ] .NET (C#) agent using `System.Reflection` for in-memory assembly loading
+- [ ] BloodHound-style AD enumeration (users, groups, ACLs, GPOs)
+- [ ] Kerberoasting — SPN enumeration + TGS ticket extraction
+- [ ] AS-REP Roasting — attack accounts with pre-auth disabled
+- [ ] Pass-the-Hash via `sekurlsa::pth` wrapper
+- [ ] Pass-the-Ticket (import forged Kerberos tickets)
+- [ ] DCSync attack — simulate domain controller replication to dump hashes
+- [ ] LDAP enumeration (users, computers, trusts, domain info)
+- [ ] SMB enumeration (shares, sessions, users via NetAPI)
+
+---
+
+**Assembly / Shellcode / Exploit Development** *(planned — `ZombieKeeper-Arsenal/assembly/`)*
+- [ ] x86-64 shellcode stubs — Linux `execve("/bin/sh")` via raw syscalls
+- [ ] x86-64 shellcode stubs — Windows `WinExec` / reverse shell via WinSock2
+- [ ] Position-independent shellcode (PIC) — no hardcoded addresses
+- [ ] Staged shellcode loader (stager downloads and executes second stage)
+- [ ] XOR / AES encrypted shellcode with runtime decryption stub
+- [ ] Stack-based buffer overflow exploit templates (ret2win, ret2libc)
+- [ ] ret2syscall chain construction helpers
+- [ ] ROP gadget finder integration (ROPgadget / ropper output parser)
+- [ ] ROP chain builder for bypassing NX/DEP
+- [ ] SROP — Sigreturn-Oriented Programming exploit template
+- [ ] Format string vulnerability exploit templates (`%n` write-what-where)
+- [ ] Heap exploitation templates — tcache poisoning, fastbin dup
+- [ ] Use-After-Free (UAF) exploit template
+- [ ] Integer overflow → heap overflow exploit template
+- [ ] Type confusion exploit template (C++ vtable hijack)
+- [ ] ELF injection — parasitic code injection into existing binaries
+- [ ] PE injection — inject code into Windows PE headers
+- [ ] ASLR leak techniques (format string, partial overwrite)
+- [ ] Kernel exploit templates (lab VMs only): `commit_creds` ret2user, dirty pipe style
+
+---
+
+**Network Recon & OSINT** *(planned — `ZombieKeeper-Arsenal/recon/`)*
+- [ ] Subdomain enumeration (brute-force + certificate transparency logs)
+- [ ] DNS zone transfer attempt + DNS enumeration
+- [ ] WHOIS / ASN lookup and IP range mapping
+- [ ] Shodan API integration — passive host discovery
+- [ ] Web application fingerprinting (tech stack detection)
+- [ ] Directory and file brute-force (gobuster-style)
+- [ ] Web crawling and link extraction
+- [ ] SSL/TLS certificate analysis and misconfiguration detection
+- [ ] SMTP enumeration (VRFY, EXPN, user enumeration)
+- [ ] SNMP enumeration (community string brute-force, MIB walk)
+- [ ] LDAP anonymous bind enumeration
+- [ ] SMB null session and share enumeration
+- [ ] FTP anonymous login check + directory traversal
+
+---
+
+**Post-Exploitation Framework** *(planned)*
+- [ ] Screenshot capture (X11 / Win32 GDI)
+- [ ] Keylogger module (X11 `XRecord` / Win32 `SetWindowsHookEx`)
+- [ ] Clipboard monitor and exfiltration
+- [ ] Browser credential extraction (Chromium SQLite, Firefox key4.db)
+- [ ] SSH known_hosts and private key harvesting
+- [ ] Environment variable and secrets scanning (`.env`, AWS keys, tokens)
+- [ ] Docker socket abuse for container escape
+- [ ] Sudo misconfiguration checker (GTFOBins-style)
+- [ ] SUID/SGID binary enumeration
+- [ ] Cron job hijacking opportunities scanner
+- [ ] `/proc` memory scraping for credentials in running processes
+- [ ] Lateral movement: SSH agent forwarding abuse
+- [ ] Lateral movement: credential re-use scanner across discovered hosts
+
+---
+
+**Evasion & Anti-Forensics** *(planned)*
+- [ ] Process name spoofing (`argv[0]` manipulation on Linux)
+- [ ] File timestamp manipulation (timestomping)
+- [ ] Log tampering — selective `wtmp` / `auth.log` entry removal
+- [ ] Memory-only execution — no artifact on disk
+- [ ] C2 traffic mimicry (disguise as HTTPS, DNS, or WebSocket)
+- [ ] Sleep obfuscation — encrypt implant memory during sleep intervals
+- [ ] Unhooking EDR hooks in `ntdll.dll` (Windows, fresh copy from disk)
+- [ ] Heaven's Gate technique (32-bit → 64-bit call transition)
+
+---
+
+**Python — Attacks & Offensive Tooling** *(planned — `ZombieKeeper-Arsenal/python/`)*
+- [x] HTTP request automation base (`request.py`)
+- [ ] Full agent registration and check-in automation
+- [ ] Offline network session parser and report generator
+- [ ] Service version → CVE lookup automation (NVD / OSV API)
+- [ ] Custom wordlist generator from OSINT target info (names, dates, keywords)
+- [ ] Automated recon → exploit selection → report pipeline (lab environments)
+- [ ] **Network attacks**
+  - [ ] ARP spoofing + MITM traffic interceptor (`scapy`)
+  - [ ] ARP cache poisoning to redirect subnet traffic
+  - [ ] DNS spoofing — intercept and forge DNS responses on LAN
+  - [ ] DHCP starvation + rogue DHCP server (redirect default gateway)
+  - [ ] ICMP redirect attack to hijack routing tables
+  - [ ] TCP session hijacking (RST injection, sequence prediction)
+  - [ ] SSL stripping — downgrade HTTPS to HTTP on MITM position
+  - [ ] LLMNR / NBT-NS / mDNS poisoning (`Responder`-style)
+  - [ ] IPv6 rogue router advertisement (SLAAC attack)
+  - [ ] STP (Spanning Tree) BPDU manipulation — become root bridge
+  - [ ] VLAN hopping via 802.1Q double-tagging
+  - [ ] 802.1X EAP downgrade and identity harvesting
+- [ ] **Web application attacks**
+  - [ ] SQL injection fuzzer with blind / time-based detection
+  - [ ] XSS payload injector and reflective scanner
+  - [ ] SSRF probe — internal network discovery via vulnerable parameter
+  - [ ] XXE injection tester (file read + SSRF via XML parser)
+  - [ ] SSTI detection (Server-Side Template Injection — Jinja2, Twig, Freemarker)
+  - [ ] Directory traversal / path traversal fuzzer
+  - [ ] JWT tampering toolkit (none alg, RS256→HS256, brute-force weak secrets)
+  - [ ] OAuth 2.0 flow attack — state parameter bypass, open redirect
+  - [ ] CORS misconfiguration scanner
+  - [ ] GraphQL introspection + batch query attack
+  - [ ] HTTP request smuggling (CL.TE / TE.CL) probe
+  - [ ] Deserialization payload generator (Java / PHP / Python pickle)
+  - [ ] Web cache poisoning detector
+- [ ] **Credential attacks**
+  - [ ] SSH brute-force with threading and delay jitter (`paramiko`)
+  - [ ] FTP / Telnet / RDP credential spraying
+  - [ ] HTTP Basic / Digest / Form-based auth brute-force
+  - [ ] Hash cracking helper — MD5, SHA1, NTLM wordlist attack
+  - [ ] Default credential scanner across discovered services
+  - [ ] Credential stuffing with proxy rotation
+- [ ] **Phishing & Social Engineering** *(authorized engagements only)*
+  - [ ] Email phishing payload generator with embedded macro docs
+  - [ ] HTML phishing page cloner
+  - [ ] SMS / vishing pretexting script templates
+  - [ ] QR code phishing generator (Wi-Fi, URL)
+  - [ ] Malicious PDF / DOCX with auto-executing payload
+
+---
+
+**Network Protocol Attacks** *(planned — `ZombieKeeper-Arsenal/network/`)*
+- [ ] **Layer 2**
+  - [ ] MAC flooding — overflow CAM table, force hub behavior on switch
+  - [ ] ARP watch / detection evasion (randomize timing and source MAC)
+  - [ ] CDP / LLDP spoofing — impersonate Cisco/network equipment
+  - [ ] EtherChannel negotiation abuse (PAgP / LACP)
+- [ ] **Layer 3 / Routing**
+  - [ ] BGP hijacking simulation (lab — route injection via `GoBGP`)
+  - [ ] OSPF / RIP route injection (fake LSA / RIP response)
+  - [ ] IP fragmentation attack (overlapping fragments bypass IDS)
+  - [ ] TTL manipulation for firewall evasion
+  - [ ] Covert channel via IP header fields (ID field, ToS, options)
+- [ ] **Layer 4 / Transport**
+  - [ ] SYN flood with randomized source IPs (raw socket)
+  - [ ] UDP flood and UDP amplification (DNS, NTP, SSDP, memcached)
+  - [ ] TCP RST injection to terminate active connections
+  - [ ] QUIC protocol analysis and manipulation
+- [ ] **Wireless (802.11)**
+  - [ ] Wi-Fi deauthentication attack (IEEE 802.11 management frame injection)
+  - [ ] WPA2 4-way handshake capture + offline crack (hashcat integration)
+  - [ ] PMKID attack (clientless WPA2 crack)
+  - [ ] Evil Twin AP — rogue access point with captive portal
+  - [ ] WPS PIN brute-force (Pixie Dust attack)
+  - [ ] Beacon flood — fake SSIDs to confuse clients
+  - [ ] Karma attack — respond to all probe requests
+  - [ ] WPA3 Dragonblood downgrade (side-channel timing)
+  - [ ] Bluetooth LE scanning, spoofing, and MITM (`btlejack` style)
+  - [ ] BLE credential sniffing from IoT devices
+- [ ] **VPN & Tunneling**
+  - [ ] IKE/IPSec aggressive mode fingerprinting
+  - [ ] OpenVPN traffic fingerprinting and manipulation
+  - [ ] DNS tunneling — data exfiltration via DNS TXT/A records
+  - [ ] ICMP tunneling — covert channel inside ICMP echo payloads
+  - [ ] HTTP tunneling through proxies and deep packet inspection firewalls
+
+---
+
+**Other Languages — Attack Modules** *(planned)*
+
+*Bash / Shell*
+- [ ] Reverse shell one-liner collection (Linux / macOS reference)
+- [ ] Linux local enumeration script (linPEAS-style from scratch)
+- [ ] Automated cron-based persistence installer
+- [ ] Live memory forensics helper (read `/proc/[pid]/mem`)
+- [ ] Fileless C2 beacon (`curl` + sleep loop, no binary on disk)
+- [ ] SSH tunneling and port-forward automation scripts
+
+*Lua*
+- [ ] Nmap NSE script — custom vulnerability checks for discovered services
+- [ ] Nmap NSE brute-force module for proprietary protocols
+- [ ] Nmap NSE banner parser with CVE mapping output
+
+*Ruby*
+- [ ] Metasploit auxiliary module templates (custom recon + exploit)
+- [ ] Rails / Rack application security scanner
+- [ ] Custom fuzzer for binary network protocols
+
+*Nim*
+- [ ] Implant that compiles to C with minimal AV signatures
+- [ ] Shellcode loader with direct syscall evasion
+- [ ] Cross-compiler targeting Windows PE from Linux
+
+*Kotlin / JVM*
+- [ ] Android APK backdoor via smali patching + repack
+- [ ] Android reverse shell using accessibility service
+- [ ] JVM deserialization exploit toolkit (ysoserial-style gadget chains)
+- [ ] Spring Boot RCE via SPEL injection / Actuator misconfiguration
+
+*JavaScript / Node.js*
+- [ ] XSS payload that upgrades to a BeEF-style in-browser agent
+- [ ] Node.js SSRF and prototype pollution exploit demos
+- [ ] Electron app RCE via `nodeIntegration` + `contextIsolation` bypass
+- [ ] WebSocket-based browser C2 channel
+
+*PHP*
+- [ ] Webshell collection (minimal, obfuscated, image-disguised variants)
+- [ ] Object injection POP chain gadget builder
+- [ ] LFI → RCE via log poisoning and `/proc/self/fd`
+
+---
+
+**Hardware Hacking** *(planned — `ZombieKeeper-Arsenal/hardware/`)*
+
+*Microcontrollers & Single-Board Computers*
+- [ ] **Arduino / ATmega** — USB HID attack (BadUSB): keystroke injection payloads for Linux and Windows
+- [ ] **Rubber Ducky** compatible payload scripts (DuckyScript format)
+- [ ] **Digispark** (ATtiny85) — smallest possible BadUSB for covert drop
+- [ ] **Raspberry Pi Zero W** — headless Wi-Fi drop implant with reverse SSH tunnel to C2
+- [ ] **Raspberry Pi** — network tap: passive traffic capture + automatic exfiltration
+- [ ] **ESP8266 / ESP32** — Wi-Fi deauth beacon, evil twin AP, and captive portal (no PC needed)
+- [ ] **ESP32 Bluetooth** — BLE scanner, spoofer, and sniffer
+- [ ] **Flipper Zero** — payload scripts: SubGHz replay attacks, NFC/RFID cloning, IR blaster, BadUSB
+
+*RFID / NFC / Smart Cards*
+- [ ] RFID 125kHz (EM4100 / HID Prox) card cloning with `Proxmark3`
+- [ ] MIFARE Classic 1K crack (nested authentication + darkside attack)
+- [ ] MIFARE Ultralight clone and UID manipulation
+- [ ] NFC payment card data harvesting (contactless skimming, lab)
+- [ ] Smart card (ISO 7816) APDU fuzzing
+- [ ] RFID replay attack — capture → replay to gain physical access
+
+*Software Defined Radio (SDR)*
+- [ ] RF signal recording and replay with `RTL-SDR` / `HackRF`
+- [ ] 433 MHz / 868 MHz remote control replay (garage doors, car keys)
+- [ ] Rolling code analysis (KeeLoq weak implementations)
+- [ ] Tire Pressure Monitor (TPMS) packet decoding and spoofing
+- [ ] Pager (POCSAG / FLEX) interception and decoder
+- [ ] ADS-B aircraft transponder spoofing (lab simulation)
+- [ ] GSM / 4G LTE IMSI catcher simulation (`gr-gsm`, `srsRAN`)
+- [ ] Z-Wave / Zigbee IoT protocol sniffing and injection
+
+*Serial / Debug Interfaces*
+- [ ] UART console access via `screen` / `minicom` — dump bootloader and root shell
+- [ ] JTAG / SWD debugging interface identification and exploitation (extract firmware)
+- [ ] I2C / SPI bus sniffing — extract EEPROM contents (credentials, private keys)
+- [ ] CAN bus (automotive) — read and inject frames (`SocketCAN`, `can-utils`)
+- [ ] OBD-II port attack — vehicle ECU manipulation (lab / own vehicle)
+- [ ] USB fuzzing — malformed descriptor injection to crash / exploit USB host drivers
+
+*Firmware Analysis & Modification*
+- [ ] Firmware extraction via `binwalk` + entropy analysis
+- [ ] Filesystem unpacking and secrets extraction (hardcoded creds, private keys)
+- [ ] Firmware re-packing and flashing modified image
+- [ ] Bootloader unlocking techniques (U-Boot interrupt, UART shell)
+- [ ] Secure Boot bypass via glitching or misconfigured trust chain
+- [ ] TP-Link / D-Link / Netgear router firmware exploitation (known CVEs + 0-day methodology)
+
+*Physical & Side-Channel*
+- [ ] Power analysis attack (SPA / DPA) on microcontroller crypto (ChipWhisperer)
+- [ ] Electromagnetic fault injection (EMFI) — glitch to skip firmware security checks
+- [ ] Timing side-channel attack on AES / RSA implementations
+- [ ] Cold boot attack — RAM content recovery after power cut
+- [ ] Acoustic side-channel (keyboard/HDD noise analysis, lab demo)
+- [ ] USB power line monitoring to detect keystrokes (USB power glitch)
+
+---
+
+**Infrastructure & DevOps** *(planned)*
+- [ ] Docker Compose setup (API + MySQL + Redis in containers)
+- [ ] Dockerfile for the Spring Boot API
+- [ ] Dockerfile + Nginx config for the Next.js web dashboard
+- [ ] GitHub Actions CI — build, test, Docker image push
+- [ ] Terraform templates for lab infrastructure (VMs, VPC, VPN)
+- [ ] Ansible playbook for automated C2 server deployment
+- [ ] Redirector setup guide (Apache / Nginx reverse proxy for C2 traffic)
+
+---
+
+## Legal Notice
+
+This project was developed **exclusively for educational purposes, offensive security research, and controlled environment exercises** — pentest labs, Red Team operations with explicit written authorization from the infrastructure owner, and CTF competitions.
+
+**Using this tool against systems without prior authorization is a crime**, potentially violating:
+- **Brazil:** Lei nº 12.737/2012 (Lei Carolina Dieckmann) and Art. 154-A of the Penal Code
+- **USA:** Computer Fraud and Abuse Act (CFAA)
+- Equivalent legislation in other jurisdictions
+
+The author **assumes no responsibility** for any misuse, illegal application, or damage caused by using this platform outside the authorized contexts described above.
 
 ---
 

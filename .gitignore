@@ -1,10 +1,30 @@
-HELP.md
+### Scratch / Test projects ###
+Test/
+
+### Java / Maven ###
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+*.class
+*.jar
+*.war
+*.ear
 
-### STS / Eclipse ###
+### Spring Boot ###
+application-dev.properties
+application-prod.properties
+application-test.properties
+application.properties
+
+### IDE — IntelliJ ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### IDE — Eclipse / STS ###
 .apt_generated
 .classpath
 .factorypath
@@ -14,42 +34,51 @@ target/
 .sts4-cache
 bin/
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-out/
+### IDE — VS Code ###
+.vscode/
 
-### NetBeans ###
+### IDE — NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### C++ Agent — build artifacts ###
 build/
+*.o
+*.d
+*.a
+*.so
+compile_commands.json
+ZombieKeeper-Arsenal/cpp/LocalFingerPrint/LocalFingerPrint
+ZombieKeeper-Arsenal/cpp/Ping/Ping
 
-### VS Code ###
-.vscode/
+### Logs ###
+*.log
+*.log.*
+*.gz
+logs/
+hs_err_pid*
+replay_pid*
 
-### Os ###
+### Environment & secrets ###
+.env
+.env.local
+.env.development
+.env.production
+.env.*.local
+
+### Next.js ###
+ZombieKeeper-Web/.next/
+ZombieKeeper-Web/node_modules/
+ZombieKeeper-Web/tsconfig.tsbuildinfo
+ZombieKeeper-Web/out/
+
+### OS ###
 .DS_Store
 Thumbs.db
 ehthumbs.db
 *~
 *.swp
 *.swo
-
-### Logs ###
-*.log
-hs_err_pid*
-replay_pid*
-
-application-dev.properties
-application-prod.properties
-application-test.properties
-.env
-.env.local
-.env.development
-.env.production 
-application.properties

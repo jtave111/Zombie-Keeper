@@ -43,6 +43,16 @@ public class User implements UserDetails {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
+    public User(){
+
+    }
+
+    public  User(String username, String password, String name, Role role){
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.role = role;
+    }
 
     public Long getId() { return this.id; }
     public void setId(Long id) { this.id = id; }
