@@ -1,7 +1,10 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
-import { Agent } from '@/lib/data';
+import { Agent } from '@/lib/models/agents/agentModel';
 import { agentsApi, toAgent } from '@/lib/api';
+
+const stripAnsi = (s: string) =>
+  s.replace(/\x1B\[[0-9;]*[A-Za-z]/g, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
 // Module-level cache so COMMANDS closures can access live agent data
 let _agents: Agent[] = [];
@@ -192,6 +195,7 @@ const COMMANDS: Record<string, (args: string[]) => Line[]> = {
   ],
 };
 
+//TODO: implmentar melhorias no shell, como interação com o nano, vim, info, alguns comandos estao quebrando a sesão
 export default function ShellModule() {
   const [lines,   setLines]  = useState<Line[]>([
     { type:'sys', text:'ZOMBIE KEEPER C2 — Interactive Operator Shell', time:t() },
@@ -206,6 +210,56 @@ export default function ShellModule() {
   const [agents,  setAgents] = useState<Agent[]>([]);
   const bottomRef            = useRef<HTMLDivElement>(null);
   const inputRef             = useRef<HTMLInputElement>(null);
+  //TODO: Criar um arquivo apenas pro websocket, pra não misturar lógica de WS com a UI do shell. O ref e os handlers de WS poderiam ficar lá, e o ShellModule só chamaria funções tipo ws.sendCommand(cmd) e ws.onOutput(callback).
+  // useRef guarda a instância do WebSocket sem causar re-render quando muda.
+  // Se fosse useState, cada update recriaria o componente e abriria uma nova conexão.
+  const wsRef = useRef<WebSocket | null>(null);
+
+  useEffect(() => {
+    // Pega o JWT que foi salvo no login. O backend exige o token para aceitar a conexão.
+    const token = typeof window !== 'undefined' ? localStorage.getItem('zk_token') : null;
+    if (!token) return;
+
+    // Converte a URL HTTP da API em WS — ex: "http://localhost:8080" → "ws://localhost:8080"
+    // O "/term?token=..." é o endpoint do TerminalWebSocketsHandler no Spring Boot.
+    // O token vai na query string porque o browser não permite headers customizados no WebSocket.
+    const base = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080').replace(/^http/, 'ws');
+    const ws = new WebSocket(`${base}/term?token=${token}`);
+
+    // Salva a instância no ref para poder usar em outros lugares do componente (ex: enviar comandos)
+    wsRef.current = ws;
+
+    // Disparado quando a conexão é estabelecida com sucesso.
+    // Neste momento o backend já abriu um processo bash e está lendo o stdout.
+    ws.onopen = () => {
+      setLines(prev => [...prev, { type: 'ok', text: '[+] Shell connected (bash)', time: t() }]);
+    };
+
+    // Disparado toda vez que o backend manda dados — ou seja, sempre que o bash imprime algo.
+    // e.data é uma string com o chunk de saída do bash (pode ter múltiplas linhas).
+    ws.onmessage = (e) => {
+      // Remove códigos ANSI de cor/cursor que o bash injeta (ex: \x1B[32m)
+      const raw = stripAnsi(e.data as string);
+      // Divide em linhas e filtra vazias para exibir cada linha separada no terminal
+      const parts = raw.split('\n').filter(s => s.length > 0);
+      if (!parts.length) return;
+      const ts = t();
+      setLines(prev => [...prev, ...parts.map(text => ({ type: 'ok' as const, text, time: ts }))]);
+    };
+
+    // Disparado se houver falha de rede ou o backend rejeitar a conexão (ex: token inválido)
+    ws.onerror = () => {
+      setLines(prev => [...prev, { type: 'err', text: '[-] WebSocket error', time: t() }]);
+    };
+
+    // Disparado quando a conexão é fechada — seja pelo backend, pelo browser, ou pelo ws.close()
+    ws.onclose = () => {
+      setLines(prev => [...prev, { type: 'sys', text: '[*] Shell disconnected', time: t() }]);
+    };
+
+    // Cleanup: quando o componente é desmontado, fecha a conexão para não deixar o bash órfão no servidor
+    return () => { ws.close(); };
+  }, []); // [] = roda só uma vez ao montar o componente
 
   useEffect(() => {
     agentsApi.list()
@@ -240,7 +294,7 @@ export default function ShellModule() {
 
     if (handler) {
       out.push(...handler(args));
-    } else if (cmd.startsWith('info ')) {
+    } else if (cmd.startsWith('info')) {
       const id  = cmd.split(' ')[1]?.toUpperCase();
       const ag  = _agents.find(a => a.id === id);
       if (ag) {
@@ -255,7 +309,21 @@ export default function ShellModule() {
           { type:'info',text:`  Arch     : ${ag.arch}`, time },
           { type:'info',text:`  Last seen: ${ag.lastSeen}`, time },
         );
-      } else {
+        //TODO: agent undefined mas  shell aberto (Shell do servidor), TODO: Criar shell.isOpen
+      }else if(ag == undefined  ){
+        out.push(
+          { type:'sys', text:`[*] Agent info: ${"C2-SERVER"}`, time },
+          { type:'ok',  text:`  Status   : ${"ONLINE"}`, time },
+          { type:'info',text:`  IP       : ${"127.0.0.1"}`, time },
+          { type:'info',text:`  Hostname : ${"C2-SERVER"}`, time },
+          { type:'info',text:`  OS       : ${"Linux"}`, time },
+          { type:'info',text:`  User     : ${"root"} [${"root"}]`, time },
+          { type:'info',text:`  Process  : ${"zombiekeeper"} (PID ${"1234"})`, time },
+          { type:'info',text:`  Arch     : ${"x86_64"}`, time },
+          { type:'info',text:`  Last seen: ${"Never"}`, time },
+        );
+      }
+      else {
         out.push({ type:'err', text:`[-] Agent not found: ${id}`, time });
       }
     } else if (cmd.startsWith('sleep ')) {
@@ -273,7 +341,16 @@ export default function ShellModule() {
     } else if (cmd.startsWith('rename ')) {
       out.push({ type:'ok', text:`[+] Agent renamed.`, time });
     } else {
-      out.push({ type:'err', text:`[-] Unknown command: "${cmd}"  —  type "help"`, time });
+      // Comando não reconhecido como C2 — tenta mandar pro bash via WebSocket.
+      // readyState === WebSocket.OPEN (valor 1) significa que a conexão está ativa.
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
+        out.push({ type:'sys', text:`$ ${cmd}`, time });
+        // Envia o comando com "\n" no final — equivale a pressionar Enter no bash
+        wsRef.current.send(cmd + '\n');
+        // A resposta NÃO vem aqui — ela chega de forma assíncrona no ws.onmessage acima
+      } else {
+        out.push({ type:'err', text:`[-] Unknown command: "${cmd}"  —  type "help"`, time });
+      }
     }
 
     setLines(p => [...p, ...out]);

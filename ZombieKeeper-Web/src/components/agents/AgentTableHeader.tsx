@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Agent, AgentStatus } from '@/lib/data';
+import { Agent, AgentStatus } from '@/lib/models/agents/agentModel';
 import { agentsApi, toAgent } from '@/lib/api';
 
 const SYM: Record<AgentStatus,string> = { ONLINE:'[*]', IDLE:'[~]', LOST:'[!]' };

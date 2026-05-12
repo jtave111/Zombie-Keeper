@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Agent, AgentGeo } from '@/lib/data';
-import { agentsApi, c2Api, toAgent, toAgentGeo, BackendAgent, C2Info } from '@/lib/api';
+import { Agent, AgentGeo } from '@/lib/models/agents/agentModel';
+import { agentsApi, c2Api, toAgent, toAgentGeo, BackendAgentDto, C2Info } from '@/lib/api';
 import dynamic from 'next/dynamic';
 
 const WorldMap = dynamic<{ geoAgents: AgentGeo[]; c2: C2Info | null }>(() => import('./WorldMap'), {
@@ -12,7 +12,7 @@ const WorldMap = dynamic<{ geoAgents: AgentGeo[]; c2: C2Info | null }>(() => imp
 interface Props { onNav?: (v:string) => void; }
 
 export default function DashboardView({ onNav }: Props) {
-  const [rawAgents, setRawAgents] = useState<BackendAgent[]>([]);
+  const [rawAgents, setRawAgents] = useState<BackendAgentDto[]>([]);
   const [c2,        setC2]        = useState<C2Info | null>(null);
 
   useEffect(() => {

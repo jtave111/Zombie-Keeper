@@ -15,11 +15,11 @@ OBJS := $(SRCS:./%.cpp=$(OBJ_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
 # ===== EXTERNAL LIBRARY: PING =====
-PING_SRC := ../Ping/Ping.cpp
+PING_SRC := ../../../libs/cpp/ping/Ping.cpp
 PING_OBJ := $(OBJ_DIR)/external/Ping.o
 
 # ===== Include flags =====
-INCLUDES := $(addprefix -I, $(INC_DIRS)) -I. -I../Ping/h
+INCLUDES := $(addprefix -I, $(INC_DIRS)) -I. -I../../../libs/cpp/ping/h
 
 # ===== Default =====
 all: $(TARGET)

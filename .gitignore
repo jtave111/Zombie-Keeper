@@ -1,6 +1,9 @@
 ### Scratch / Test projects ###
 Test/
 
+### Personal notes ###
+ROADMAP_LOW_LEVEL.md
+
 ### Java / Maven ###
 target/
 !.mvn/wrapper/maven-wrapper.jar

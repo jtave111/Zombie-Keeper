@@ -1,66 +1,171 @@
-# ZombieKeeper — Monorepo Structure
+# ZombieKeeper — Estrutura do Monorepo
 
-This project is a **monorepo** containing the full ZombieKeeper C2 platform: backend API, web dashboard, native agents, and automation scripts.
+Este projeto é um **monorepo** contendo toda a plataforma ZombieKeeper C2: servidor API, dashboard web, arsenal de ferramentas nativas e scripts de automação.
 
 ---
 
-## Repository Layout
+## Visão Geral dos Módulos
+
+| Módulo | Tecnologia | Porta | Status |
+|---|---|---|---|
+| `ZombieKeeper-Api` | Spring Boot 4 · Java 21 · MySQL 8 | 8080 | Estável |
+| `ZombieKeeper-Web` | Next.js 15 · React 19 · TypeScript | 3000 | Estável |
+| `ZombieKeeper-Arsenal` | C++17 · CMake · Python · Go · Rust | — | Em desenvolvimento |
+
+---
+
+## Layout do Repositório
 
 ```
 ZombieKeeper/
 │
-├── ZombieKeeper-Api/               # Spring Boot 4 · Java 21 · C2 REST API
-│   ├── src/                        # Java source code
-│   ├── .env                        # Environment variables (gitignored)
-│   ├── pom.xml                     # Maven module POM
-│   └── mvnw                        # Maven wrapper
+├── ZombieKeeper-Api/                        # Servidor C2 — Spring Boot 4 · Java 21
+│   ├── src/main/java/com/manager/Zombie_Keeper/
+│   │   ├── controller/                      # REST: Agent, Auth, Recon
+│   │   ├── service/                         # Lógica de negócio
+│   │   ├── model/entity/                    # Entidades JPA
+│   │   ├── model/enums/                     # Flags, Tags, Status, Severity
+│   │   ├── repository/                      # Spring Data JPA
+│   │   ├── dtos/                            # Request/Response DTOs
+│   │   ├── configuration/security/          # Spring Security + CORS
+│   │   └── util/                            # JwtUtil
+│   ├── src/main/resources/
+│   │   ├── application.properties           # Configuração do servidor
+│   │   └── db/changelog/                    # Migrações Liquibase
+│   ├── .env                                 # Variáveis de ambiente (gitignored)
+│   ├── pom.xml                              # POM do módulo Maven
+│   └── mvnw                                 # Maven wrapper
 │
-├── ZombieKeeper-Web/               # Next.js 15 · React 19 · Operator dashboard
-│   ├── src/                        # TypeScript/TSX source code
-│   ├── .env.local                  # Frontend env variables (gitignored)
+├── ZombieKeeper-Web/                        # Dashboard do Operador — Next.js 15 · React 19
+│   ├── src/
+│   │   ├── app/                             # Next.js App Router
+│   │   ├── components/                      # Componentes React por feature
+│   │   │   ├── layout/                      # App, LoginPage, Menubar, Sidebar
+│   │   │   ├── agents/                      # AgentsView, AgentShell
+│   │   │   ├── dashboard/                   # DashboardView, WorldMap (Leaflet)
+│   │   │   ├── network/                     # NetworkView (topologia)
+│   │   │   ├── scanner/                     # ScannerView
+│   │   │   ├── payloads/                    # PayloadGenerator
+│   │   │   ├── listeners/                   # ListenersView
+│   │   │   ├── intelligence/                # CredentialsView, LootView, ReportsView
+│   │   │   ├── users/                       # UsersView
+│   │   │   └── shared/                      # SettingsView
+│   │   ├── lib/                             # api.ts, data.ts, networkData.ts
+│   │   └── styles/                          # globals.css (Tailwind + variáveis CSS)
+│   ├── .env.local                           # NEXT_PUBLIC_API_URL (gitignored)
 │   └── package.json
 │
-├── ZombieKeeper-Arsenal/                        # All native agents, exploits & automation
-│   ├── cpp/                        # C++17 projects
-│   │   ├── LocalFingerPrint/       # Network fingerprint agent (own project)
-│   │   └── Ping/                   # ICMP raw socket library (own project)
-│   ├── python/                     # Python projects
-│   │   └── LocalFingerPrint/       # HTTP automation for C2 interaction
-│   ├── go/                         # Go projects (planned)
-│   ├── rust/                       # Rust projects (planned)
-│   ├── assembly/                   # x86-64 shellcode & exploit dev (planned)
-│   └── windows/                    # Windows agents & tooling (planned)
+├── ZombieKeeper-Arsenal/                    # Arsenal de ferramentas nativas
+│   │
+│   ├── network-session/                     # Domínio: Blue Team — inteligência de rede
+│   │   ├── scanners/
+│   │   │   └── local-fingerprint/           # Fingerprint completo de subnet
+│   │   │       ├── cpp/                     # Implementação C++17 (ferramenta principal)
+│   │   │       │   ├── localNetwork/        # Scanner, FingerPrintSession, Models
+│   │   │       │   ├── CMakeLists.txt       # Target: executável LocalFingerPrint
+│   │   │       │   └── Makefile             # Wrapper de conveniência (chama cmake)
+│   │   │       ├── python/                  # Scripts auxiliares HTTP
+│   │   │       ├── go/                      # Implementação Go concorrente (planejado)
+│   │   │       └── README.md
+│   │   ├── discovery/                       # Descoberta de hosts (planejado)
+│   │   │   ├── icmp-sweep/
+│   │   │   ├── arp-scan/
+│   │   │   └── dns-enum/
+│   │   ├── osint/                           # Reconhecimento externo (planejado)
+│   │   │   ├── subdomain/
+│   │   │   ├── shodan/
+│   │   │   └── ssl-analysis/
+│   │   ├── libs/                            # Bibliotecas compartilhadas do domínio
+│   │   │   └── cpp/
+│   │   │       └── ping/                   # Biblioteca ICMP (usada pelo local-fingerprint)
+│   │   │           └── CMakeLists.txt      # Target: lib estática libping.a
+│   │   ├── CMakeLists.txt                  # Agregador do domínio network-session
+│   │   └── README.md
+│   │
+│   ├── agents/                              # Domínio: Red Team — implants e exploits
+│   │   ├── implants/                        # Beacons C2 por plataforma
+│   │   │   ├── linux/
+│   │   │   │   ├── cpp/                     # Implant Linux em C++ (planejado)
+│   │   │   │   ├── rust/                    # Implant Linux em Rust (planejado)
+│   │   │   │   └── go/                      # Implant Linux em Go (planejado)
+│   │   │   ├── windows/
+│   │   │   │   ├── cpp/                     # Implant Windows em C++ (planejado)
+│   │   │   │   └── rust/                    # Implant Windows em Rust (planejado)
+│   │   │   └── cross-platform/
+│   │   │       └── go/                      # Implant multiplataforma em Go (planejado)
+│   │   ├── exploits/                        # Módulos de exploração (planejado)
+│   │   │   ├── linux/
+│   │   │   ├── windows/
+│   │   │   └── web/
+│   │   ├── post-exploitation/               # Pós-acesso por plataforma (planejado)
+│   │   │   ├── linux/
+│   │   │   │   ├── persistence/
+│   │   │   │   ├── privesc/
+│   │   │   │   └── credentials/
+│   │   │   └── windows/
+│   │   │       ├── persistence/
+│   │   │       ├── privesc/
+│   │   │       └── credentials/
+│   │   ├── attacks/                         # Ataques ativos por vetor (planejado)
+│   │   │   ├── network/                     # ARP, DNS, wireless, BGP
+│   │   │   ├── web/                         # SQLi, XSS, SSRF, JWT
+│   │   │   └── credentials/                 # Brute-force, stuffing, phishing
+│   │   ├── payloads/                        # Shellcodes e ROP chains (planejado)
+│   │   │   ├── x86_64/asm/
+│   │   │   └── arm64/asm/
+│   │   ├── evasion/                         # Bypass AV/EDR, anti-forense (planejado)
+│   │   │   ├── linux/
+│   │   │   └── windows/
+│   │   ├── hardware/                        # BadUSB, SDR, RFID (planejado)
+│   │   │   ├── badusb/
+│   │   │   ├── sdr/
+│   │   │   └── rfid/
+│   │   └── README.md
+│   │
+│   ├── build/                               # Artefatos de build CMake (gitignored)
+│   │   └── network-session/scanners/local-fingerprint/cpp/
+│   │       └── LocalFingerPrint             # Binário compilado
+│   │
+│   ├── scripts/                             # Automação de build e deploy
+│   │   ├── build-all.sh
+│   │   ├── build-network-session.sh
+│   │   ├── build-agents.sh
+│   │   └── clean-all.sh
+│   │
+│   ├── CMakeLists.txt                       # Entry point CMake (abrir no CLion)
+│   ├── Makefile                             # Wrapper de conveniência sobre cmake
+│   └── .gitignore
 │
-├── pom.xml                         # Maven aggregator (root, packaging=pom)
-├── start.sh                        # Startup script for all services
-├── README.md
-├── MONOREPO.md                     # This file
-└── HELP.md                         # Developer reference guide
+├── pom.xml                                  # Agregador Maven (monorepo root)
+├── start.sh                                 # Script de inicialização de todos os serviços
+├── README.md                                # Documentação principal do projeto
+├── MONOREPO.md                              # Este arquivo
+└── HELP.md                                  # Referência rápida para desenvolvedores
 ```
 
 ---
 
-## Running the Platform
+## Iniciando a Plataforma
 
-### Quick start (all services)
+### Início rápido (todos os serviços)
 
 ```bash
 ./start.sh
 ```
 
-### With API recompile
+### Com recompilação da API
 
 ```bash
 ./start.sh --build
 ```
 
-### Individual services
+### Serviços individuais
 
 ```bash
-# API only
+# Somente API
 ./start.sh --api-only
 
-# Web dashboard only
+# Somente dashboard web
 ./start.sh --web-only
 ```
 
@@ -80,7 +185,7 @@ npm run dev
 
 ---
 
-## Building for Production
+## Build para Produção
 
 ### API
 
@@ -98,52 +203,98 @@ npm run build
 npm start
 ```
 
-### C++ Agent
+### Arsenal — Ferramentas C/C++
 
 ```bash
-cd ZombieKeeper-Arsenal/cpp/LocalFingerPrint
+cd ZombieKeeper-Arsenal
+
+# Instalar dependências (primeira vez)
+sudo apt install build-essential cmake libcurl4-openssl-dev
+
+# Build completo (Debug)
 make
-sudo ./LocalFingerPrint
+
+# Build Release (otimizado para deploy)
+make release
+
+# Build de apenas uma ferramenta
+cmake --build build --target LocalFingerPrint
+
+# Aplicar capabilities de rede (necessário para rodar)
+sudo cmake --build build --target setcap
+
+# Limpar artefatos
+make clean        # limpa artefatos, mantém config cmake
+make reset        # remove build/ inteiro
+```
+
+O binário compilado fica em:
+```
+ZombieKeeper-Arsenal/build/network-session/scanners/local-fingerprint/cpp/LocalFingerPrint
 ```
 
 ---
 
-## Environment Variables
+## Variáveis de Ambiente
 
-Both modules require their own environment files. **These files are gitignored — never commit credentials.**
+Ambos os módulos requerem seus próprios arquivos de ambiente. **Esses arquivos são gitignored — nunca commite credenciais.**
 
-| File | Module | Required |
+| Arquivo | Módulo | Obrigatório |
 |---|---|---|
-| `ZombieKeeper-Api/.env` | API Server | Yes |
-| `ZombieKeeper-Web/.env.local` | Web Dashboard | Yes |
+| `ZombieKeeper-Api/.env` | Servidor API | Sim |
+| `ZombieKeeper-Web/.env.local` | Dashboard Web | Sim |
 
-See [HELP.md](HELP.md) for the full list of variables.
+Veja [HELP.md](HELP.md) para a lista completa de variáveis.
 
 ---
 
-## Maven Aggregator
+## Agregador Maven
 
-The root `pom.xml` is a **pure aggregator** (`<packaging>pom</packaging>`). It allows running Maven commands from the root that apply to all Java modules.
+O `pom.xml` raiz é um **agregador puro** (`<packaging>pom</packaging>`). Ele permite executar comandos Maven a partir da raiz que se aplicam a todos os módulos Java.
 
 ```bash
-# Build all Java modules from root
+# Build de todos os módulos Java a partir da raiz
 ./mvnw clean package -DskipTests -f pom.xml
 ```
 
-`ZombieKeeper-Api` keeps `spring-boot-starter-parent` as its own parent — the root POM does not interfere with Spring Boot's dependency management.
+`ZombieKeeper-Api` mantém o `spring-boot-starter-parent` como seu próprio parent — o POM raiz não interfere no gerenciamento de dependências do Spring Boot.
 
 ---
 
-## Module Status
+## Status dos Módulos
 
-| Module | Path | Status |
+### Serviços
+
+| Módulo | Caminho | Status |
 |---|---|---|
-| ZombieKeeper-Api | `ZombieKeeper-Api/` | Stable · port 8080 |
-| ZombieKeeper-Web | `ZombieKeeper-Web/` | Stable · port 3000 |
-| C++ LocalFingerPrint | `ZombieKeeper-Arsenal/cpp/LocalFingerPrint/` | Stable |
-| C++ Ping | `ZombieKeeper-Arsenal/cpp/Ping/` | Stable (lib) |
-| Python LocalFingerPrint | `ZombieKeeper-Arsenal/python/LocalFingerPrint/` | Partial |
-| Go modules | `ZombieKeeper-Arsenal/go/` | Planned |
-| Rust modules | `ZombieKeeper-Arsenal/rust/` | Planned |
-| Assembly / Exploits | `ZombieKeeper-Arsenal/assembly/` | Planned |
-| Windows agent | `ZombieKeeper-Arsenal/windows/` | Planned |
+| ZombieKeeper-Api | `ZombieKeeper-Api/` | Estável · porta 8080 |
+| ZombieKeeper-Web | `ZombieKeeper-Web/` | Estável · porta 3000 |
+
+### Arsenal — network-session (Blue Team)
+
+| Ferramenta | Caminho | Linguagem | Status |
+|---|---|---|---|
+| LocalFingerPrint | `network-session/scanners/local-fingerprint/cpp/` | C++17 | Estável |
+| Ping (lib) | `network-session/libs/cpp/ping/` | C++17 | Estável (lib) |
+| Scripts HTTP | `network-session/scanners/local-fingerprint/python/` | Python | Parcial |
+| LocalFingerPrint Go | `network-session/scanners/local-fingerprint/go/` | Go | Planejado |
+| icmp-sweep | `network-session/discovery/icmp-sweep/` | — | Planejado |
+| arp-scan | `network-session/discovery/arp-scan/` | — | Planejado |
+| dns-enum | `network-session/discovery/dns-enum/` | — | Planejado |
+| Subdomain OSINT | `network-session/osint/subdomain/` | — | Planejado |
+| Shodan OSINT | `network-session/osint/shodan/` | — | Planejado |
+| SSL Analysis | `network-session/osint/ssl-analysis/` | — | Planejado |
+
+### Arsenal — agents (Red Team)
+
+| Categoria | Caminho | Status |
+|---|---|---|
+| Implants Linux | `agents/implants/linux/` | Planejado |
+| Implants Windows | `agents/implants/windows/` | Planejado |
+| Implants Cross-Platform | `agents/implants/cross-platform/` | Planejado |
+| Exploits Linux/Windows/Web | `agents/exploits/` | Planejado |
+| Post-Exploitation Linux/Windows | `agents/post-exploitation/` | Planejado |
+| Ataques Network/Web/Creds | `agents/attacks/` | Planejado |
+| Payloads x86_64/arm64 | `agents/payloads/` | Planejado |
+| Evasion Linux/Windows | `agents/evasion/` | Planejado |
+| Hardware BadUSB/SDR/RFID | `agents/hardware/` | Planejado |

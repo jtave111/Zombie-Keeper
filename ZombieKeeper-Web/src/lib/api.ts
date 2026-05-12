@@ -1,4 +1,5 @@
-import type { Agent, AgentGeo } from './data';
+import type { C2ServerInfo } from './models/c2Server/c2ServerModel';
+import type { Agent, AgentGeo } from './models/agents/agentModel';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
 
@@ -36,7 +37,7 @@ async function req<T>(path: string, init: RequestInit = {}): Promise<T> {
 
 // ─── Backend shapes ───────────────────────────────────────────────────────────
 
-export interface BackendAgent {
+export interface BackendAgentDto {
   id: string;
   publicId: number;
   hostname: string;
@@ -65,16 +66,7 @@ export interface BackendAgent {
 }
 
 // Shape returned by GET /api/c2-server/info (to be created on the backend)
-export interface C2Info {
-  lat: number;
-  lng: number;
-  city?: string;
-  country?: string;
-  publicIp?: string;
-  listenPort?: number;
-  version?: string;
-  name?: string;
-}
+
 
 export interface LoginResponse {
   status: string;
@@ -85,7 +77,7 @@ export interface LoginResponse {
 
 // ─── Status mapping ───────────────────────────────────────────────────────────
 
-export function mapStatus(s: BackendAgent['status']): 'ONLINE' | 'IDLE' | 'LOST' {
+export function mapStatus(s: BackendAgentDto['status']): 'ONLINE' | 'IDLE' | 'LOST' {
   if (s === 'OLINE') return 'ONLINE';
   return 'LOST';
 }
@@ -102,7 +94,7 @@ function elapsed(iso: string): string {
 
 // ─── Type converters ──────────────────────────────────────────────────────────
 
-export function toAgent(b: BackendAgent): Agent {
+export function toAgent(b: BackendAgentDto): Agent {
   return {
     id:       `ZK-${b.publicId}`,
     ip:       b.ipv4        ?? '--',
@@ -120,7 +112,7 @@ export function toAgent(b: BackendAgent): Agent {
   };
 }
 
-export function toAgentGeo(b: BackendAgent): AgentGeo | null {
+export function toAgentGeo(b: BackendAgentDto): AgentGeo | null {
   const loc = b.locations?.[0];
   if (!loc || loc.lat == null || loc.lng == null) return null;
   return {
@@ -152,14 +144,14 @@ export const auth = {
 };
 
 export const agentsApi = {
-  list:   ()           => req<BackendAgent[]>('/api/c2-server/agents'),
-  get:    (id: string) => req<BackendAgent>(`/api/c2-server/agents/${id}`),
-  ping:   (id: string) => req<BackendAgent>(`/api/c2-server/agents/${id}/ping`,   { method: 'PUT' }),
+  list: () => req<BackendAgentDto[]>('/api/c2-server/agents'),
+  get:    (id: string) => req<BackendAgentDto>(`/api/c2-server/agents/${id}`),
+  ping:   (id: string) => req<BackendAgentDto>(`/api/c2-server/agents/${id}/ping`,   { method: 'PUT' }),
   remove: (id: string) => req<void>(`/api/c2-server/agents/${id}/delete`,          { method: 'PUT' }),
 };
 
 export const c2Api = {
-  info: () => req<C2Info>('/api/c2-server/info'),
+  info: () => req<C2ServerInfo>('/api/c2-server/info'),
 };
 
 // ─── Users & Roles ────────────────────────────────────────────────────────────

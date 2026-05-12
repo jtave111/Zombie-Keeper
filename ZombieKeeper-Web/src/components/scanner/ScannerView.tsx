@@ -120,7 +120,7 @@ function generateScanLog(target: string, types: string[], scope: string, aggr: s
 }
 
 interface ScannerViewProps {
-  targetNode?: import('@/lib/networkData').NetworkNode | null;
+  targetNode?: import('@/lib/models/localNetwork/networkModel').NetworkNode | null;
   onClose?: () => void;
 }
 
@@ -513,7 +513,7 @@ export default function ScannerView({ targetNode, onClose }: ScannerViewProps) {
               <span style={{ color: '#e05c6e' }}>{0}</span>
             </div>
             <div style={{ flex: 1, overflowY: 'auto', background: '#080808' }}>
-              {([] as import('@/lib/networkData').NetworkNode[]).map(node => {
+              {([] as import('@/lib/models/localNetwork/networkModel').NetworkNode[]).map(node => {
                 const hasRisk = node.ports.some(() => false);
                 const col = hasRisk ? '#e05c6e' : '#33a84a';
                 return (

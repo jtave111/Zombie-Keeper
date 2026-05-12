@@ -74,7 +74,7 @@ public class User implements UserDetails {
         if (this.role == null) {
             return Collections.emptyList();
         }
-        return Collections.singletonList(new SimpleGrantedAuthority(this.role.getName()));
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + this.role.getName()));
     }
 
     @Override

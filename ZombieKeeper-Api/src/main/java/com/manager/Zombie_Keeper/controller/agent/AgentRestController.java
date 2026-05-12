@@ -154,7 +154,7 @@ public class AgentRestController {
 
     @GetMapping("/{id}")
 
-    public Agent getAgentDetails(@PathVariable UUID id){
+        public Agent getAgentDetails(@PathVariable UUID id){
 
         Agent agent = agentRepository.findById(id).orElse(null);
 

@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef } from 'react';
-import { AgentGeo } from '@/lib/data';
+import { AgentGeo } from '@/lib/models/agents/agentModel';
 import { C2Info } from '@/lib/api';
 
 const STATUS_COLOR: Record<string, string> = {

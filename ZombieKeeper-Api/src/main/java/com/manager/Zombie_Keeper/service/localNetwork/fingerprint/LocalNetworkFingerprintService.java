@@ -48,8 +48,8 @@ public class LocalNetworkFingerprintService {
         return rawOutput.startsWith("ERRO") ? rawOutput : "{}]";
     }
 
-    
 
+    //TODO: concertar chaada dos binarios para nova estrutura
     public File getRootPath(){
         File currentDir = new File(System.getProperty("user.dir"));
 

@@ -1,0 +1,69 @@
+# =============================================================================
+# ZombieKeeper Arsenal — .gitignore
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# CMake — diretório de build out-of-source e artefatos gerados
+# -----------------------------------------------------------------------------
+build/
+cmake-build-*/          # CLion usa cmake-build-debug/, cmake-build-release/, etc.
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+*.cmake
+!**/CMakeLists.txt      # CMakeLists.txt são source — nunca ignorar
+
+# compile_commands.json é gerado em build/ automaticamente.
+# O symlink na raiz (se criado) também deve ser ignorado.
+compile_commands.json
+
+# -----------------------------------------------------------------------------
+# C/C++ artefatos de build (Makefile legado e builds diretos)
+# -----------------------------------------------------------------------------
+*.o
+*.d
+*.a
+*.so
+
+# Binários compilados — gerados em build/, não devem ir pro repositório
+network-session/scanners/local-fingerprint/cpp/LocalFingerPrint
+
+# -----------------------------------------------------------------------------
+# IDEs
+# -----------------------------------------------------------------------------
+
+# CLion
+.idea/
+
+# VSCode (configs de máquina local, não de projeto)
+.vscode/
+
+# Vim/Neovim
+*.swp
+*.swo
+.cache/
+
+# -----------------------------------------------------------------------------
+# Linguagens
+# -----------------------------------------------------------------------------
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# Rust (Cargo)
+target/
+
+# Go
+vendor/
+*.test
+
+# -----------------------------------------------------------------------------
+# Sistema operacional
+# -----------------------------------------------------------------------------
+.DS_Store
+Thumbs.db

@@ -3,8 +3,6 @@ package com.manager.Zombie_Keeper.util;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -18,13 +16,15 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
+    private final String secretKey;
+    private final Long expiration;
 
-    @Value("${JWT_SECRET:n3tS3nt1n3LvX9Kj2Qw5Rp8ZbYm4N7FcWgT1Lh6DxVzAqPsJ3uE0yR}")
-    private String secretKey;
-
-    @Value("${JWT_EXPIRATION:86400000}") // 24 horas
-    private Long expiration;
+    public JwtUtil(
+            @Value("${app.jwt.secret}") String secretKey,
+            @Value("${app.jwt.expiration}") Long expiration) {
+        this.secretKey = secretKey;
+        this.expiration = expiration;
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -38,6 +38,7 @@ public class JwtUtil {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
@@ -50,13 +51,11 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    // ✅ Gerar token
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, userDetails.getUsername());
     }
 
-    // ✅ Criar token com claims
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .claims(claims)
@@ -67,7 +66,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    // ✅ Validar token
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));

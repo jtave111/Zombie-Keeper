@@ -1,4 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+    ZombieKeeper — POM Agregador do Monorepo
+    =========================================
+
+    Este é o POM raiz do monorepo ZombieKeeper. Seu papel é exclusivamente
+    de AGREGADOR: ele lista os módulos Java do projeto e permite executar
+    comandos Maven a partir da raiz que se propagam para todos os módulos.
+
+    Tipo: <packaging>pom</packaging>
+    Não produz nenhum artefato (JAR/WAR). Apenas orquestra o build.
+
+    Módulos Java gerenciados:
+      - ZombieKeeper-Api  →  Servidor C2 Spring Boot 4 · Java 21
+
+    Nota: ZombieKeeper-Web (Next.js) e ZombieKeeper-Arsenal (C++/CMake) NÃO
+    são módulos Maven. Eles possuem seus próprios sistemas de build (npm e cmake).
+
+    Comandos úteis a partir da raiz:
+      ./mvnw clean package -DskipTests        Build de todos os módulos Java
+      ./mvnw clean package -DskipTests -pl ZombieKeeper-Api   Apenas a API
+      ./mvnw spring-boot:run -pl ZombieKeeper-Api             Rodar a API
+
+    Importante: ZombieKeeper-Api mantém spring-boot-starter-parent como seu
+    próprio parent POM. Este POM raiz NÃO interfere no gerenciamento de
+    dependências do Spring Boot — é um agregador puro sem herança de dependências.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -7,16 +33,24 @@
     <artifactId>zombie-keeper-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ZombieKeeper</name>
-    <description>Zombie Keeper - Command &amp; Control System (Monorepo Parent)</description>
+    <description>
+        ZombieKeeper — Plataforma C2 dual-purpose para monitoramento de infraestrutura
+        e operações de segurança ofensiva autorizada. POM agregador do monorepo.
+    </description>
     <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <!--
+        Módulos Java do monorepo.
+        Adicione novos módulos Java aqui conforme o projeto crescer.
+        Ex: <module>ZombieKeeper-Agent-Java</module>
+    -->
     <modules>
         <module>ZombieKeeper-Api</module>
-        <!-- <module>ZombieKeeper-Web</module> -->
+        <!-- <module>ZombieKeeper-Web</module>  Next.js — gerenciado por npm, não Maven -->
     </modules>
 
 </project>

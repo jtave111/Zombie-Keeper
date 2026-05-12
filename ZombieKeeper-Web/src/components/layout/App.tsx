@@ -11,7 +11,7 @@ import PayloadGenerator from '@/components/payloads/PayloadGenerator';
 import ListenersView from '@/components/listeners/ListenersView';
 import LoginPage from '@/components/layout/LoginPage';
 import AgentShell from '@/components/agents/AgentShell';
-import { Agent, FeedEvent } from '@/lib/data';
+import { Agent, FeedEvent } from '@/lib/models/agents/agentModel';
 import { agentsApi, toAgent, mapStatus } from '@/lib/api';
 import CredentialsView from '@/components/intelligence/CredentialsView';
 import LootView from '@/components/intelligence/LootView';

@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
-import { Agent, AgentStatus } from '@/lib/data';
-import { agentsApi, toAgent, BackendAgent } from '@/lib/api';
+import { Agent, AgentStatus } from '@/lib/models/agents/agentModel';
+import { agentsApi, toAgent, BackendAgentDto } from '@/lib/api';
 
 const SYM: Record<AgentStatus,string> = { ONLINE:'[*]', IDLE:'[~]', LOST:'[!]' };
 const CLS: Record<AgentStatus,string> = { ONLINE:'status-on', IDLE:'status-idle', LOST:'status-lost' };
@@ -13,7 +13,7 @@ const FILTERS: { key:AgentStatus|'ALL'; label:string }[] = [
 interface Props { onOpenShell?: (a:Agent) => void; }
 
 export default function AgentsView({ onOpenShell }: Props) {
-  const [rawAgents, setRawAgents] = useState<BackendAgent[]>([]);
+  const [rawAgents, setRawAgents] = useState<BackendAgentDto[]>([]);
   const [loading,   setLoading]   = useState(true);
   const [error,     setError]     = useState('');
   const [filter,    setFilter]    = useState<AgentStatus|'ALL'>('ALL');
