@@ -1,4 +1,3 @@
-'use client';
 
 const SECTIONS = [
   { label:'OVERVIEW', items:[

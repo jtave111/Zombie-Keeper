@@ -1,4 +1,3 @@
-'use client';
 import { useState, useRef, useEffect } from 'react';
 import { NetworkSession, NetworkNode } from '@/lib/models/localNetwork/networkModel';
 import ScannerView from '../scanner/ScannerView';

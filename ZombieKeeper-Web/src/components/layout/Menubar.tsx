@@ -1,4 +1,3 @@
-'use client';
 import { useEffect, useState } from 'react';
 
 // Menubar with real functional items and no duplicates

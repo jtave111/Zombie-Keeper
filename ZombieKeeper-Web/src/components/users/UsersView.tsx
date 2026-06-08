@@ -1,4 +1,3 @@
-'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { BackendUser, BackendRole, usersApi } from '@/lib/client/api';
 

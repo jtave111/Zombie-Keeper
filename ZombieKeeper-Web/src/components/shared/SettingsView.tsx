@@ -1,4 +1,3 @@
-'use client';
 import { useState } from 'react';
 
 type SettingsTab = 'general' | 'server' | 'users' | 'database' | 'network' | 'logging' | 'about' | 'danger';

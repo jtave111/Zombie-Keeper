@@ -1,13 +1,9 @@
-'use client';
 import { useState, useEffect } from 'react';
 import { Agent, AgentGeo } from '@/lib/models/agents/agentModel';
 import { agentsApi, c2Api, toAgent, toAgentGeo, BackendAgentDto, C2Info } from '@/lib/client/api';
-import dynamic from 'next/dynamic';
+import { lazy, Suspense } from 'react';
 
-const WorldMap = dynamic<{ geoAgents: AgentGeo[]; c2: C2Info | null }>(() => import('./WorldMap'), {
-  ssr: false,
-  loading: () => <div style={{flex:1,background:'#050a0e',display:'flex',alignItems:'center',justifyContent:'center',color:'#1a1a1a',fontFamily:'Courier New',fontSize:11}}>LOADING MAP...</div>,
-});
+const WorldMap = lazy(() => import('./WorldMap'));
 
 interface Props { onNav?: (v:string) => void; }
 
@@ -57,7 +53,9 @@ export default function DashboardView({ onNav }: Props) {
 
         {/* WORLD MAP */}
         <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
-          <WorldMap geoAgents={geoAgents} c2={c2} />
+          <Suspense fallback={<div style={{flex:1,background:'#050a0e',display:'flex',alignItems:'center',justifyContent:'center',color:'#1a1a1a',fontFamily:'Courier New',fontSize:11}}>LOADING MAP...</div>}>
+            <WorldMap geoAgents={geoAgents} c2={c2} />
+          </Suspense>
         </div>
 
         {/* SYSTEM HEALTH */}

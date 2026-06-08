@@ -1,7 +1,6 @@
-'use client';
 import { useState, useRef, useEffect } from 'react';
 import { Agent } from '@/lib/models/agents/agentModel';
-import { agentsApi, toAgent } from '@/lib/client/api';
+import { agentsApi, toAgent, shellWsUrl } from '@/lib/client/api';
 
 const stripAnsi = (s: string) =>
   s.replace(/\x1B\[[0-9;]*[A-Za-z]/g, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
@@ -216,10 +215,7 @@ export default function ShellModule() {
   const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    // O proxy /api/shell lê o cookie httpOnly e conecta ao Spring Boot com o token.
-    // Sem token visível no browser, sem URL do Spring Boot exposta.
-    const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(`${proto}//${window.location.host}/api/shell`);
+    const ws = new WebSocket(shellWsUrl());
 
     // Salva a instância no ref para poder usar em outros lugares do componente (ex: enviar comandos)
     wsRef.current = ws;

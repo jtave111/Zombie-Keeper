@@ -1,4 +1,3 @@
-'use client';
 import { useState, useEffect } from 'react';
 import { Agent, AgentStatus } from '@/lib/models/agents/agentModel';
 import { agentsApi, toAgent } from '@/lib/client/api';

@@ -1,4 +1,3 @@
-'use client';
 //TODO:configurar os imports 
 import { useState, useEffect, useCallback } from 'react';
 import { Agent, AgentStatus } from '@/lib/models/agents/agentModel';

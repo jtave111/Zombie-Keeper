@@ -1,6 +1,6 @@
-'use client';
 import { useState, useEffect, useRef } from 'react';
 import { Agent } from '@/lib/models/agents/agentModel';
+import { shellWsUrl } from '@/lib/client/api';
 
 interface ShellLine {
   type: 'cmd' | 'ok' | 'err' | 'warn' | 'sys' | 'info';
@@ -36,9 +36,7 @@ export default function AgentShell({ agent, onClose }: { agent: Agent; onClose: 
   const wsRef                   = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    // Proxy /api/shell/[id] lê o cookie httpOnly e conecta ao Spring Boot
-    const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(`${proto}//${window.location.host}/api/shell/${agent._uuid ?? 'server'}`);
+    const ws = new WebSocket(shellWsUrl(agent._uuid ?? undefined));
     wsRef.current = ws;
 
     ws.onopen = () => {
