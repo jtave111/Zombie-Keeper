@@ -1,6 +1,5 @@
-'use client';
 import { useState, useEffect } from 'react';
-import { auth } from '@/lib/api';
+import { auth } from '@/lib/client/api';
 
 interface BootLine { text: string; color: string; }
 
@@ -13,7 +12,9 @@ const BOOT: BootLine[] = [
   { text: '[*] Awaiting operator credentials...',       color: '#444' },
 ];
 
-export default function LoginPage({ onLogin }: { onLogin: () => void }) {
+interface Props { onLogin: () => void; }
+
+export default function LoginPage({ onLogin }: Props) {
   const [user,    setUser]    = useState('');
   const [pass,    setPass]    = useState('');
   const [error,   setError]   = useState('');

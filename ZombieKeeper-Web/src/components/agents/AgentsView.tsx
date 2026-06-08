@@ -1,7 +1,8 @@
 'use client';
+//TODO:configurar os imports 
 import { useState, useEffect, useCallback } from 'react';
 import { Agent, AgentStatus } from '@/lib/models/agents/agentModel';
-import { agentsApi, toAgent, BackendAgentDto } from '@/lib/api';
+import { agentsApi, toAgent, BackendAgentDto } from '@/lib/client/api';
 
 const SYM: Record<AgentStatus,string> = { ONLINE:'[*]', IDLE:'[~]', LOST:'[!]' };
 const CLS: Record<AgentStatus,string> = { ONLINE:'status-on', IDLE:'status-idle', LOST:'status-lost' };

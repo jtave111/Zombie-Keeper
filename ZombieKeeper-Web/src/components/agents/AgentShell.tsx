@@ -36,15 +36,9 @@ export default function AgentShell({ agent, onClose }: { agent: Agent; onClose: 
   const wsRef                   = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('zk_token') : null;
-    if (!token) {
-      setWsStatus('error');
-      setLines(prev => [...prev, { type:'err', text:'[-] No auth token — please log in again', time:now() }]);
-      return;
-    }
-
-    const base = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080').replace(/^http/, 'ws');
-    const ws = new WebSocket(`${base}/term?token=${token}`);
+    // Proxy /api/shell/[id] lê o cookie httpOnly e conecta ao Spring Boot
+    const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const ws = new WebSocket(`${proto}//${window.location.host}/api/shell/${agent._uuid ?? 'server'}`);
     wsRef.current = ws;
 
     ws.onopen = () => {

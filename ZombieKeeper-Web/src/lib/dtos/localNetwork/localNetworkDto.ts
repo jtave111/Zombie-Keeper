@@ -1,4 +1,4 @@
-export interface Port {
+export interface PortDto {
   id: number;
   number: number;
   proto: string;
@@ -6,7 +6,7 @@ export interface Port {
   banner: string;
 }
 
-export interface Vulnerability {
+export interface VulnerabilityDto {
   id: number;
   title: string;
   severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'INFO';
@@ -16,7 +16,7 @@ export interface Vulnerability {
   recommendation: string;
 }
 
-export interface NetworkNode {
+export interface NetworkNodeDto {
   id: number;
   ipv4: string;
   ipv6?: string;
@@ -31,11 +31,11 @@ export interface NetworkNode {
   isTrusted: boolean;
   vulnerabilityScore: number;
   isAgent: boolean;
-  ports: Port[];
-  vulnerabilities: Vulnerability[];
+  ports: PortDto[];
+  vulnerabilities: VulnerabilityDto[];
 }
 
-export interface NetworkSession {
+export interface NetworkSessionDto {
   id: string;
   networkIdentifier: string;
   networkName: string;
@@ -46,5 +46,5 @@ export interface NetworkSession {
   cidr: string;
   firstSeen: string;
   lastSeen: string;
-  nodes: NetworkNode[];
+  nodes: NetworkNodeDto[];
 }

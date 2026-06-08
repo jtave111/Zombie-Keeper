@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
-import { BackendUser, BackendRole, usersApi } from '@/lib/api';
+import { BackendUser, BackendRole, usersApi } from '@/lib/client/api';
 
 const ROLE_COL: Record<string, string> = {
   ADMIN:    '#e05c6e',
@@ -104,7 +104,7 @@ export default function UsersView() {
   async function submitCreate() {
     if (!fName || !fUser || !fPass || !fRole) { setFErr('All fields required'); return; }
     setFBusy(true); setFErr('');
-    try { await usersApi.create(fName, fUser, fPass, fRole); load(); setModal(null); }
+    try { await usersApi.create({ name: fName, username: fUser, password: fPass, role: { name: fRole } }); load(); setModal(null); }
     catch (e: any) { setFErr(`[-] ${e.message}`); }
     finally { setFBusy(false); }
   }

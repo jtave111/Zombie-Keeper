@@ -1,7 +1,7 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import { Agent } from '@/lib/models/agents/agentModel';
-import { agentsApi, toAgent } from '@/lib/api';
+import { agentsApi, toAgent } from '@/lib/client/api';
 
 const stripAnsi = (s: string) =>
   s.replace(/\x1B\[[0-9;]*[A-Za-z]/g, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
@@ -216,15 +216,10 @@ export default function ShellModule() {
   const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    // Pega o JWT que foi salvo no login. O backend exige o token para aceitar a conexão.
-    const token = typeof window !== 'undefined' ? localStorage.getItem('zk_token') : null;
-    if (!token) return;
-
-    // Converte a URL HTTP da API em WS — ex: "http://localhost:8080" → "ws://localhost:8080"
-    // O "/term?token=..." é o endpoint do TerminalWebSocketsHandler no Spring Boot.
-    // O token vai na query string porque o browser não permite headers customizados no WebSocket.
-    const base = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080').replace(/^http/, 'ws');
-    const ws = new WebSocket(`${base}/term?token=${token}`);
+    // O proxy /api/shell lê o cookie httpOnly e conecta ao Spring Boot com o token.
+    // Sem token visível no browser, sem URL do Spring Boot exposta.
+    const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const ws = new WebSocket(`${proto}//${window.location.host}/api/shell`);
 
     // Salva a instância no ref para poder usar em outros lugares do componente (ex: enviar comandos)
     wsRef.current = ws;
@@ -309,7 +304,7 @@ export default function ShellModule() {
           { type:'info',text:`  Arch     : ${ag.arch}`, time },
           { type:'info',text:`  Last seen: ${ag.lastSeen}`, time },
         );
-        //TODO: agent undefined mas  shell aberto (Shell do servidor), TODO: Criar shell.isOpen
+        //TODO: agent undefined mas  shell aberto (Shell do servidor), TODO: Criar shell.isOpen para diferenciar shell do servidor de shell de agente, e não mostrar info de agente quando for shell do servidor
       }else if(ag == undefined  ){
         out.push(
           { type:'sys', text:`[*] Agent info: ${"C2-SERVER"}`, time },

@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Agent, AgentGeo } from '@/lib/models/agents/agentModel';
-import { agentsApi, c2Api, toAgent, toAgentGeo, BackendAgentDto, C2Info } from '@/lib/api';
+import { agentsApi, c2Api, toAgent, toAgentGeo, BackendAgentDto, C2Info } from '@/lib/client/api';
 import dynamic from 'next/dynamic';
 
 const WorldMap = dynamic<{ geoAgents: AgentGeo[]; c2: C2Info | null }>(() => import('./WorldMap'), {

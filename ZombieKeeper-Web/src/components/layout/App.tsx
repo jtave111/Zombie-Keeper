@@ -1,4 +1,3 @@
-'use client';
 import { useState, useEffect } from 'react';
 import Menubar from '@/components/layout/Menubar';
 import Sidebar from '@/components/layout/Sidebar';
@@ -9,10 +8,9 @@ import SettingsView from '@/components/shared/SettingsView';
 import ShellModule from '@/components/shell/ShellModule';
 import PayloadGenerator from '@/components/payloads/PayloadGenerator';
 import ListenersView from '@/components/listeners/ListenersView';
-import LoginPage from '@/components/layout/LoginPage';
 import AgentShell from '@/components/agents/AgentShell';
 import { Agent, FeedEvent } from '@/lib/models/agents/agentModel';
-import { agentsApi, toAgent, mapStatus } from '@/lib/api';
+import { agentsApi, toAgent, mapStatus } from '@/lib/client/api';
 import CredentialsView from '@/components/intelligence/CredentialsView';
 import LootView from '@/components/intelligence/LootView';
 import ReportsView from '@/components/intelligence/ReportsView';
@@ -46,7 +44,6 @@ function buildFeed(agents: Agent[]): FeedEvent[] {
 
 
 export default function App() {
-  const [loggedIn,    setLoggedIn]    = useState(false);
   const [view,        setView]        = useState<View>('dashboard');
   const [cmd,         setCmd]         = useState('');
   const [shellAgent,  setShellAgent]  = useState<Agent|null>(null);
@@ -54,7 +51,6 @@ export default function App() {
   const [feed,        setFeed]        = useState<FeedEvent[]>([]);
 
   useEffect(() => {
-    if (!loggedIn) return;
     const load = () =>
       agentsApi.list()
         .then(list => {
@@ -66,9 +62,7 @@ export default function App() {
     load();
     const id = setInterval(load, 30_000);
     return () => clearInterval(id);
-  }, [loggedIn]);
-
-  if (!loggedIn) return <LoginPage onLogin={() => setLoggedIn(true)} />;
+  }, []);
 
   return (
     <div style={{ display:'flex', flexDirection:'column', height:'100vh', overflow:'hidden', background:'#080808', fontFamily:'Courier New' }}>
