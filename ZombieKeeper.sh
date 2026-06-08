@@ -3,15 +3,16 @@
 # ZombieKeeper — Script de inicialização da plataforma
 #
 # Uso:
-#   ./start.sh                  Inicia API + Dashboard Web
-#   ./start.sh --build          Recompila a API antes de iniciar
-#   ./start.sh --api-only       Inicia somente o servidor API (porta 8080)
-#   ./start.sh --web-only       Inicia somente o dashboard Web (porta 3000)
-#   ./start.sh --help           Exibe esta ajuda
+#   ./ZombieKeeper.sh                  Inicia API + cliente desktop (Tauri dev)
+#   ./ZombieKeeper.sh --build          Recompila a API antes de iniciar
+#   ./ZombieKeeper.sh --api-only       Inicia somente o servidor API (porta 8080)
+#   ./ZombieKeeper.sh --client         Inicia somente o cliente desktop (Tauri dev)
+#   ./ZombieKeeper.sh --help           Exibe esta ajuda
 #
 # Pré-requisitos:
-#   - Java 21+  (para a API)
-#   - Node.js 20+ com npm  (para o Web)
+#   - Java 21+        (API)
+#   - Rust + cargo    (cliente Tauri)
+#   - Node.js 20+     (cliente Tauri)
 #   - MySQL 8 rodando
 #   - ZombieKeeper-Api/.env configurado
 # =============================================================================
@@ -20,12 +21,12 @@ set -e
 
 PROJECT_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 API_DIR="$PROJECT_ROOT/ZombieKeeper-Api"
-WEB_DIR="$PROJECT_ROOT/ZombieKeeper-Web"
+CLIENT_DIR="$PROJECT_ROOT/ZombieKeeper-Client"
 API_JAR="$API_DIR/target/Zombie-Keeper-0.0.1-SNAPSHOT.jar"
 
 BUILD=false
 API_ONLY=false
-WEB_ONLY=false
+CLIENT_ONLY=false
 API_PID=""
 
 # -----------------------------------------------------------------------------
@@ -39,17 +40,17 @@ for arg in "$@"; do
         --api-only)
             API_ONLY=true
             ;;
-        --web-only)
-            WEB_ONLY=true
+        --client)
+            CLIENT_ONLY=true
             ;;
         --help|-h)
             echo ""
-            echo "  Uso: ./start.sh [opções]"
+            echo "  Uso: ./ZombieKeeper.sh [opções]"
             echo ""
             echo "  Opções:"
             echo "    --build       Recompila a API antes de iniciar"
             echo "    --api-only    Inicia somente o servidor API (porta 8080)"
-            echo "    --web-only    Inicia somente o dashboard Web (porta 3000)"
+            echo "    --client      Inicia somente o cliente desktop (Tauri dev)"
             echo "    --help        Exibe esta mensagem"
             echo ""
             echo "  Para compilar as ferramentas C++ do Arsenal:"
@@ -60,7 +61,7 @@ for arg in "$@"; do
             ;;
         *)
             echo "[erro] Opção desconhecida: $arg"
-            echo "       Execute './start.sh --help' para ver as opções disponíveis."
+            echo "       Execute './ZombieKeeper.sh --help' para ver as opções disponíveis."
             exit 1
             ;;
     esac
@@ -76,14 +77,12 @@ cleanup() {
     if [ -n "$API_PID" ] && kill -0 "$API_PID" 2>/dev/null; then
         kill -TERM "$API_PID" 2>/dev/null
 
-        # Aguarda até 10s o shutdown gracioso do Spring Boot
         local waited=0
         while kill -0 "$API_PID" 2>/dev/null && [ $waited -lt 10 ]; do
             sleep 1
             waited=$((waited + 1))
         done
 
-        # Força encerramento se ainda estiver vivo
         if kill -0 "$API_PID" 2>/dev/null; then
             kill -KILL "$API_PID" 2>/dev/null
             echo "[api] Encerrado forçadamente (SIGKILL)."
@@ -92,7 +91,6 @@ cleanup() {
         fi
     fi
 
-    # Garante que nada ficou na porta mesmo com PID perdido
     local port="${SERVER_PORT:-8080}"
     local zombie
     zombie=$(lsof -ti :"$port" -sTCP:LISTEN 2>/dev/null)
@@ -135,7 +133,7 @@ fi
 # -----------------------------------------------------------------------------
 # Compilar API se solicitado
 # -----------------------------------------------------------------------------
-if [ "$BUILD" = true ] && [ "$WEB_ONLY" = false ]; then
+if [ "$BUILD" = true ] && [ "$CLIENT_ONLY" = false ]; then
     echo "[build] Compilando ZombieKeeper-Api..."
     cd "$API_DIR"
     ./mvnw clean package -DskipTests -q
@@ -147,10 +145,10 @@ fi
 # -----------------------------------------------------------------------------
 # Iniciar servidor API
 # -----------------------------------------------------------------------------
-if [ "$WEB_ONLY" = false ]; then
+if [ "$CLIENT_ONLY" = false ]; then
     if [ ! -f "$API_JAR" ]; then
         echo "[erro] JAR da API não encontrado: $API_JAR"
-        echo "       Execute './start.sh --build' para compilar primeiro."
+        echo "       Execute './ZombieKeeper.sh --build' para compilar primeiro."
         exit 1
     fi
 
@@ -161,28 +159,26 @@ if [ "$WEB_ONLY" = false ]; then
     echo "[api] PID: $API_PID"
     echo ""
 
-    # Aguardar a API subir antes de iniciar o Web
     sleep 3
 fi
 
 # -----------------------------------------------------------------------------
-# Iniciar dashboard Web
+# Iniciar cliente desktop (Tauri)
 # -----------------------------------------------------------------------------
 if [ "$API_ONLY" = false ]; then
-    if [ ! -d "$WEB_DIR/node_modules" ]; then
-        echo "[web] Instalando dependências npm..."
-        cd "$WEB_DIR"
+    if [ ! -d "$CLIENT_DIR/node_modules" ]; then
+        echo "[client] Instalando dependências npm..."
+        cd "$CLIENT_DIR"
         npm install --silent
         cd "$PROJECT_ROOT"
     fi
 
-    echo "[web] Iniciando ZombieKeeper-Web..."
-    echo "[web] Dashboard: http://localhost:3000"
+    echo "[client] Iniciando ZombieKeeper-Client (Tauri dev)..."
+    echo "[client] A janela do aplicativo será aberta automaticamente."
     echo ""
-    cd "$WEB_DIR"
-    npm run dev
+    cd "$CLIENT_DIR"
+    npm run tauri dev
 else
-    # Modo API-only: aguardar o processo da API
     echo "[*] API em execução. Pressione Ctrl+C para encerrar."
     wait "$API_PID"
 fi

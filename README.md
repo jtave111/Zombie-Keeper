@@ -8,7 +8,7 @@
 
 [![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk/21/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
-[![Next.js](https://img.shields.io/badge/Next.js-15-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![Tauri](https://img.shields.io/badge/Tauri-2-24C8DB?style=for-the-badge&logo=tauri&logoColor=white)](https://tauri.app/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![C++](https://img.shields.io/badge/C++17-Raw%20Sockets-00599C?style=for-the-badge&logo=cplusplus&logoColor=white)](https://isocpp.org/)
 [![CMake](https://img.shields.io/badge/CMake-3.20+-064F8C?style=for-the-badge&logo=cmake&logoColor=white)](https://cmake.org/)
@@ -30,7 +30,7 @@
 - [Arquitetura](#-arquitetura)
 - [Módulos](#-módulos)
   - [ZombieKeeper-Api — Servidor C2 Spring Boot](#zombiekeeper-api--servidor-c2-spring-boot)
-  - [ZombieKeeper-Web — Dashboard Next.js](#zombiekeeper-web--dashboard-nextjs)
+  - [ZombieKeeper-Client — Desktop App (Tauri)](#zombiekeeper-client--desktop-app-tauri)
   - [ZombieKeeper-Arsenal — Network Session (Blue Team)](#zombiekeeper-arsenal--network-session-blue-team)
   - [ZombieKeeper-Arsenal — Agents (Red Team)](#zombiekeeper-arsenal--agents-red-team)
 - [Stack Tecnológica](#-stack-tecnológica)
@@ -49,7 +49,7 @@
 O sistema opera em três camadas principais:
 
 - **Servidor C2** (`ZombieKeeper-Api`) — API REST Spring Boot 4 que orquestra agents, recebe telemetria de rede, gerencia sessões e autentica operadores via JWT.
-- **Dashboard Web** (`ZombieKeeper-Web`) — Interface dark-terminal Next.js 15 para interação do operador em tempo real: gerenciamento de agents, acesso shell, topologia de rede, geração de payloads e administração de usuários.
+- **Desktop App** (`ZombieKeeper-Client`) — Aplicação desktop Tauri 2 (Rust + Vite + React 19) para interação do operador: gerenciamento de agents, acesso shell, topologia de rede, geração de payloads e administração de usuários. Roda em Linux, Windows e macOS.
 - **Arsenal** (`ZombieKeeper-Arsenal`) — Coleção de ferramentas nativas dividida em dois domínios:
   - **network-session** (Blue Team): scanner C++17 com Raw Sockets para fingerprint de rede local, descoberta ICMP e scan TCP, reportando resultados ao servidor C2.
   - **agents** (Red Team): implants, exploits, módulos de pós-exploração e ferramentas de ataque (em desenvolvimento).
@@ -60,14 +60,14 @@ O sistema opera em três camadas principais:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                      ZombieKeeper-Web                            │
-│                Next.js 15 · React 19 · TypeScript                │
+│                    ZombieKeeper-Client                            │
+│           Tauri 2 · Vite · React 19 · TypeScript                 │
 │                                                                  │
 │  Dashboard · Agents · Shell · Network · Payloads                 │
 │  Listeners · Scanner · Credentials · Users · Settings            │
 └────────────────────────┬─────────────────────────────────────────┘
-                         │ HTTP/REST  (JWT Bearer)
-                         │ http://localhost:3000 → :8080
+                         │ HTTP/REST direto (JWT Bearer no header)
+                         │ WebSocket ws://localhost:8080/term?token=JWT
 ┌────────────────────────▼─────────────────────────────────────────┐
 │                      ZombieKeeper-Api                             │
 │                Spring Boot 4 · Java 21 · MySQL 8                 │
@@ -174,14 +174,14 @@ LocationSource → IP_API / MANUAL / AGENT_REPORTED
 
 - **JWT** — autenticação stateless com expiração configurável
 - **Spring Security** — proteção de rotas com controle de acesso baseado em roles
-- **CORS** — configurado para a origem do frontend Next.js
+- **CORS** — configurado para origens Tauri (`tauri://localhost`, `https://tauri.localhost`) e Vite dev (`http://localhost:1420`)
 - **Bcrypt** — hash de senhas com fator de custo configurável
 
 ---
 
-### ZombieKeeper-Web — Dashboard Next.js
+### ZombieKeeper-Client — Desktop App (Tauri)
 
-Interface dark-terminal para operadores construída com **Next.js 15 + React 19 + TypeScript + Tailwind CSS**.
+Aplicação desktop para operadores construída com **Tauri 2 + Vite + React 19 + TypeScript + Tailwind CSS**. Compila para Linux, Windows e macOS a partir do mesmo código-fonte.
 
 #### Views
 
@@ -202,11 +202,13 @@ Interface dark-terminal para operadores construída com **Next.js 15 + React 19 
 
 #### Detalhes de Implementação
 
-- Todas as chamadas à API são centralizadas em `src/lib/api.ts` com injeção automática do JWT
-- Token armazenado no `localStorage` com a chave `zk_token`
+- Todas as chamadas à API centralizadas em `src/lib/client/api.ts` com injeção automática do JWT
+- Token armazenado em `localStorage` (`zk_token`) — seguro em Tauri, sem acesso externo ao webview
 - Lista de agents atualizada a cada 30 segundos via `setInterval`
-- Mapa mundial usa Leaflet com SSR desabilitado via `next/dynamic`
-- URL do backend configurada via `NEXT_PUBLIC_API_URL` (padrão: `http://localhost:8080`)
+- Mapa mundial usa Leaflet com lazy loading via `React.lazy + Suspense`
+- URLs configuradas via `VITE_API_URL` e `VITE_WS_URL` (padrão: `http://localhost:8080`)
+- WebSocket do shell conecta diretamente ao Spring Boot com JWT na query string
+- Auth event: `zk:logout` dispara logout em qualquer componente sem prop drilling
 
 ---
 
@@ -305,13 +307,13 @@ agents/
 | Banco de Dados | MySQL 8 |
 | Autenticação | Spring Security + JWT + Roles |
 | API REST | Spring Web MVC + Jackson |
-| Dashboard Web | Next.js 15 + React 19 + TypeScript |
+| Desktop App | Tauri 2 + Vite + React 19 + TypeScript |
 | Estilização UI | Tailwind CSS + variáveis CSS customizadas |
 | Mapa | Leaflet + Leaflet.markercluster |
 | Scanner de Rede | C++17 + Raw Sockets (POSIX / Linux) |
 | Build (API) | Apache Maven 3 (wrapper mvnw) |
 | Build (Arsenal C++) | CMake 3.20+ + GNU Make (wrapper) |
-| Build (Web) | npm / Next.js |
+| Build (Desktop) | Rust + cargo + npm / Tauri CLI |
 | Automação | Python 3 |
 
 ---
@@ -338,11 +340,12 @@ ZombieKeeper/
 │   ├── .env                                   # Variáveis de ambiente (gitignored)
 │   └── pom.xml
 │
-├── ZombieKeeper-Web/                          # Dashboard — Next.js
+├── ZombieKeeper-Client/                       # Desktop App — Tauri 2 + Vite + React
 │   ├── src/
-│   │   ├── app/                               # Next.js App Router (layout + página raiz)
+│   │   ├── main.tsx                           # Entrypoint React (monta Root)
+│   │   ├── Root.tsx                           # Auth gate: LoginPage ou App
 │   │   ├── components/                        # Componentes React por feature
-│   │   │   ├── layout/                        # App, LoginPage, Menubar, Sidebar
+│   │   │   ├── layout/                        # App (roteamento), LoginPage, Menubar, Sidebar
 │   │   │   ├── agents/                        # AgentsView, AgentShell, AgentTableHeader
 │   │   │   ├── dashboard/                     # DashboardView, WorldMap
 │   │   │   ├── network/                       # NetworkView
@@ -352,9 +355,16 @@ ZombieKeeper/
 │   │   │   ├── intelligence/                  # CredentialsView, LootView, ReportsView
 │   │   │   ├── users/                         # UsersView
 │   │   │   └── shared/                        # SettingsView
-│   │   ├── lib/                               # api.ts, data.ts, networkData.ts
-│   │   └── styles/                            # globals.css (Tailwind + CSS vars)
-│   ├── .env.local                             # NEXT_PUBLIC_API_URL (gitignored)
+│   │   └── lib/
+│   │       ├── client/api.ts                  # HTTP + WebSocket: req(), auth, shellWsUrl()
+│   │       ├── dtos/                          # Tipos espelho do Spring Boot
+│   │       └── models/                        # Tipos internos do frontend
+│   ├── src-tauri/                             # Core Rust (Tauri)
+│   │   ├── src/lib.rs                         # Ponto de entrada Tauri
+│   │   ├── Cargo.toml
+│   │   └── tauri.conf.json                    # Produto: nome, janela, URLs
+│   ├── vite.config.ts                         # Vite: alias @/, port 1420
+│   ├── .env                                   # VITE_API_URL, VITE_WS_URL (gitignored)
 │   └── package.json
 │
 ├── ZombieKeeper-Arsenal/                      # Arsenal de ferramentas nativas
@@ -388,7 +398,7 @@ ZombieKeeper/
 │   └── .gitignore
 │
 ├── pom.xml                                    # Agregador Maven (monorepo root)
-├── start.sh                                   # Script de inicialização da plataforma
+├── ZombieKeeper.sh                            # Script de inicialização da plataforma
 ├── README.md                                  # Este arquivo
 ├── MONOREPO.md                                # Estrutura detalhada do monorepo
 └── HELP.md                                    # Referência rápida para desenvolvedores
@@ -404,7 +414,8 @@ ZombieKeeper/
 |---|---|---|
 | Java (JDK) | 21+ | Servidor C2 (API) |
 | Maven | 3.8+ | Build da API (ou use o wrapper `mvnw`) |
-| Node.js | 20+ | Dashboard web |
+| Node.js | 20+ | Cliente desktop (Tauri) |
+| Rust (cargo) | stable | Cliente desktop (Tauri core) |
 | MySQL | 8+ | Banco de dados |
 | GCC / G++ | 11+ com C++17 | Arsenal C++ |
 | CMake | 3.20+ | Sistema de build do Arsenal |
@@ -429,9 +440,6 @@ cd ZombieKeeper
 cp ZombieKeeper-Api/.env.example ZombieKeeper-Api/.env
 nano ZombieKeeper-Api/.env
 
-# Configurar o arquivo de ambiente do Web
-cp ZombieKeeper-Web/.env.local.example ZombieKeeper-Web/.env.local
-nano ZombieKeeper-Web/.env.local
 ```
 
 **Variáveis mínimas obrigatórias em `ZombieKeeper-Api/.env`:**
@@ -447,26 +455,27 @@ ADMIN_USERNAME=admin
 ADMIN_PASSWORD=SuaSenhaSegura!
 ```
 
-**Mínimo obrigatório em `ZombieKeeper-Web/.env.local`:**
+**Variáveis do cliente desktop em `ZombieKeeper-Client/.env`:**
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:8080
+VITE_API_URL=http://localhost:8080
+VITE_WS_URL=ws://localhost:8080
 ```
 
 ### 3. Iniciar todos os serviços (recomendado)
 
 ```bash
-# Iniciar API + Dashboard Web
-./start.sh
+# Iniciar API + cliente desktop (Tauri dev)
+./ZombieKeeper.sh
 
 # Compilar a API primeiro e depois iniciar tudo
-./start.sh --build
+./ZombieKeeper.sh --build
 
 # Iniciar somente a API
-./start.sh --api-only
+./ZombieKeeper.sh --api-only
 
-# Iniciar somente o Web
-./start.sh --web-only
+# Iniciar somente o cliente desktop
+./ZombieKeeper.sh --client
 ```
 
 ### 4. Inicialização manual
@@ -478,12 +487,12 @@ cd ZombieKeeper-Api
 # API disponível em http://localhost:8080
 ```
 
-**Dashboard Web:**
+**Cliente desktop:**
 ```bash
-cd ZombieKeeper-Web
+cd ZombieKeeper-Client
 npm install
-npm run dev
-# Dashboard disponível em http://localhost:3000
+npm run tauri dev
+# A janela do aplicativo é aberta automaticamente
 ```
 
 ### 5. Compilar o Arsenal C++ (Linux)
@@ -524,7 +533,7 @@ Targets disponíveis: LocalFingerPrint · ping · setcap
 
 ### Fluxo do Operador
 
-**1. Login** — Acesse `http://localhost:3000` e autentique-se com suas credenciais de operador.
+**1. Login** — Abra o aplicativo ZombieKeeper (ou execute `./ZombieKeeper.sh`) e autentique-se com suas credenciais de operador.
 
 **2. Dashboard** — Painel de visão geral com contador de agents ativos e mapa mundial com geolocalizações.
 
@@ -567,13 +576,13 @@ Targets disponíveis: LocalFingerPrint · ping · setcap
 
 ---
 
-**Dashboard Web**
+**Desktop App (Cliente Tauri)**
 - [x] UI dark terminal com navegação completa de operador (12 views)
 - [x] Login com autenticação JWT
 - [x] Dashboard com estatísticas de agents em tempo real e mapa mundial Leaflet
 - [x] Tabela de agents — API real, filtros, busca, ação de kill
 - [x] Gerenciamento de usuários — CRUD completo com atribuição de roles (API real)
-- [~] Shell do agent — UI terminal pronta, respostas hardcoded (precisa de execução real de comandos)
+- [~] Shell do agent — UI terminal pronta, WebSocket direto ao Spring Boot (precisa de backend real)
 - [~] Tabs do Shell — Process List, File Manager, Port Forward, Sysinfo (UI pronta, sem backend)
 - [~] View Scanner — UI + construtor de comandos pronto, execução de scan simulada
 - [~] Gerador de Payloads — UI de configuração completa, output de build falso (sem geração real)
@@ -588,6 +597,8 @@ Targets disponíveis: LocalFingerPrint · ping · setcap
 - [ ] Shell — execução real de comandos encaminhada ao agent
 - [ ] Download de payload após geração
 - [ ] Exportação de relatório (PDF / HTML)
+- [ ] Build de produção Tauri (`.deb`, `.AppImage`, `.exe`, `.dmg`)
+- [ ] Atualização automática via Tauri updater
 
 ---
 
@@ -800,7 +811,7 @@ Targets disponíveis: LocalFingerPrint · ping · setcap
 **Infraestrutura & DevOps**
 - [ ] Docker Compose (API + MySQL + Redis em containers)
 - [ ] Dockerfile para a API Spring Boot
-- [ ] Dockerfile + Nginx para o dashboard Next.js
+- [ ] Build Tauri para produção (pacotes `.deb`, `.AppImage`, `.exe`, `.dmg`)
 - [ ] GitHub Actions CI — build, teste, push de imagem Docker
 - [ ] Templates Terraform para infraestrutura de lab (VMs, VPC, VPN)
 - [ ] Playbook Ansible para deploy automatizado do servidor C2
