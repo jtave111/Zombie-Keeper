@@ -129,7 +129,8 @@ html, body {
 .zk-input:focus { border-color: var(--red); background: var(--inset2); }
 .zk-input::placeholder { color: var(--tx3); }
 
-.zk-select {
+.zk-select,
+select {
   background: var(--inset);
   border: 1px solid var(--b2);
   color: var(--tx0);
@@ -139,9 +140,13 @@ html, body {
   width: 100%;
   outline: none;
   cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
 }
-.zk-select:focus { border-color: var(--red); }
-.zk-select option { background: var(--panel2); }
+.zk-select:focus,
+select:focus { border-color: var(--red); }
+.zk-select option,
+select option { background: var(--panel); color: var(--tx0); }
 
 /* ── BUTTONS ── */
 .zk-btn {

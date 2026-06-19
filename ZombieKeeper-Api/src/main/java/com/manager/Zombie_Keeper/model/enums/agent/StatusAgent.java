@@ -1,9 +1,7 @@
 package com.manager.Zombie_Keeper.model.enums.agent;
 
 public enum StatusAgent {
-    OLINE,
+    ONLINE,
     OFF,
     KILL,
-
-
 }

@@ -1,5 +1,6 @@
 package com.manager.Zombie_Keeper.model.entity.agent;
 
+import com.manager.Zombie_Keeper.model.entity.c2Server.C2Server;
 import com.manager.Zombie_Keeper.model.enums.agent.StatusAgent;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -17,7 +18,7 @@ import com.manager.Zombie_Keeper.model.enums.agent.Flags;
 import com.manager.Zombie_Keeper.model.enums.agent.Tags;
 
 @Entity
-
+@Table(name = "tb_agent")
 public class Agent {
 
     @Id
@@ -52,7 +53,7 @@ public class Agent {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
-    private StatusAgent status = StatusAgent.OLINE;
+    private StatusAgent status = StatusAgent.ONLINE;
     
     private Integer sleepTime = 0; // Beacon interval in seconds (0 = interactive)
 
@@ -60,6 +61,8 @@ public class Agent {
     private LocalDateTime firstSeen; // When the agent first registered
 
     private LocalDateTime lastSeen; // Last time it checked in
+
+
 
     @OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Loot> loots = new ArrayList<>();
@@ -75,6 +78,10 @@ public class Agent {
     private Set<Tags> tags = new HashSet<>();
 
 
+    @ManyToOne
+    @JoinColumn(name = "c_2_server_id")
+    private C2Server server;
+
     @OneToMany(
             mappedBy      = "agent",
             cascade       = CascadeType.ALL,   // salvar/deletar agent cascateia locations
@@ -82,6 +89,14 @@ public class Agent {
             fetch         = FetchType.LAZY     // não carrega locations a cada getAgent()
     )
     private List<AgentLocation> locations = new ArrayList<>();
+
+    public C2Server getC2Server() {
+        return server;
+    }
+
+    public void setC2Server(C2Server server) {
+        this.server = server;
+    }
 
     public Agent() {
 
@@ -120,13 +135,10 @@ public class Agent {
     }
 
 
-    // ── Getter & Setter ───────────────────────────────────────────────────────
-
     public List<AgentLocation> getLocations() { return locations; }
 
     public void setLocations(List<AgentLocation> locations) { this.locations = locations; }
 
-    // ── Helper methods ────────────────────────────────────────────────────────
 
     public void addLocation(AgentLocation location) {
         locations.add(location);

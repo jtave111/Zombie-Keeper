@@ -1,26 +1,45 @@
-
 const SECTIONS = [
   { label:'OVERVIEW', items:[
-    { key:'dashboard', icon:'#', label:'Dashboard' },
+    { key:'dashboard',  icon:'#', label:'Dashboard' },
   ]},
   { label:'C2 OPERATIONS', items:[
-    { key:'agents',    icon:'>', label:'Agents',    badge:'6' },
-    { key:'shell',     icon:'$', label:'Shell' },
-    { key:'listeners', icon:'~', label:'Listeners', badge:'2' },
-    { key:'payloads',  icon:'*', label:'Payloads' },
+    { key:'agents',     icon:'>', label:'Agents',        badge:'6' },
+    { key:'shell',      icon:'$', label:'Shell' },
+    { key:'listeners',  icon:'~', label:'Listeners',     badge:'2' },
+    { key:'payloads',   icon:'*', label:'Payloads' },
+    { key:'sweep',      icon:'»', label:'Sweep',         badge:'!' },
+  ]},
+  { label:'OPERATIONS', items:[
+    { key:'operations', icon:'K', label:'Op Planner' },
+    { key:'mitre',      icon:'M', label:'MITRE ATT&CK' },
+    { key:'playbooks',  icon:'▶', label:'Playbooks' },
   ]},
   { label:'RECON', items:[
-    { key:'network',   icon:'@', label:'Network Map' },
+    { key:'scanner',    icon:'@', label:'Net Scanner' },
+    { key:'network',    icon:'°', label:'Network Map' },
+  ]},
+  { label:'POST-EXPLOIT', items:[
+    { key:'files',      icon:'/', label:'File Manager' },
+    { key:'processes',  icon:'%', label:'Processes' },
+    { key:'tunnels',    icon:'↔', label:'Tunnels' },
   ]},
   { label:'INTELLIGENCE', items:[
-    { key:'credentials', icon:':', label:'Credentials' },
-    { key:'loot',        icon:'=', label:'Loot' },
-    { key:'reports',     icon:'~', label:'Reports' },
+    { key:'loot',       icon:'=', label:'Loot' },
+    { key:'credentials',icon:':', label:'Credentials' },
+    { key:'reports',    icon:'~', label:'Reports' },
+  ]},
+  { label:'ARSENAL', items:[
+    { key:'implants',   icon:'⚡', label:'Implants' },
+    { key:'exploits',   icon:'!', label:'Exploits' },
+    { key:'arsenal',    icon:'⚙', label:'Build Manager' },
+  ]},
+  { label:'OPSEC', items:[
+    { key:'opsec',      icon:'⊘', label:'IOC Tracker' },
   ]},
   { label:'SYSTEM', items:[
-    { key:'users',     icon:'@', label:'Users' },
-    { key:'logs',      icon:'=', label:'Logs' },
-    { key:'settings',  icon:'+', label:'Settings' },
+    { key:'users',      icon:'@', label:'Users' },
+    { key:'logs',       icon:'=', label:'Logs' },
+    { key:'settings',   icon:'+', label:'Settings' },
   ]},
 ];
 

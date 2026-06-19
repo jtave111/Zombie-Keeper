@@ -1,73 +1,106 @@
 # =============================================================================
-# ZombieKeeper Arsenal — Makefile raiz (wrapper CMake)
+# ZombieKeeper Arsenal — Makefile raiz (coordenador polyglot)
 # =============================================================================
 #
-# Este Makefile é um wrapper de conveniência sobre o CMake.
-# Use-o para builds rápidos via terminal ou CI/CD sem precisar
-# lembrar os comandos cmake completos.
+# Ponto de entrada único para buildar qualquer ferramenta do Arsenal.
+# Cada linguagem tem seu próprio sistema de build — este Makefile orquestra.
 #
-# O sistema de build real é o CMake (CMakeLists.txt na raiz).
-# Para uso avançado (targets específicos, flags customizadas),
-# use cmake diretamente — veja os comentários no CMakeLists.txt raiz.
+#   C/C++    → CMake  (cada módulo tem seu próprio CMakeLists.txt autossuficiente)
+#   Go       → go build  (cada módulo tem seu go.mod)
+#   Rust     → cargo build  (cada módulo tem seu Cargo.toml)
+#   Python   → sem build — executar direto com python3
+#   Assembly → nasm  (por módulo)
+#
+# Não existe CMakeLists.txt na raiz do Arsenal.
+# Cada módulo C++ é autossuficiente e pode ser aberto no CLion diretamente.
 #
 # TARGETS DISPONÍVEIS
 # ===================
-#   make              → configura (se necessário) e compila tudo em Debug
-#   make release      → compila tudo em Release (otimizado)
-#   make network-session → compila apenas o domínio network-session
-#   make agents       → compila apenas o domínio agents (quando disponível)
-#   make clean        → remove artefatos de build (mantém configuração cmake)
-#   make reset        → remove o diretório build/ inteiro (reset completo)
-#   make help         → exibe esta ajuda
+#   make                  → builda tudo (toolchains ativos)
+#   make network-session  → builda LocalFingerPrint
+#   make go               → builda módulos Go ativos
+#   make rust             → builda módulos Rust ativos
+#   make release          → build Release otimizado
+#   make clean            → remove artefatos de build
+#   make help             → exibe esta ajuda
 # =============================================================================
 
-BUILD_DIR := build
 BUILD_TYPE ?= Debug
 
-.PHONY: all release network-session agents clean reset help
+# Diretório de build de cada módulo C++ (dentro do próprio módulo)
+BUILD_NS := network-session/tools/local-fingerprint/build
 
-# Configura o cmake na primeira execução (ou se build/ não existir),
-# depois compila tudo.
-all: $(BUILD_DIR)/CMakeCache.txt
-	@cmake --build $(BUILD_DIR) --parallel
+# ─── Detecta toolchains disponíveis ──────────────────────────────────────────
+HAS_CMAKE := $(shell command -v cmake 2>/dev/null)
+HAS_GO    := $(shell command -v go    2>/dev/null)
+HAS_CARGO := $(shell command -v cargo 2>/dev/null)
+HAS_NASM  := $(shell command -v nasm  2>/dev/null)
 
+.PHONY: all network-session go rust release clean help
+
+# ─── Build de tudo ───────────────────────────────────────────────────────────
+all: network-session
+# Descomentar conforme módulos Go/Rust forem sendo ativados:
+# all: network-session go rust
+
+# ─── C/C++: network-session/LocalFingerPrint ─────────────────────────────────
+network-session: $(BUILD_NS)/CMakeCache.txt
+ifndef HAS_CMAKE
+	$(error "[!] cmake não encontrado. Instale: sudo apt install cmake")
+endif
+	@cmake --build $(BUILD_NS) --parallel
+
+$(BUILD_NS)/CMakeCache.txt:
+	@cmake \
+		-B $(BUILD_NS) \
+		-S network-session/tools/local-fingerprint \
+		-DCMAKE_BUILD_TYPE=$(BUILD_TYPE) \
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+# ─── Go ──────────────────────────────────────────────────────────────────────
+go:
+ifndef HAS_GO
+	$(error "[!] go não encontrado. Instale: https://go.dev/dl/")
+endif
+	@echo "[*] Nenhum módulo Go ativo ainda."
+# Exemplo — descomentar quando o módulo existir:
+# @cd agents/implants/linux/go && go build -o ../../../../build/linux-implant ./...
+
+# ─── Rust ────────────────────────────────────────────────────────────────────
+rust:
+ifndef HAS_CARGO
+	$(error "[!] cargo não encontrado. Instale: https://rustup.rs/")
+endif
+	@echo "[*] Nenhum módulo Rust ativo ainda."
+# Exemplo — descomentar quando o módulo existir:
+# @cd agents/implants/linux/rust && cargo build --release
+
+# ─── Release ─────────────────────────────────────────────────────────────────
 release:
-	@cmake -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-	@cmake --build $(BUILD_DIR) --parallel
+	@$(MAKE) BUILD_TYPE=Release network-session
 
-# Compila apenas o target LocalFingerPrint (e sua dependência ping).
-network-session: $(BUILD_DIR)/CMakeCache.txt
-	@cmake --build $(BUILD_DIR) --target LocalFingerPrint --parallel
-
-# Placeholder — ativar quando agents/CMakeLists.txt for criado.
-agents:
-	@echo "[!] Domínio agents ainda não tem targets C/C++ configurados."
-
+# ─── Limpeza ─────────────────────────────────────────────────────────────────
 clean:
-	@cmake --build $(BUILD_DIR) --target clean 2>/dev/null || true
-	@echo "[*] Artefatos removidos. Configuração cmake mantida em $(BUILD_DIR)/."
+	@rm -rf $(BUILD_NS)
+	@find . -name "target" -path "*/rust/target" -exec rm -rf {} + 2>/dev/null || true
+	@echo "[*] Artefatos removidos."
 
-# Reset completo: remove tudo incluindo a configuração cmake.
-# Após reset, o próximo 'make' reconfigura do zero.
-reset:
-	@rm -rf $(BUILD_DIR)
-	@echo "[*] $(BUILD_DIR)/ removido. Execute 'make' para reconfigurar."
-
+# ─── Help ────────────────────────────────────────────────────────────────────
 help:
 	@echo ""
-	@echo "  make              build Debug (padrão)"
-	@echo "  make release      build Release (otimizado)"
-	@echo "  make network-session  apenas ferramentas de network-session"
-	@echo "  make clean        remove artefatos, mantém config cmake"
-	@echo "  make reset        remove build/ inteiro"
+	@echo "  make                  build tudo (toolchains ativos)"
+	@echo "  make network-session  build LocalFingerPrint (C++)"
+	@echo "  make go               build módulos Go"
+	@echo "  make rust             build módulos Rust"
+	@echo "  make release          build Release otimizado"
+	@echo "  make clean            remove artefatos de build"
 	@echo ""
-	@echo "  Build type manual:"
-	@echo "    cmake -B build -DCMAKE_BUILD_TYPE=Debug|Release|RelWithDebInfo"
-	@echo "    cmake --build build --target <nome-do-target>"
+	@echo "  Toolchains detectados:"
+	@echo "    cmake : $(if $(HAS_CMAKE),OK,NÃO ENCONTRADO)"
+	@echo "    go    : $(if $(HAS_GO),OK,NÃO ENCONTRADO)"
+	@echo "    cargo : $(if $(HAS_CARGO),OK,NÃO ENCONTRADO)"
+	@echo "    nasm  : $(if $(HAS_NASM),OK,NÃO ENCONTRADO)"
 	@echo ""
-	@echo "  Targets disponíveis: LocalFingerPrint, ping"
+	@echo "  Abrir no CLion:"
+	@echo "    LocalFingerPrint → abrir: network-session/scanners/local-fingerprint/cpp/"
 	@echo ""
-
-# Configura o cmake se build/ ainda não existir ou se algum CMakeLists.txt mudou.
-$(BUILD_DIR)/CMakeCache.txt: CMakeLists.txt network-session/CMakeLists.txt
-	@cmake -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_EXPORT_COMPILE_COMMANDS=ON

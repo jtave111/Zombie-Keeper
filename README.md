@@ -14,6 +14,7 @@
 [![CMake](https://img.shields.io/badge/CMake-3.20+-064F8C?style=for-the-badge&logo=cmake&logoColor=white)](https://cmake.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Rust](https://img.shields.io/badge/Rust-stable-000000?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
 [![Spring Security](https://img.shields.io/badge/Spring%20Security-JWT-4CA154?style=for-the-badge&logo=springsecurity&logoColor=white)](#)
 
 <br/>
@@ -100,14 +101,17 @@ O sistema opera em três camadas principais:
               │    ZombieKeeper-Arsenal       │
               │                              │
               │  ┌─────────────────────────┐ │
-              │  │  network-session/       │ │   ← Blue Team
-              │  │  scanners/              │ │
-              │  │  local-fingerprint/cpp/ │ │
+              │  │  libs/cpp/              │ │   ← libs compartilhadas
+              │  │    net_utils/           │ │     ICMP checksum
+              │  │    ping/                │ │     raw ICMP (linka net_utils)
+              │  │    D_DOS/               │ │     TCP flood + ICMP flood
               │  │                         │ │
-              │  │  ICMP Sweep (Ping lib)  │ │
-              │  │  TCP Port Scanner       │ │
-              │  │  FingerPrint Session    │ │
-              │  │  Node · Port · Vuln     │ │
+              │  │  network-session/tools/ │ │   ← Blue Team
+              │  │    local-fingerprint/   │ │
+              │  │      include/  src/     │ │
+              │  │      ICMP sweep         │ │
+              │  │      TCP port scan      │ │
+              │  │      Node · Port · Vuln │ │
               │  └─────────────────────────┘ │
               │  ┌─────────────────────────┐ │
               │  │  agents/               │ │   ← Red Team (planejado)
@@ -216,67 +220,65 @@ Aplicação desktop para operadores construída com **Tauri 2 + Vite + React 19 
 
 Ferramentas para descoberta, fingerprint e inteligência de rede local. Os dados gerados alimentam o modelo `NetworkSession → NetworkNode → Port → Vulnerability` no servidor C2.
 
+#### Estrutura do Arsenal
+
+```
+ZombieKeeper-Arsenal/
+├── libs/
+│   └── cpp/
+│       ├── net_utils/               # Utilitários compartilhados
+│       │   ├── include/             # net_utils::icmp_checksum (in_cksum)
+│       │   └── src/
+│       ├── ping/                    # ICMP raw socket — linka net_utils
+│       │   ├── include/
+│       │   └── src/
+│       └── D_DOS/                   # TCP SYN flood + ICMP/UDP flood
+│           ├── include/
+│           └── src/
+│
+└── network-session/
+    └── tools/
+        └── local-fingerprint/       # Scanner de rede local (C++17)
+            ├── include/             # Headers públicos
+            ├── src/                 # Implementações
+            └── CMakeLists.txt       # Target: LocalFingerPrint
+```
+
+Convenção em todo o Arsenal: `include/` para headers, `src/` para `.cpp`. Todas as libs linkam `net_utils` via `target_link_libraries(... PRIVATE net_utils)`.
+
 #### local-fingerprint (C++17)
 
-Binário nativo compilado em **C++17** usando **POSIX Raw Sockets**. Invocado pelo servidor via `ProcessManagerService` ou executado manualmente.
-
-**Estrutura do código-fonte:**
-
-```
-network-session/
-├── libs/cpp/ping/                   # Biblioteca ICMP (libping.a)
-│   ├── Ping.cpp                     # Implementação ICMP Echo Request
-│   ├── h/Ping.h                     # Interface pública
-│   └── CMakeLists.txt               # Target CMake: lib estática
-│
-└── scanners/local-fingerprint/
-    ├── cpp/                         # Implementação principal C++17
-    │   ├── localNetwork/
-    │   │   ├── app/
-    │   │   │   ├── main.cpp         # Entry point, parsing de argumentos
-    │   │   │   └── App.cpp          # Orquestração do fluxo principal
-    │   │   ├── FingerPrintSession.cpp   # Execução completa da sessão
-    │   │   ├── SessionBuild.cpp         # Serialização JSON + HTTP POST
-    │   │   ├── model/               # Node, Port, Session, Vulnerability
-    │   │   └── scanners/
-    │   │       └── Scanner.cpp      # Motor de scan TCP via raw sockets
-    │   ├── CMakeLists.txt           # Target CMake: executável LocalFingerPrint
-    │   └── Makefile                 # Wrapper de conveniência (chama cmake)
-    ├── python/                      # Scripts auxiliares HTTP
-    │   └── requestAutomation/
-    │       └── request.py           # Automação de requisições ao C2
-    ├── go/                          # Implementação Go concorrente (planejado)
-    └── README.md
-```
+Binário nativo compilado em **C++17** com **POSIX Raw Sockets**. Invocado pelo servidor via `ProcessManagerService` ou executado manualmente.
 
 **Fluxo de execução:**
 
 ```
-App::run()
-  │
-  ├─► Ping::sweep()            — Pacotes ICMP para cada IP da subnet
-  ├─► Scanner::portScan()      — Scan raw socket TCP nos hosts ativos
-  ├─► Model::build()           — Constrói Node → Port → Vulnerability por resultado
-  └─► SessionBuild::send()     — Serializa em JSON e faz HTTP POST ao servidor C2
+LocalFingerPrint
+  ├─► ICMP sweep (ping/)         — descobre hosts ativos na subnet
+  ├─► TCP port scan              — raw socket SYN scan nos hosts ativos
+  ├─► Node → Port → Vuln         — constrói modelo de dados da sessão
+  └─► JSON → stdout              — API Spring Boot lê via ProcessBuilder
 ```
 
-**Exige root ou `CAP_NET_RAW`** (Raw Sockets necessitam de privilégio elevado).
+Saída de progresso vai para **stderr**, JSON puro para **stdout** (necessário para integração Java via `extractJson()`).
+
+**Exige root ou `CAP_NET_RAW`** (Raw Sockets requerem privilégio elevado).
 
 **Sistema de build — CMake:**
 
 ```
 ZombieKeeper-Arsenal/
-├── CMakeLists.txt                   ← entry point (abrir no CLion)
-│   └── add_subdirectory(network-session)
+├── Makefile                         ← wrapper: make network-session
+├── libs/CMakeLists.txt
+│   └── libs/cpp/CMakeLists.txt
+│       ├── add_subdirectory(net_utils)   → target: net_utils
+│       ├── add_subdirectory(ping)        → target: ping (linka net_utils)
+│       └── add_subdirectory(D_DOS)       → target: D_DOS (linka net_utils)
 │
-├── network-session/CMakeLists.txt
-│   ├── find_package(CURL REQUIRED)
-│   ├── add_subdirectory(libs/cpp/ping)          → target: ping (libping.a)
-│   └── add_subdirectory(scanners/local-fingerprint/cpp) → target: LocalFingerPrint
-│
-└── build/                           ← artefatos gerados (gitignored)
-    └── network-session/scanners/local-fingerprint/cpp/
-        └── LocalFingerPrint         ← binário compilado
+└── network-session/CMakeLists.txt
+    └── tools/local-fingerprint/CMakeLists.txt → target: LocalFingerPrint
+
+build/                               ← artefatos gerados (gitignored)
 ```
 
 ---
@@ -369,32 +371,28 @@ ZombieKeeper/
 │
 ├── ZombieKeeper-Arsenal/                      # Arsenal de ferramentas nativas
 │   │
+│   ├── libs/cpp/                              # Bibliotecas compartilhadas C++17
+│   │   ├── net_utils/include/ src/            # ICMP checksum (in_cksum) + utilitários
+│   │   ├── ping/include/ src/                 # Raw ICMP socket (linka net_utils)
+│   │   └── D_DOS/include/ src/                # TCP SYN flood + ICMP/UDP flood
+│   │
 │   ├── network-session/                       # Domínio: Blue Team
-│   │   ├── scanners/local-fingerprint/
-│   │   │   ├── cpp/                           # C++17 — ferramenta principal
-│   │   │   │   ├── localNetwork/              # Scanner, Session, Models
-│   │   │   │   └── CMakeLists.txt             # Target: LocalFingerPrint
-│   │   │   ├── python/requestAutomation/      # Scripts HTTP auxiliares
-│   │   │   └── README.md
-│   │   ├── discovery/                         # icmp-sweep, arp-scan, dns-enum (planejado)
-│   │   ├── osint/                             # subdomain, shodan, ssl-analysis (planejado)
-│   │   ├── libs/cpp/ping/                     # Biblioteca ICMP — CMakeLists.txt
-│   │   └── CMakeLists.txt                     # Agregador do domínio
+│   │   └── tools/local-fingerprint/
+│   │       ├── include/                       # Headers públicos do scanner
+│   │       ├── src/                           # Implementação C++17
+│   │       └── CMakeLists.txt                 # Target: LocalFingerPrint
 │   │
-│   ├── agents/                                # Domínio: Red Team
-│   │   ├── implants/linux/    (cpp, rust, go) # Beacons Linux (planejado)
-│   │   ├── implants/windows/  (cpp, rust)     # Beacons Windows (planejado)
-│   │   ├── implants/cross-platform/go/        # Beacon multiplataforma (planejado)
-│   │   ├── exploits/          (linux, windows, web) # Exploits (planejado)
-│   │   ├── post-exploitation/ (linux, windows)     # Pós-acesso (planejado)
-│   │   ├── attacks/           (network, web, credentials) # Ataques (planejado)
-│   │   ├── payloads/          (x86_64/asm, arm64/asm)     # Shellcodes (planejado)
-│   │   ├── evasion/           (linux, windows)            # Bypass AV/EDR (planejado)
-│   │   └── hardware/          (badusb, sdr, rfid)         # Hardware (planejado)
+│   ├── agents/                                # Domínio: Red Team (planejado)
+│   │   ├── implants/linux/    (cpp, rust, go) # Beacons Linux
+│   │   ├── implants/windows/  (cpp, rust)     # Beacons Windows
+│   │   ├── exploits/          (linux, windows, web)
+│   │   ├── post-exploitation/ (linux, windows)
+│   │   ├── attacks/           (network, web, credentials)
+│   │   ├── payloads/          (x86_64/asm, arm64/asm)
+│   │   ├── evasion/           (linux, windows)
+│   │   └── hardware/          (badusb, sdr, rfid)
 │   │
-│   ├── scripts/                               # build-all.sh, build-network-session.sh...
-│   ├── CMakeLists.txt                         # Entry point CMake (abrir no CLion)
-│   ├── Makefile                               # Wrapper de conveniência sobre cmake
+│   ├── Makefile                               # make network-session / make all
 │   └── .gitignore
 │
 ├── pom.xml                                    # Agregador Maven (monorepo root)
@@ -498,33 +496,33 @@ npm run tauri dev
 ### 5. Compilar o Arsenal C++ (Linux)
 
 ```bash
-# Instalar dependências
-sudo apt install build-essential cmake libcurl4-openssl-dev
+# Instalar dependências (Arch)
+sudo pacman -S cmake gcc
+
+# Instalar dependências (Debian/Ubuntu)
+sudo apt install build-essential cmake
 
 cd ZombieKeeper-Arsenal
 
-# Build Debug (padrão)
-make
-
-# Build Release (otimizado para deploy)
-make release
+# Build do scanner de rede local
+make network-session
 ```
 
-**Aplicar capabilities de rede** (necessário para rodar):
+**Aplicar capabilities de rede** (necessário para raw sockets sem root):
 ```bash
-sudo cmake --build build --target setcap
+sudo setcap cap_net_raw+ep build/network-session/tools/local-fingerprint/LocalFingerPrint
 ```
 
 **Executar o scanner:**
 ```bash
-sudo build/network-session/scanners/local-fingerprint/cpp/LocalFingerPrint
+./build/network-session/tools/local-fingerprint/LocalFingerPrint --create_session -all-ports 60 0
 ```
 
 **Usar no CLion:**
 ```
 File → Open → selecionar ZombieKeeper-Arsenal/
 CLion detecta o CMakeLists.txt raiz automaticamente.
-Targets disponíveis: LocalFingerPrint · ping · setcap
+Targets disponíveis: LocalFingerPrint · ping · D_DOS · net_utils
 ```
 
 ---

@@ -22,7 +22,7 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "network_session")
+@Table(name = "tb_network_session")
 public class NetworkSession {
 
     @Id

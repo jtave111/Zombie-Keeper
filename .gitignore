@@ -1,8 +1,15 @@
+### Claude Code ###
+.claude/
+/memory/
+*.claude-session
 ### Scratch / Test projects ###
 Test/
-
+CLAUDE.md
 ### Personal notes ###
-ROADMAP_LOW_LEVEL.md
+Learning/
+Ideas/
+ZombieKeeper-Web/SECURITY_UPGRADE.md
+ZombieKeeper-Arsenal/CPP_STRUCTURE_GUIDE.md
 
 ### Java / Maven ###
 target/

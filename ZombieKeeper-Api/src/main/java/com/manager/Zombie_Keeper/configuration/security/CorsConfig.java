@@ -11,7 +11,10 @@ public class CorsConfig implements WebMvcConfigurer{
             .allowedOrigins(
                 "http://localhost:8080",
                 "http://192.168.5.81:8080",
-                    "http://localhost:3000"
+                "http://localhost:3000",
+                "http://localhost:1420",
+                "tauri://localhost",
+                "https://tauri.localhost"
             )
             .allowedMethods("*")
             .allowedHeaders("*")

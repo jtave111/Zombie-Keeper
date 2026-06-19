@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background -->
+  <rect width="512" height="512" fill="#0d0d0d"/>
+
+  <!-- Outer hexagon border -->
+  <polygon points="256,20 460,136 460,376 256,492 52,376 52,136"
+    fill="none" stroke="#e05c6e" stroke-width="8" opacity="0.8"/>
+
+  <!-- Inner hexagon -->
+  <polygon points="256,50 430,152 430,360 256,462 82,360 82,152"
+    fill="none" stroke="#e05c6e" stroke-width="2" opacity="0.25"/>
+
+  <!-- Skull head -->
+  <ellipse cx="256" cy="210" rx="110" ry="115" fill="#e05c6e" opacity="0.95"/>
+
+  <!-- Skull top dome shadow -->
+  <ellipse cx="256" cy="185" rx="100" ry="95" fill="#c04050" opacity="0.5"/>
+
+  <!-- Eye sockets -->
+  <ellipse cx="216" cy="200" rx="30" ry="33" fill="#0d0d0d"/>
+  <ellipse cx="296" cy="200" rx="30" ry="33" fill="#0d0d0d"/>
+
+  <!-- Eye glow -->
+  <ellipse cx="216" cy="200" rx="12" ry="13" fill="#e05c6e" opacity="0.6"/>
+  <ellipse cx="296" cy="200" rx="12" ry="13" fill="#e05c6e" opacity="0.6"/>
+
+  <!-- Nose cavity -->
+  <path d="M248 240 L256 225 L264 240 L260 248 L252 248 Z" fill="#0d0d0d"/>
+
+  <!-- Jaw / teeth row -->
+  <rect x="156" y="285" width="200" height="38" rx="6" fill="#c04050"/>
+
+  <!-- Teeth gaps -->
+  <rect x="186" y="285" width="8" height="38" fill="#0d0d0d"/>
+  <rect x="214" y="285" width="8" height="38" fill="#0d0d0d"/>
+  <rect x="242" y="285" width="8" height="38" fill="#0d0d0d"/>
+  <rect x="270" y="285" width="8" height="38" fill="#0d0d0d"/>
+  <rect x="298" y="285" width="8" height="38" fill="#0d0d0d"/>
+
+  <!-- Jaw outline -->
+  <path d="M156 285 Q156 340 175 345 L337 345 Q356 340 356 285"
+    fill="none" stroke="#e05c6e" stroke-width="3"/>
+
+  <!-- ZK text at bottom -->
+  <text x="256" y="430" font-family="monospace" font-size="52" font-weight="900"
+    fill="#e05c6e" text-anchor="middle" letter-spacing="8" opacity="0.9">ZK</text>
+
+  <!-- Corner brackets decoration -->
+  <path d="M40 40 L40 80 M40 40 L80 40" stroke="#e05c6e" stroke-width="4" fill="none" opacity="0.4"/>
+  <path d="M472 40 L472 80 M472 40 L432 40" stroke="#e05c6e" stroke-width="4" fill="none" opacity="0.4"/>
+  <path d="M40 472 L40 432 M40 472 L80 472" stroke="#e05c6e" stroke-width="4" fill="none" opacity="0.4"/>
+  <path d="M472 472 L472 432 M472 472 L432 472" stroke="#e05c6e" stroke-width="4" fill="none" opacity="0.4"/>
+</svg>

@@ -8,9 +8,11 @@ const ENCODINGS    = ['None','Base64','XOR (single-byte)','XOR (multi-byte)','AE
 const ARCHITECTURES= ['x86_64','x86 (32-bit)','ARM64','ARM (32-bit)','MIPS'];
 const SPAWN_TO     = ['%WINDIR%\\System32\\svchost.exe','%WINDIR%\\System32\\notepad.exe','%WINDIR%\\System32\\rundll32.exe','%WINDIR%\\SysWOW64\\svchost.exe','Custom path...'];
 const COMMS_PROTO  = ['HTTP/1.1','HTTP/2','HTTPS/TLS 1.2','HTTPS/TLS 1.3','DNS-over-HTTPS','WebSocket','gRPC'];
-const INJECT_TYPES = ['None','Process Hollowing','Thread Hijacking','APC Injection','Early Bird APC','DLL Injection','Reflective DLL'];
-const SANDBOX_EVADE= ['None','Sleep check (> 60s)','User interaction check','CPU core count check','RAM check (> 2GB)','Domain join check','Screensaver check','Mouse movement check'];
+const INJECT_TYPES = ['None','Process Hollowing','Thread Hijacking','APC Injection','Early Bird APC','DLL Injection','Reflective DLL','PPID Spoofing','Heaven\'s Gate (32→64)','NtCreateSection Map','Thread Pool Hijacking','Module Stomping','Ghost Writing','NtCreateThreadEx (direct syscall)'];
+const SANDBOX_EVADE= ['None','Sleep check (> 60s)','User interaction check','CPU core count check','RAM check (> 2GB)','Domain join check','Screensaver check','Mouse movement check','Registry artifact check','Network adapter check','Process list check (VM/AV procs)','Time acceleration check','Loaded DLL check (EDR/AV)','Disk size check (> 60 GB)'];
 const OBFUSCATIONS = ['None','String encryption','Import table obfuscation','Control flow flattening','Anti-debug','Anti-VM','Stack strings','All (heavy)'];
+const ANTI_ANALYSIS= ['None','ETW patching','AMSI bypass (patch amsi.dll)','Unhook ntdll.dll (fresh disk copy)','Hook detection + kill on detect','ETW + AMSI combined','Full stealth (all techniques)'];
+const PERSISTENCE  = ['None','Registry Run key (HKCU)','Registry Run key (HKLM)','Scheduled Task via COM (ITaskService)','WMI event subscription','Startup folder LNK','Windows Service install','DLL hijacking (system path)','IFEO debugger key'];
 
 const LOG_LINES_BASE = [
   '[*] Initializing payload builder...',
@@ -33,6 +35,7 @@ interface Config {
   killdate: string; userAgent: string; proxy: string; maxRetry: string;
   callbackHosts: string; referer: string; x64: boolean; stageless: boolean;
   https_verify: boolean; prepend_null: boolean;
+  anti_analysis: string; persistence: string; ppid_target: string;
 }
 
 const DEFAULT: Config = {
@@ -42,11 +45,12 @@ const DEFAULT: Config = {
   sleep:'10', jitter:'23', killdate:'', userAgent:'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
   proxy:'', maxRetry:'5', callbackHosts:'', referer:'', x64:true, stageless:false,
   https_verify:true, prepend_null:false,
+  anti_analysis:'None', persistence:'None', ppid_target:'%WINDIR%\\System32\\explorer.exe',
 };
 
 const S = {
   lbl: { fontSize:9, color:'#444', textTransform:'uppercase' as const, letterSpacing:'1px', marginBottom:5, display:'block' as const },
-  field: { width:'100%', background:'#080808', border:'1px solid #1e1e1e', color:'#cccccc', fontFamily:'Courier New', fontSize:12, padding:'6px 8px', outline:'none' as const },
+  field: { width:'100%', background:'#040404', border:'1px solid #1e1e1e', color:'#cccccc', fontFamily:'Courier New', fontSize:12, padding:'6px 8px', outline:'none' as const, appearance:'none' as const },
   row: { marginBottom:12 },
   sec: { fontSize:9, color:'#333', textTransform:'uppercase' as const, letterSpacing:'1.2px', padding:'8px 0 4px', display:'block' as const, borderBottom:'1px solid #111', marginBottom:10 },
 };
@@ -143,7 +147,7 @@ export default function PayloadGenerator() {
             </div>
             <div style={{ display:'flex', gap:10, marginBottom:12 }}>
               <div style={{ flex:1 }}><Input label="Max Retry Attempts" value={cfg.maxRetry} onChange={set('maxRetry')} /></div>
-              <div style={{ flex:1 }}><Input label="Kill Date (YYYY-MM-DD)" value={cfg.killdate} onChange={set('killdate')} placeholder="2025-12-31" /></div>
+              <div style={{ flex:1 }}><Input label="Kill Date (YYYY-MM-DD)" value={cfg.killdate} onChange={set('killdate')} placeholder="2027-12-31" /></div>
             </div>
             <Toggle label="Stageless payload"   desc="Embed full agent — no staging request"         value={cfg.stageless}    onChange={set('stageless')} />
             <Toggle label="x64 shellcode stub"  desc="Force x64 shellcode header"                    value={cfg.x64}          onChange={set('x64')} />
@@ -153,31 +157,45 @@ export default function PayloadGenerator() {
             <span style={S.sec}>Encoding & Obfuscation</span>
             <Select label="Payload Encoding"    value={cfg.encoding} options={ENCODINGS}        onChange={set('encoding')} />
             <Select label="Code Obfuscation"    value={cfg.obfusc}   options={OBFUSCATIONS}     onChange={set('obfusc')} />
-            <span style={S.sec}>Injection</span>
-            <Select label="Process Injection"   value={cfg.inject}   options={INJECT_TYPES}     onChange={set('inject')} />
+            <Toggle label="Prepend null bytes"  desc="Prepend 0x00 bytes to evade signature"    value={cfg.prepend_null} onChange={set('prepend_null')} />
+            <span style={S.sec}>Process Injection</span>
+            <Select label="Injection Technique" value={cfg.inject}   options={INJECT_TYPES}     onChange={set('inject')} />
             <Select label="Spawn-To Process"    value={cfg.spawnTo}  options={SPAWN_TO}         onChange={set('spawnTo')} />
+            {cfg.inject === 'PPID Spoofing' && (
+              <Input label="PPID Target Process" value={cfg.ppid_target} onChange={set('ppid_target')} placeholder="%WINDIR%\System32\explorer.exe" />
+            )}
+            <span style={S.sec}>Anti-Analysis</span>
+            <Select label="EDR/AV Bypass"       value={cfg.anti_analysis} options={ANTI_ANALYSIS} onChange={set('anti_analysis')} />
             <span style={S.sec}>Sandbox Evasion</span>
             <Select label="Sandbox Check"       value={cfg.sandbox}  options={SANDBOX_EVADE}    onChange={set('sandbox')} />
-            <Toggle label="Prepend null bytes"  desc="Prepend 0x00 bytes to evade signature"    value={cfg.prepend_null} onChange={set('prepend_null')} />
+            <span style={S.sec}>Persistence</span>
+            <Select label="Persistence Method"  value={cfg.persistence} options={PERSISTENCE}   onChange={set('persistence')} />
           </>}
 
-          {tab === 'network' && <>
-            <span style={S.sec}>HTTP Headers</span>
-            <Input label="User-Agent"           value={cfg.userAgent}  onChange={set('userAgent')} />
-            <Input label="Referer"              value={cfg.referer}    onChange={set('referer')} placeholder="https://www.google.com" />
-            <Input label="HTTP Proxy (host:port)" value={cfg.proxy}    onChange={set('proxy')} placeholder="proxy.corp.local:8080" />
-            <span style={S.sec}>TLS / SSL</span>
-            <Toggle label="Verify HTTPS cert"   desc="Check TLS certificate validity"           value={cfg.https_verify} onChange={set('https_verify')} />
-            <span style={S.sec}>Preview — Generated Headers</span>
-            <div style={{ background:'#080808', border:'1px solid #1a1a1a', padding:'8px 10px', fontFamily:'Courier New', fontSize:10, color:'#555', marginBottom:12 }}>
-              <div>GET /beacon HTTP/1.1</div>
-              <div>Host: 0.0.0.0:4444</div>
-              <div>User-Agent: {cfg.userAgent.slice(0,40)}...</div>
-              {cfg.referer && <div>Referer: {cfg.referer}</div>}
-              <div>Accept: */*</div>
-              <div>Connection: keep-alive</div>
-            </div>
-          </>}
+          {tab === 'network' && (()=>{
+            const listenerHost = cfg.listener.replace(/^[A-Z0-9/. ]+ — /,'');
+            const ua = cfg.userAgent;
+            return <>
+              <span style={S.sec}>HTTP Headers</span>
+              <Input label="User-Agent"             value={cfg.userAgent} onChange={set('userAgent')} />
+              <Input label="Referer"                value={cfg.referer}   onChange={set('referer')}   placeholder="https://www.google.com" />
+              <Input label="HTTP Proxy (host:port)" value={cfg.proxy}     onChange={set('proxy')}     placeholder="proxy.corp.local:8080" />
+              <span style={S.sec}>Beacon URI</span>
+              <Input label="Check-in Path"          value={cfg.callbackHosts} onChange={set('callbackHosts')} placeholder="/jquery-3.5.1.min.js, /api/data" />
+              <span style={S.sec}>TLS / SSL</span>
+              <Toggle label="Verify HTTPS cert"   desc="Validate server TLS certificate"         value={cfg.https_verify} onChange={set('https_verify')} />
+              <span style={S.sec}>Preview — Generated Headers</span>
+              <div style={{ background:'#080808', border:'1px solid #1a1a1a', padding:'8px 10px', fontFamily:'Courier New', fontSize:10, color:'#555', marginBottom:12, lineHeight:1.6 }}>
+                <div style={{color:'#444'}}>GET /beacon HTTP/1.1</div>
+                <div><span style={{color:'#3a3a3a'}}>Host: </span>{listenerHost}</div>
+                <div><span style={{color:'#3a3a3a'}}>User-Agent: </span>{ua.length > 50 ? ua.slice(0,50)+'…' : ua}</div>
+                {cfg.referer && <div><span style={{color:'#3a3a3a'}}>Referer: </span>{cfg.referer}</div>}
+                {cfg.proxy   && <div><span style={{color:'#3a3a3a'}}>X-Forwarded-For: </span>{cfg.proxy}</div>}
+                <div><span style={{color:'#3a3a3a'}}>Accept: </span>*/*</div>
+                <div><span style={{color:'#3a3a3a'}}>Connection: </span>keep-alive</div>
+              </div>
+            </>;
+          })()}
 
           {tab === 'advanced' && <>
             <span style={S.sec}>Build Options</span>
@@ -188,15 +206,18 @@ export default function PayloadGenerator() {
                 <div><span style={{ color:'#444' }}>Format:</span>   {cfg.format}</div>
                 <div><span style={{ color:'#444' }}>Listener:</span> {cfg.listener}</div>
                 <div><span style={{ color:'#444' }}>Encoding:</span> {cfg.encoding}</div>
-                <div><span style={{ color:'#444' }}>Inject:</span>   {cfg.inject}</div>
-                <div><span style={{ color:'#444' }}>Sandbox:</span>  {cfg.sandbox}</div>
-                <div><span style={{ color:'#444' }}>Sleep:</span>    {cfg.sleep}s / {cfg.jitter}% jitter</div>
-                <div><span style={{ color:'#444' }}>Stageless:</span>{cfg.stageless?'yes':'no'}</div>
+                <div><span style={{ color:'#444' }}>Inject:</span>      {cfg.inject}</div>
+                <div><span style={{ color:'#444' }}>Anti-Analysis:</span>{cfg.anti_analysis}</div>
+                <div><span style={{ color:'#444' }}>Sandbox:</span>     {cfg.sandbox}</div>
+                <div><span style={{ color:'#444' }}>Persistence:</span> {cfg.persistence}</div>
+                <div><span style={{ color:'#444' }}>Sleep:</span>       {cfg.sleep}s / {cfg.jitter}% jitter</div>
+                <div><span style={{ color:'#444' }}>Kill Date:</span>   {cfg.killdate || 'none'}</div>
+                <div><span style={{ color:'#444' }}>Stageless:</span>   {cfg.stageless?'yes':'no'}</div>
               </div>
             </div>
             <span style={S.sec}>Raw Builder Command</span>
             <div style={{ background:'#080808', border:'1px solid #1a1a1a', padding:'8px 10px', fontFamily:'Courier New', fontSize:10, color:'#444', wordBreak:'break-all', marginBottom:12 }}>
-              {'zk-build'} --os "{cfg.os}" --fmt "{cfg.format}" --listener "{cfg.listener}" --enc "{cfg.encoding}" --sleep {cfg.sleep} --jitter {cfg.jitter}{cfg.stageless?' --stageless':''}
+              {'zk-build'} --os "{cfg.os}" --arch "{cfg.arch}" --fmt "{cfg.format}" --listener "{cfg.listener}" --enc "{cfg.encoding}" --inject "{cfg.inject}" --anti "{cfg.anti_analysis}" --sandbox "{cfg.sandbox}" --persist "{cfg.persistence}" --sleep {cfg.sleep} --jitter {cfg.jitter}{cfg.stageless?' --stageless':''}{cfg.killdate?` --killdate "${cfg.killdate}"`:''}
             </div>
             <span style={S.sec}>API Endpoint</span>
             <div style={{ background:'#080808', border:'1px solid #1a1a1a', padding:'8px 10px', fontFamily:'Courier New', fontSize:10, color:'#444', marginBottom:12 }}>

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "network_node")
+@Table(name = "tb_network_node")
 public class NetworkNode {
 
     @Id
