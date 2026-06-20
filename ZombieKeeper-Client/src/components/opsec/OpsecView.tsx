@@ -59,13 +59,13 @@ export default function OpsecView() {
     <div style={{ display:'flex', flexDirection:'column', height:'100%', overflow:'hidden', fontFamily:'Courier New' }}>
 
       {/* Header / score */}
-      <div style={{ padding:'8px 14px', background:'#0d0d0d', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', gap:20, flexShrink:0 }}>
-        <span style={{ fontSize:11, color:'#555', textTransform:'uppercase', letterSpacing:1 }}>OPSEC / IOC Tracker</span>
+      <div style={{ padding:'8px 14px', background:'var(--inset2)', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', gap:20, flexShrink:0 }}>
+        <span style={{ fontSize:11, color:'var(--tx1)', textTransform:'uppercase', letterSpacing:1 }}>OPSEC / IOC Tracker</span>
 
         {/* Score gauge */}
         <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-          <span style={{ fontSize:9, color:'#333', textTransform:'uppercase', letterSpacing:1 }}>OPSEC Score</span>
-          <div style={{ width:80, height:6, background:'#111', borderRadius:3 }}>
+          <span style={{ fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1 }}>OPSEC Score</span>
+          <div style={{ width:80, height:6, background:'var(--inset)', borderRadius:3 }}>
             <div style={{ height:'100%', width:`${score}%`, background: score>75?'#33a84a':score>40?'#d48b55':'#e05c6e', borderRadius:3, transition:'width 0.3s' }}/>
           </div>
           <span style={{ fontSize:11, color: score>75?'#33a84a':score>40?'#d48b55':'#e05c6e', fontWeight:700 }}>{score}%</span>
@@ -86,10 +86,10 @@ export default function OpsecView() {
       </div>
 
       {/* Filters */}
-      <div style={{ padding:'5px 14px', background:'#0a0a0a', borderBottom:'1px solid #1a1a1a', display:'flex', gap:6, flexWrap:'wrap', flexShrink:0 }}>
+      <div style={{ padding:'5px 14px', background:'var(--inset2)', borderBottom:'1px solid #1a1a1a', display:'flex', gap:6, flexWrap:'wrap', flexShrink:0 }}>
         {/* Host filter */}
         <select value={hostFilter} onChange={e=>setHostFilter(e.target.value)}
-          style={{ background:'#040404', border:'1px solid #1e1e1e', color:'#555', fontFamily:'Courier New', fontSize:10, padding:'2px 8px', outline:'none', appearance:'none' }}>
+          style={{ background:'var(--inset2)', border:'1px solid #1e1e1e', color:'var(--tx1)', fontFamily:'Courier New', fontSize:10, padding:'2px 8px', outline:'none', appearance:'none' }}>
           {hosts.map(h=><option key={h}>{h}</option>)}
         </select>
         {/* Type/status filter */}
@@ -107,7 +107,7 @@ export default function OpsecView() {
 
         {/* IOC list */}
         <div style={{ flex:1, overflowY:'auto' }}>
-          <div style={{ display:'grid', gridTemplateColumns:'70px 30px 100px 70px 1fr 70px 80px 80px', padding:'4px 14px', background:'#111', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'#333', textTransform:'uppercase', letterSpacing:0.8, position:'sticky', top:0 }}>
+          <div style={{ display:'grid', gridTemplateColumns:'70px 30px 100px 70px 1fr 70px 80px 80px', padding:'4px 14px', background:'var(--inset)', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:0.8, position:'sticky', top:0 }}>
             <span>ID</span><span>T</span><span>Host</span><span>Agent</span><span>Path / Detail</span><span>Risk</span><span>Status</span><span>Action</span>
           </div>
           {visible.map(a => (
@@ -118,18 +118,18 @@ export default function OpsecView() {
                 padding:'6px 14px', borderBottom:'1px solid #0d0d0d', cursor:'pointer', alignItems:'center',
                 background: selected?.id===a.id?'#0d0d14':'transparent',
               }}>
-              <span style={{ fontSize:9, color:'#444' }}>{a.id}</span>
-              <span style={{ fontSize:10, color:'#555', fontWeight:700 }}>{TYPE_ICON[a.type]}</span>
+              <span style={{ fontSize:9, color:'var(--tx2)' }}>{a.id}</span>
+              <span style={{ fontSize:10, color:'var(--tx1)', fontWeight:700 }}>{TYPE_ICON[a.type]}</span>
               <span style={{ fontSize:10, color:'#777' }}>{a.host.replace('WIN-','').replace('UBUNTU-','')}</span>
-              <span style={{ fontSize:10, color:'#444' }}>{a.agent}</span>
+              <span style={{ fontSize:10, color:'var(--tx2)' }}>{a.agent}</span>
               <div>
-                <div style={{ fontSize:10, color:'#555', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{a.path}</div>
-                <div style={{ fontSize:9, color:'#2a2a2a' }}>{a.detail}</div>
+                <div style={{ fontSize:10, color:'var(--tx1)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{a.path}</div>
+                <div style={{ fontSize:9, color:'var(--tx2)' }}>{a.detail}</div>
               </div>
               <span style={{ fontSize:9, color:RISK_COL[a.risk], fontWeight:700, textTransform:'uppercase' }}>{a.risk}</span>
               <span style={{ fontSize:9, color:CLEAN_COL[a.clean], textTransform:'uppercase' }}>● {a.clean}</span>
               <button onClick={e=>{e.stopPropagation();clean(a.id);}} disabled={a.clean==='verified'} style={{
-                background:'#080808',
+                background:'var(--inset2)',
                 border:`1px solid ${a.clean==='verified'?'#111':'#1a2a1a'}`,
                 color: a.clean==='verified'?'#1a1a1a':CLEAN_COL[a.clean],
                 fontFamily:'Courier New', fontSize:9, padding:'2px 8px', cursor:a.clean==='verified'?'default':'pointer',
@@ -141,25 +141,25 @@ export default function OpsecView() {
         </div>
 
         {/* Risk summary sidebar */}
-        <div style={{ width:180, background:'#0a0a0a', borderLeft:'1px solid #1a1a1a', padding:'10px', flexShrink:0, overflowY:'auto' }}>
-          <div style={{ fontSize:9, color:'#2a2a2a', textTransform:'uppercase', letterSpacing:1, marginBottom:10 }}>Risk by Host</div>
+        <div style={{ width:180, background:'var(--inset2)', borderLeft:'1px solid #1a1a1a', padding:'10px', flexShrink:0, overflowY:'auto' }}>
+          <div style={{ fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1, marginBottom:10 }}>Risk by Host</div>
           {hosts.filter(h=>h!=='all').map(h => {
             const hArts = arts.filter(a=>a.host===h);
             const hDirty = hArts.filter(a=>a.clean==='dirty');
             const hCrit  = hArts.filter(a=>a.risk==='critical'&&a.clean==='dirty');
             return (
-              <div key={h} style={{ marginBottom:10, padding:'6px 8px', background:'#0d0d0d', border:`1px solid ${hCrit.length>0?'#3a1220':'#1a1a1a'}` }}>
+              <div key={h} style={{ marginBottom:10, padding:'6px 8px', background:'var(--inset2)', border:`1px solid ${hCrit.length>0?'#3a1220':'#1a1a1a'}` }}>
                 <div style={{ fontSize:10, color: hCrit.length>0?'#e05c6e':'#555', marginBottom:3, fontWeight:700 }}>{h.split('-')[1]||h}</div>
-                <div style={{ fontSize:9, color:'#333' }}>{hDirty.length}/{hArts.length} unclean</div>
+                <div style={{ fontSize:9, color:'var(--tx2)' }}>{hDirty.length}/{hArts.length} unclean</div>
                 {hCrit.length>0&&<div style={{ fontSize:9, color:'#e05c6e', marginTop:2 }}>{hCrit.length} critical!</div>}
-                <div style={{ height:3, background:'#111', marginTop:4, borderRadius:2 }}>
+                <div style={{ height:3, background:'var(--inset)', marginTop:4, borderRadius:2 }}>
                   <div style={{ height:'100%', width:`${((hArts.length-hDirty.length)/hArts.length)*100}%`, background:'#33a84a', borderRadius:2 }}/>
                 </div>
               </div>
             );
           })}
 
-          <div style={{ marginTop:14, fontSize:9, color:'#2a2a2a', textTransform:'uppercase', letterSpacing:1, marginBottom:8 }}>Exposure</div>
+          <div style={{ marginTop:14, fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1, marginBottom:8 }}>Exposure</div>
           {(['critical','high','med','low'] as const).map(r => {
             const count = arts.filter(a=>a.risk===r&&a.clean==='dirty').length;
             return count > 0 ? (
@@ -174,11 +174,11 @@ export default function OpsecView() {
 
       {/* Detail bar */}
       {selected && (
-        <div style={{ padding:'6px 14px', background:'#0d0d0d', borderTop:'1px solid #1a1a1a', flexShrink:0, display:'flex', gap:16, fontSize:10 }}>
+        <div style={{ padding:'6px 14px', background:'var(--inset2)', borderTop:'1px solid #1a1a1a', flexShrink:0, display:'flex', gap:16, fontSize:10 }}>
           <span style={{ color:'#e05c6e' }}>{selected.id}</span>
           <span style={{ color:'#777' }}>{selected.path}</span>
-          <span style={{ color:'#333' }}>{selected.detail}</span>
-          <span style={{ color:'#2a2a2a', marginLeft:'auto' }}>{selected.ts}</span>
+          <span style={{ color:'var(--tx2)' }}>{selected.detail}</span>
+          <span style={{ color:'var(--tx2)', marginLeft:'auto' }}>{selected.ts}</span>
         </div>
       )}
     </div>

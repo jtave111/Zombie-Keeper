@@ -30,10 +30,10 @@ const DEF: ImplantConfig = {
 };
 
 const S = {
-  label: { fontSize:9, color:'#333', textTransform:'uppercase' as const, letterSpacing:1, marginBottom:3 },
-  field: { width:'100%', background:'#040404', border:'1px solid #1e1e1e', color:'#ccc', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none', appearance:'none' as const, WebkitAppearance:'none' as const },
+  label: { fontSize:9, color:'var(--tx2)', textTransform:'uppercase' as const, letterSpacing:1, marginBottom:3 },
+  field: { width:'100%', background:'var(--inset2)', border:'1px solid var(--b1)', color:'var(--tx0)', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none', appearance:'none' as const, WebkitAppearance:'none' as const },
   section: { marginBottom:16 },
-  sectionTitle: { fontSize:9, color:'#444', textTransform:'uppercase' as const, letterSpacing:1.5, marginBottom:8, paddingBottom:4, borderBottom:'1px solid #111' },
+  sectionTitle: { fontSize:9, color:'var(--tx2)', textTransform:'uppercase' as const, letterSpacing:1.5, marginBottom:8, paddingBottom:4, borderBottom:'1px solid var(--b1)' },
   row: { display:'grid' as const, gridTemplateColumns:'1fr 1fr' as const, gap:8, marginBottom:8 },
   checkbox: { display:'flex' as const, alignItems:'center' as const, gap:6, cursor:'pointer' as const },
 };
@@ -67,7 +67,7 @@ export default function ImplantsView() {
 
       {/* Config column */}
       <div style={{ flex:1, overflowY:'auto', padding:'12px 16px', borderRight:'1px solid #1a1a1a' }}>
-        <div style={{ fontSize:9, color:'#2a2a2a', textTransform:'uppercase', letterSpacing:1, marginBottom:12 }}>Implant / Beacon Builder</div>
+        <div style={{ fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1, marginBottom:12 }}>Implant / Beacon Builder</div>
 
         {/* Name + OS */}
         <div style={S.section}>
@@ -189,7 +189,7 @@ export default function ImplantsView() {
                 <div style={{ width:14, height:14, border:`1px solid ${cfg[k]?'#e05c6e':'#1a1a1a'}`, background:cfg[k]?'#1a0000':'transparent', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                   {cfg[k] && <span style={{ fontSize:9, color:'#e05c6e' }}>✓</span>}
                 </div>
-                <span style={{ fontSize:11, color:'#555' }}>{label}</span>
+                <span style={{ fontSize:11, color:'var(--tx1)' }}>{label}</span>
               </label>
             ))}
           </div>
@@ -212,8 +212,8 @@ export default function ImplantsView() {
       </div>
 
       {/* Right — summary + generate */}
-      <div style={{ width:260, background:'#0d0d0d', display:'flex', flexDirection:'column', flexShrink:0 }}>
-        <div style={{ padding:'10px 12px', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'#444', textTransform:'uppercase', letterSpacing:1 }}>Summary</div>
+      <div style={{ width:260, background:'var(--panel)', display:'flex', flexDirection:'column', flexShrink:0 }}>
+        <div style={{ padding:'10px 12px', borderBottom:'1px solid var(--b1)', fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1 }}>Summary</div>
 
         <div style={{ flex:1, overflowY:'auto', padding:'10px 12px' }}>
           {([
@@ -229,27 +229,27 @@ export default function ImplantsView() {
             ['Kill date', cfg.killDate],
           ] as [string,string][]).map(([k,v])=>(
             <div key={k} style={{ display:'flex', justifyContent:'space-between', marginBottom:6, fontSize:10 }}>
-              <span style={{ color:'#333' }}>{k}</span>
-              <span style={{ color:'#666' }}>{v}</span>
+              <span style={{ color:'var(--tx2)' }}>{k}</span>
+              <span style={{ color:'var(--tx1)' }}>{v}</span>
             </div>
           ))}
 
           <div style={{ marginTop:8, display:'flex', gap:6, flexWrap:'wrap' }}>
-            {cfg.sandbox   && <span style={{ fontSize:8, padding:'2px 6px', border:'1px solid #1a1a1a', color:'#555' }}>SANDBOX-EVADE</span>}
-            {cfg.antiDebug && <span style={{ fontSize:8, padding:'2px 6px', border:'1px solid #1a1a1a', color:'#555' }}>ANTI-DEBUG</span>}
-            {cfg.sleepMask && <span style={{ fontSize:8, padding:'2px 6px', border:'1px solid #1a1a1a', color:'#555' }}>SLEEP-MASK</span>}
-            {cfg.amsiPatch && <span style={{ fontSize:8, padding:'2px 6px', border:'1px solid #1a1a1a', color:'#555' }}>AMSI-PATCH</span>}
+            {cfg.sandbox   && <span style={{ fontSize:8, padding:'2px 6px', border:'1px solid #1a1a1a', color:'var(--tx1)' }}>SANDBOX-EVADE</span>}
+            {cfg.antiDebug && <span style={{ fontSize:8, padding:'2px 6px', border:'1px solid var(--b2)', color:'var(--tx1)' }}>ANTI-DEBUG</span>}
+            {cfg.sleepMask && <span style={{ fontSize:8, padding:'2px 6px', border:'1px solid var(--b2)', color:'var(--tx1)' }}>SLEEP-MASK</span>}
+            {cfg.amsiPatch && <span style={{ fontSize:8, padding:'2px 6px', border:'1px solid var(--b2)', color:'var(--tx1)' }}>AMSI-PATCH</span>}
           </div>
 
           {generated && (
-            <div style={{ marginTop:16, padding:'10px', background:'#050505', border:'1px solid #1a2a1a' }}>
+            <div style={{ marginTop:16, padding:'10px', background:'var(--inset2)', border:'1px solid #1a2a1a' }}>
               <div style={{ fontSize:10, color:'#33a84a', marginBottom:4 }}>[+] Implant generated</div>
-              <div style={{ fontSize:10, color:'#555' }}>{summary}</div>
-              <div style={{ fontSize:10, color:'#2a2a2a', marginTop:2 }}>MD5: 8f4e2a…c1d3</div>
-              <div style={{ fontSize:10, color:'#2a2a2a' }}>Size: 124 KB</div>
+              <div style={{ fontSize:10, color:'var(--tx1)' }}>{summary}</div>
+              <div style={{ fontSize:10, color:'var(--tx2)', marginTop:2 }}>MD5: 8f4e2a…c1d3</div>
+              <div style={{ fontSize:10, color:'var(--tx2)' }}>Size: 124 KB</div>
               <div style={{ display:'flex', gap:6, marginTop:8 }}>
-                <button style={{ flex:1, background:'#080808', border:'1px solid #1a2a1a', color:'#33a84a', fontFamily:'Courier New', fontSize:9, padding:'4px', cursor:'pointer' }}>DOWNLOAD</button>
-                <button style={{ flex:1, background:'#080808', border:'1px solid #1a1a1a', color:'#5a96d4', fontFamily:'Courier New', fontSize:9, padding:'4px', cursor:'pointer' }}>STAGE</button>
+                <button style={{ flex:1, background:'var(--inset2)', border:'1px solid #1a2a1a', color:'#33a84a', fontFamily:'Courier New', fontSize:9, padding:'4px', cursor:'pointer' }}>DOWNLOAD</button>
+                <button style={{ flex:1, background:'var(--inset2)', border:'1px solid #1a1a1a', color:'#5a96d4', fontFamily:'Courier New', fontSize:9, padding:'4px', cursor:'pointer' }}>STAGE</button>
               </div>
             </div>
           )}
@@ -259,14 +259,14 @@ export default function ImplantsView() {
           <button onClick={generate} disabled={generating} style={{
             width:'100%', background: generating?'#0d0d0d':'#1a0000',
             border:`1px solid ${generating?'#222':'#e05c6e'}`,
-            color: generating?'#333':'#e05c6e',
+            color: generating?'var(--tx2)':'#e05c6e',
             fontFamily:'Courier New', fontSize:12, fontWeight:700,
             padding:'8px', cursor: generating?'default':'pointer', letterSpacing:1,
           }}>
             {generating?'[ GENERATING... ]':'[ GENERATE IMPLANT ]'}
           </button>
-          <div style={{ fontSize:9, color:'#1a1a1a', textAlign:'center', marginTop:4 }}>
-            TODO: Tauri invoke → Arsenal C++ builder
+          <div style={{ fontSize:9, color:'var(--tx3)', textAlign:'center', marginTop:4 }}>
+            Tauri invoke → Arsenal C++ builder
           </div>
         </div>
       </div>

@@ -102,8 +102,8 @@ export default function PlaybooksView() {
     <div style={{ display:'flex', height:'100%', overflow:'hidden', fontFamily:'Courier New' }}>
 
       {/* LEFT — playbook list */}
-      <div style={{ width:230, background:'#0d0d0d', borderRight:'1px solid #1a1a1a', display:'flex', flexDirection:'column', flexShrink:0 }}>
-        <div style={{ padding:'8px 10px', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'#444', textTransform:'uppercase', letterSpacing:1 }}>Playbooks ({books.length})</div>
+      <div style={{ width:230, background:'var(--inset2)', borderRight:'1px solid #1a1a1a', display:'flex', flexDirection:'column', flexShrink:0 }}>
+        <div style={{ padding:'8px 10px', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1 }}>Playbooks ({books.length})</div>
         <div style={{ flex:1, overflowY:'auto' }}>
           {books.map(pb => (
             <div key={pb.id} onClick={()=>setActive(pb)} style={{
@@ -112,11 +112,11 @@ export default function PlaybooksView() {
               borderLeft:`2px solid ${active.id===pb.id?'#e05c6e':'transparent'}`,
             }}>
               <div style={{ fontSize:10, color:active.id===pb.id?'#cccccc':'#777', fontWeight:700, marginBottom:2 }}>{pb.name}</div>
-              <div style={{ fontSize:9, color:'#2a2a2a', marginBottom:4, lineHeight:1.4 }}>{pb.desc.slice(0,50)}…</div>
+              <div style={{ fontSize:9, color:'var(--tx2)', marginBottom:4, lineHeight:1.4 }}>{pb.desc.slice(0,50)}…</div>
               <div style={{ display:'flex', gap:4, flexWrap:'wrap', marginBottom:3 }}>
-                {pb.tags.map(t=><span key={t} style={{ fontSize:8, padding:'1px 4px', background:'#181818', color:'#444', border:'1px solid #222' }}>{t}</span>)}
+                {pb.tags.map(t=><span key={t} style={{ fontSize:8, padding:'1px 4px', background:'var(--inset)', color:'var(--tx2)', border:'1px solid #222' }}>{t}</span>)}
               </div>
-              <div style={{ fontSize:9, color:'#1a1a1a' }}>{pb.steps.length} steps · ran {pb.runsTotal}×</div>
+              <div style={{ fontSize:9, color:'var(--tx3)' }}>{pb.steps.length} steps · ran {pb.runsTotal}×</div>
             </div>
           ))}
         </div>
@@ -125,10 +125,10 @@ export default function PlaybooksView() {
       {/* RIGHT — detail + run */}
       <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
         {/* Run bar */}
-        <div style={{ padding:'8px 14px', background:'#0d0d0d', borderBottom:'1px solid #1a1a1a', display:'flex', gap:10, alignItems:'center', flexShrink:0 }}>
+        <div style={{ padding:'8px 14px', background:'var(--inset2)', borderBottom:'1px solid #1a1a1a', display:'flex', gap:10, alignItems:'center', flexShrink:0 }}>
           <span style={{ fontSize:12, color:'#cccccc', fontWeight:700 }}>{active.name}</span>
-          <span style={{ fontSize:10, color:'#333', flex:1 }}>{active.desc}</span>
-          <select value={targetAgent} onChange={e=>setTAgent(e.target.value)} style={{ background:'#040404', border:'1px solid #1e1e1e', color:'#ccc', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none', appearance:'none' }}>
+          <span style={{ fontSize:10, color:'var(--tx2)', flex:1 }}>{active.desc}</span>
+          <select value={targetAgent} onChange={e=>setTAgent(e.target.value)} style={{ background:'var(--inset2)', border:'1px solid #1e1e1e', color:'#ccc', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none', appearance:'none' }}>
             {['ZK-001','ZK-002','ZK-003','ZK-005','ZK-006'].map(a=><option key={a}>{a}</option>)}
           </select>
           <button onClick={run} disabled={running} style={{
@@ -151,17 +151,17 @@ export default function PlaybooksView() {
                 {step.status==='done'?'✓':step.status==='failed'?'✕':step.status==='running'?'▶':i+1}
               </div>
               {/* Content */}
-              <div style={{ flex:1, background:'#0d0d0d', border:`1px solid ${step.status==='running'?'#d48b55':'#1a1a1a'}`, padding:'8px 10px' }}>
+              <div style={{ flex:1, background:'var(--inset2)', border:`1px solid ${step.status==='running'?'#d48b55':'#1a1a1a'}`, padding:'8px 10px' }}>
                 <div style={{ display:'flex', gap:8, alignItems:'center', marginBottom:4 }}>
                   <span style={{ fontSize:9, color:TYPE_COLOR[step.type], fontWeight:700, textTransform:'uppercase', border:`1px solid ${TYPE_COLOR[step.type]}44`, padding:'1px 6px' }}>{step.type}</span>
                   <span style={{ fontSize:11, color:'#ccc' }}>{step.label}</span>
-                  {step.condition && <span style={{ fontSize:9, color:'#333', marginLeft:'auto' }}>if: {step.condition}</span>}
+                  {step.condition && <span style={{ fontSize:9, color:'var(--tx2)', marginLeft:'auto' }}>if: {step.condition}</span>}
                 </div>
                 {step.cmd && (
-                  <div style={{ background:'#040404', padding:'4px 8px', fontSize:10, color:'#444', fontFamily:'monospace', marginBottom:step.output?4:0 }}>{step.cmd}</div>
+                  <div style={{ background:'var(--inset2)', padding:'4px 8px', fontSize:10, color:'var(--tx2)', fontFamily:'monospace', marginBottom:step.output?4:0 }}>{step.cmd}</div>
                 )}
                 {step.target && (
-                  <div style={{ background:'#040404', padding:'4px 8px', fontSize:10, color:'#5a96d4', fontFamily:'monospace', marginBottom:step.output?4:0 }}>target: {step.target}</div>
+                  <div style={{ background:'var(--inset2)', padding:'4px 8px', fontSize:10, color:'#5a96d4', fontFamily:'monospace', marginBottom:step.output?4:0 }}>target: {step.target}</div>
                 )}
                 {step.output && (
                   <div style={{ fontSize:10, color:step.status==='done'?'#33a84a':'#e05c6e', marginTop:2 }}>{step.output}</div>

@@ -97,18 +97,18 @@ export default function NetworkScannerView() {
     <div style={{ display:'flex', flexDirection:'column', height:'100%', overflow:'hidden', fontFamily:'Courier New' }}>
 
       {/* Scan config bar */}
-      <div style={{ padding:'8px 14px', background:'#0d0d0d', borderBottom:'1px solid #1a1a1a', display:'flex', gap:10, alignItems:'flex-end', flexShrink:0 }}>
+      <div style={{ padding:'8px 14px', background:'var(--bg)', borderBottom:'1px solid #1a1a1a', display:'flex', gap:10, alignItems:'flex-end', flexShrink:0 }}>
         <div>
-          <div style={{ fontSize:9, color:'#333', textTransform:'uppercase', letterSpacing:1, marginBottom:3 }}>Subnet (CIDR)</div>
-          <input value={subnet} onChange={e=>setSubnet(e.target.value)} disabled={status==='scanning'} style={{ width:160, background:'#040404', border:'1px solid #1e1e1e', color:'#ccc', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none' }}/>
+          <div style={{ fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1, marginBottom:3 }}>Subnet (CIDR)</div>
+          <input value={subnet} onChange={e=>setSubnet(e.target.value)} disabled={status==='scanning'} style={{ width:160, background:'var(--bg)', border:'1px solid #1e1e1e', color:'#ccc', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none' }}/>
         </div>
         <div style={{ flex:1 }}>
-          <div style={{ fontSize:9, color:'#333', textTransform:'uppercase', letterSpacing:1, marginBottom:3 }}>Ports</div>
-          <input value={ports} onChange={e=>setPorts(e.target.value)} disabled={status==='scanning'} style={{ width:'100%', background:'#040404', border:'1px solid #1e1e1e', color:'#ccc', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none' }}/>
+          <div style={{ fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1, marginBottom:3 }}>Ports</div>
+          <input value={ports} onChange={e=>setPorts(e.target.value)} disabled={status==='scanning'} style={{ width:'100%', background:'var(--bg)', border:'1px solid #1e1e1e', color:'#ccc', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none' }}/>
         </div>
         <div>
-          <div style={{ fontSize:9, color:'#333', textTransform:'uppercase', letterSpacing:1, marginBottom:3 }}>Threads</div>
-          <input value={threads} onChange={e=>setThreads(e.target.value)} style={{ width:60, background:'#040404', border:'1px solid #1e1e1e', color:'#ccc', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none' }}/>
+          <div style={{ fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1, marginBottom:3 }}>Threads</div>
+          <input value={threads} onChange={e=>setThreads(e.target.value)} style={{ width:60, background:'var(--bg)', border:'1px solid #1e1e1e', color:'#ccc', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none' }}/>
         </div>
         <button onClick={scan} disabled={status==='scanning'} style={{
           background: status==='scanning'?'#0d0d0d':'#1a0000',
@@ -121,10 +121,10 @@ export default function NetworkScannerView() {
         </button>
         {status==='scanning' && (
           <div style={{ width:120, alignSelf:'center' }}>
-            <div style={{ height:4, background:'#111', borderRadius:2 }}>
+            <div style={{ height:4, background:'var(--inset)', borderRadius:2 }}>
               <div style={{ height:'100%', width:`${progress}%`, background:'#e05c6e', borderRadius:2, transition:'width 0.2s' }}/>
             </div>
-            <div style={{ fontSize:9, color:'#555', marginTop:2 }}>{progress}%</div>
+            <div style={{ fontSize:9, color:'var(--tx1)', marginTop:2 }}>{progress}%</div>
           </div>
         )}
         {result && <span style={{ fontSize:10, color:'#33a84a', alignSelf:'center' }}>{result.hostsUp} hosts · {result.elapsed}</span>}
@@ -133,10 +133,10 @@ export default function NetworkScannerView() {
       <div style={{ flex:1, display:'flex', overflow:'hidden' }}>
 
         {/* Log panel */}
-        <div style={{ width:300, background:'#050505', borderRight:'1px solid #1a1a1a', display:'flex', flexDirection:'column', flexShrink:0 }}>
-          <div style={{ padding:'4px 10px', background:'#0d0d0d', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'#333', textTransform:'uppercase', letterSpacing:1 }}>Scan Output</div>
+        <div style={{ width:300, background:'var(--bg)', borderRight:'1px solid #1a1a1a', display:'flex', flexDirection:'column', flexShrink:0 }}>
+          <div style={{ padding:'4px 10px', background:'var(--bg)', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1 }}>Scan Output</div>
           <div style={{ flex:1, overflowY:'auto', padding:'6px 10px' }}>
-            {logLines.length === 0 && <div style={{ fontSize:10, color:'#1a1a1a' }}>awaiting scan…</div>}
+            {logLines.length === 0 && <div style={{ fontSize:10, color:'var(--tx3)' }}>awaiting scan…</div>}
             {logLines.map((l,i)=>(
               <div key={i} style={{ fontSize:10, color:l.startsWith('[+]')?'#33a84a':l.startsWith('[!]')?'#c8a84b':'#444', lineHeight:1.8, fontFamily:'monospace' }}>
                 {l}
@@ -155,13 +155,13 @@ export default function NetworkScannerView() {
           )}
 
           {/* Host table header */}
-          <div style={{ display:'grid', gridTemplateColumns:'110px 140px 160px 50px 1fr 80px', padding:'4px 14px', background:'#111', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'#333', textTransform:'uppercase', letterSpacing:0.8, flexShrink:0 }}>
+          <div style={{ display:'grid', gridTemplateColumns:'110px 140px 160px 50px 1fr 80px', padding:'4px 14px', background:'var(--inset)', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:0.8, flexShrink:0 }}>
             <span>IP</span><span>Hostname</span><span>OS</span><span>TTL</span><span>Open Ports</span><span>Vulns</span>
           </div>
 
           <div style={{ flex:1, overflowY:'auto' }}>
             {!result && status === 'idle' && (
-              <div style={{ padding:'20px 14px', color:'#1a1a1a', fontSize:11 }}>[*] Configure subnet and click SCAN — calls LocalFingerPrint via /api/recon</div>
+              <div style={{ padding:'20px 14px', color:'var(--tx3)', fontSize:11 }}>[*] Configure subnet and click SCAN — calls LocalFingerPrint via /api/recon</div>
             )}
             {result?.hosts.map(h=>(
               <div key={h.ip}
@@ -172,9 +172,9 @@ export default function NetworkScannerView() {
                   background: selected?.ip===h.ip?'#0d0d14':h.vulns.length>0?'#0d0000':'transparent',
                 }}>
                 <span style={{ fontSize:11, color:'#777', fontFamily:'monospace' }}>{h.ip}</span>
-                <span style={{ fontSize:10, color:'#555', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{h.hostname}</span>
-                <span style={{ fontSize:10, color:'#444' }}>{h.os}</span>
-                <span style={{ fontSize:10, color:'#2a2a2a' }}>{h.ttl}</span>
+                <span style={{ fontSize:10, color:'var(--tx1)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{h.hostname}</span>
+                <span style={{ fontSize:10, color:'var(--tx2)' }}>{h.os}</span>
+                <span style={{ fontSize:10, color:'var(--tx2)' }}>{h.ttl}</span>
                 <div style={{ display:'flex', gap:4, flexWrap:'wrap' }}>
                   {h.ports.filter(p=>p.state==='open').map(p=>(
                     <span key={p.port} style={{ fontSize:9, color:PORT_COL[p.state], border:`1px solid ${PORT_COL[p.state]}44`, padding:'1px 4px' }}>{p.port}</span>
@@ -190,19 +190,19 @@ export default function NetworkScannerView() {
 
         {/* Host detail */}
         {selected && (
-          <div style={{ width:240, background:'#0a0a0a', borderLeft:'1px solid #1a1a1a', padding:'10px', overflowY:'auto', flexShrink:0 }}>
+          <div style={{ width:240, background:'var(--bg)', borderLeft:'1px solid #1a1a1a', padding:'10px', overflowY:'auto', flexShrink:0 }}>
             <div style={{ fontSize:11, color:'#cccccc', fontWeight:700, marginBottom:2 }}>{selected.ip}</div>
-            <div style={{ fontSize:10, color:'#555', marginBottom:6 }}>{selected.hostname}</div>
-            <div style={{ fontSize:9, color:'#333', marginBottom:10 }}>{selected.os}</div>
+            <div style={{ fontSize:10, color:'var(--tx1)', marginBottom:6 }}>{selected.hostname}</div>
+            <div style={{ fontSize:9, color:'var(--tx2)', marginBottom:10 }}>{selected.os}</div>
 
-            {selected.mac && <div style={{ fontSize:9, color:'#2a2a2a', marginBottom:8 }}>MAC: {selected.mac}</div>}
+            {selected.mac && <div style={{ fontSize:9, color:'var(--tx2)', marginBottom:8 }}>MAC: {selected.mac}</div>}
 
-            <div style={{ fontSize:9, color:'#2a2a2a', textTransform:'uppercase', letterSpacing:1, marginBottom:6 }}>Ports</div>
+            <div style={{ fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1, marginBottom:6 }}>Ports</div>
             {selected.ports.map(p=>(
               <div key={p.port} style={{ display:'flex', justifyContent:'space-between', marginBottom:4, fontSize:10 }}>
                 <span style={{ color:PORT_COL[p.state], minWidth:36 }}>{p.port}</span>
-                <span style={{ color:'#444', flex:1, marginLeft:6 }}>{p.service}</span>
-                <span style={{ color:'#2a2a2a', fontSize:9 }}>{p.version.slice(0,18)}</span>
+                <span style={{ color:'var(--tx2)', flex:1, marginLeft:6 }}>{p.service}</span>
+                <span style={{ color:'var(--tx2)', fontSize:9 }}>{p.version.slice(0,18)}</span>
               </div>
             ))}
 

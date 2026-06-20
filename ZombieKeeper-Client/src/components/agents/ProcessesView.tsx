@@ -56,14 +56,14 @@ export default function ProcessesView() {
     <div style={{ display:'flex', flexDirection:'column', height:'100%', overflow:'hidden', fontFamily:'Courier New' }}>
 
       {/* Header */}
-      <div style={{ padding:'7px 14px', background:'#0d0d0d', borderBottom:'1px solid #1a1a1a', display:'flex', gap:10, alignItems:'center', flexShrink:0 }}>
+      <div style={{ padding:'7px 14px', background:'var(--inset2)', borderBottom:'1px solid #1a1a1a', display:'flex', gap:10, alignItems:'center', flexShrink:0 }}>
         <select value={agent} onChange={e=>{ setAgent(e.target.value); setSelected(null); }}
-          style={{ background:'#040404', border:'1px solid #1e1e1e', color:'#ccc', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none', appearance:'none' }}>
+          style={{ background:'var(--inset2)', border:'1px solid #1e1e1e', color:'#ccc', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none', appearance:'none' }}>
           {AGENTS.map(a=><option key={a}>{a}</option>)}
         </select>
 
         <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="filter name/pid…"
-          style={{ width:160, background:'#040404', border:'1px solid #1e1e1e', color:'#777', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none' }}/>
+          style={{ width:160, background:'var(--inset2)', border:'1px solid #1e1e1e', color:'#777', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none' }}/>
 
         <button onClick={()=>setShowSusp(s=>!s)} style={{
           background: showSusp?'#1a0000':'transparent',
@@ -75,9 +75,9 @@ export default function ProcessesView() {
           {suspCount>0 && <span style={{ marginLeft:6, background:'#1a0000', color:'#e05c6e', padding:'0 4px', border:'1px solid #3d1520' }}>{suspCount}</span>}
         </button>
 
-        <span style={{ marginLeft:'auto', fontSize:10, color:'#333' }}>{visible.length} procs</span>
+        <span style={{ marginLeft:'auto', fontSize:10, color:'var(--tx2)' }}>{visible.length} procs</span>
 
-        <button style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', color:'#444', fontFamily:'Courier New', fontSize:10, padding:'3px 12px', cursor:'pointer' }}>
+        <button style={{ background:'var(--inset2)', border:'1px solid #1a1a1a', color:'var(--tx2)', fontFamily:'Courier New', fontSize:10, padding:'3px 12px', cursor:'pointer' }}>
           REFRESH
         </button>
       </div>
@@ -92,7 +92,7 @@ export default function ProcessesView() {
 
         {/* Process table */}
         <div style={{ flex:1, overflowY:'auto' }}>
-          <div style={{ display:'grid', gridTemplateColumns:'60px 60px 160px 160px 60px 60px 1fr', padding:'4px 14px', background:'#111', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'#333', textTransform:'uppercase', letterSpacing:0.8, position:'sticky', top:0 }}>
+          <div style={{ display:'grid', gridTemplateColumns:'60px 60px 160px 160px 60px 60px 1fr', padding:'4px 14px', background:'var(--inset)', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:0.8, position:'sticky', top:0 }}>
             <span>PID</span><span>PPID</span><span>Name</span><span>User</span><span>CPU%</span><span>MEM</span><span>Cmdline</span>
           </div>
           {visible.map(p=>(
@@ -104,25 +104,25 @@ export default function ProcessesView() {
                 background: selected?.pid===p.pid?'#0d0d14': p.suspicious?'#0d0000':'transparent',
               }}>
               <span style={{ fontSize:10, color:p.marked?'#e05c6e':p.suspicious?'#c8a84b':'#555', fontWeight:p.suspicious?700:400 }}>{p.pid}</span>
-              <span style={{ fontSize:9, color:'#333' }}>{p.ppid||'—'}</span>
+              <span style={{ fontSize:9, color:'var(--tx2)' }}>{p.ppid||'—'}</span>
               <span style={{ fontSize:11, color:p.suspicious?'#c8a84b':p.marked?'#e05c6e':'#777', fontWeight:p.suspicious?700:400 }}>
                 {p.suspicious && '⚠ '}{p.name}
               </span>
-              <span style={{ fontSize:9, color:'#444', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{p.user.replace('NT AUTHORITY\\','').replace('CORP\\','')}</span>
+              <span style={{ fontSize:9, color:'var(--tx2)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{p.user.replace('NT AUTHORITY\\','').replace('CORP\\','')}</span>
               <span style={{ fontSize:10, color:parseFloat(p.cpu)>5?'#d48b55':'#333' }}>{p.cpu}</span>
-              <span style={{ fontSize:10, color:'#333' }}>{p.mem} MB</span>
-              <span style={{ fontSize:9, color:'#2a2a2a', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{p.cmdline||p.path}</span>
+              <span style={{ fontSize:10, color:'var(--tx2)' }}>{p.mem} MB</span>
+              <span style={{ fontSize:9, color:'var(--tx2)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{p.cmdline||p.path}</span>
             </div>
           ))}
         </div>
 
         {/* Detail + actions */}
         {selected && (
-          <div style={{ width:240, background:'#0a0a0a', borderLeft:'1px solid #1a1a1a', padding:'12px', flexShrink:0, overflowY:'auto' }}>
+          <div style={{ width:240, background:'var(--inset2)', borderLeft:'1px solid #1a1a1a', padding:'12px', flexShrink:0, overflowY:'auto' }}>
             <div style={{ fontSize:12, color: selected.suspicious?'#c8a84b':'#ccc', fontWeight:700, marginBottom:4 }}>
               {selected.suspicious && '⚠ '}{selected.name}
             </div>
-            <div style={{ fontSize:10, color:'#444', marginBottom:10 }}>PID {selected.pid} · PPID {selected.ppid}</div>
+            <div style={{ fontSize:10, color:'var(--tx2)', marginBottom:10 }}>PID {selected.pid} · PPID {selected.ppid}</div>
 
             {([
               ['User',    selected.user.split('\\').pop()!],
@@ -130,22 +130,22 @@ export default function ProcessesView() {
               ['Memory',  selected.mem + ' MB'],
             ] as [string,string][]).map(([k,v])=>(
               <div key={k} style={{ display:'flex', justifyContent:'space-between', marginBottom:5, fontSize:10 }}>
-                <span style={{ color:'#2a2a2a' }}>{k}</span>
-                <span style={{ color:'#555' }}>{v}</span>
+                <span style={{ color:'var(--tx2)' }}>{k}</span>
+                <span style={{ color:'var(--tx1)' }}>{v}</span>
               </div>
             ))}
 
             {selected.path && (
               <div style={{ marginTop:6, marginBottom:8 }}>
-                <div style={{ fontSize:9, color:'#2a2a2a', textTransform:'uppercase', letterSpacing:1, marginBottom:3 }}>Path</div>
-                <div style={{ fontSize:9, color:'#333', wordBreak:'break-all', fontFamily:'monospace' }}>{selected.path}</div>
+                <div style={{ fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1, marginBottom:3 }}>Path</div>
+                <div style={{ fontSize:9, color:'var(--tx2)', wordBreak:'break-all', fontFamily:'monospace' }}>{selected.path}</div>
               </div>
             )}
 
             {selected.cmdline && (
               <div style={{ marginBottom:12 }}>
-                <div style={{ fontSize:9, color:'#2a2a2a', textTransform:'uppercase', letterSpacing:1, marginBottom:3 }}>Cmdline</div>
-                <div style={{ fontSize:9, color:'#333', wordBreak:'break-all', fontFamily:'monospace', background:'#040404', padding:'4px 6px' }}>{selected.cmdline}</div>
+                <div style={{ fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1, marginBottom:3 }}>Cmdline</div>
+                <div style={{ fontSize:9, color:'var(--tx2)', wordBreak:'break-all', fontFamily:'monospace', background:'var(--inset2)', padding:'4px 6px' }}>{selected.cmdline}</div>
               </div>
             )}
 
@@ -162,13 +162,13 @@ export default function ProcessesView() {
             )}
 
             <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
-              <button onClick={()=>mark(selected.pid)} style={{ background:'#080808', border:'1px solid #1a1a1a', color:'#c8a84b', fontFamily:'Courier New', fontSize:10, padding:'5px', cursor:'pointer' }}>
+              <button onClick={()=>mark(selected.pid)} style={{ background:'var(--inset2)', border:'1px solid #1a1a1a', color:'#c8a84b', fontFamily:'Courier New', fontSize:10, padding:'5px', cursor:'pointer' }}>
                 {selected.marked?'UNMARK':'MARK SUSPICIOUS'}
               </button>
-              <button style={{ background:'#080808', border:'1px solid #1a1a1a', color:'#5a96d4', fontFamily:'Courier New', fontSize:10, padding:'5px', cursor:'pointer' }}>
+              <button style={{ background:'var(--inset2)', border:'1px solid #1a1a1a', color:'#5a96d4', fontFamily:'Courier New', fontSize:10, padding:'5px', cursor:'pointer' }}>
                 INJECT SHELLCODE
               </button>
-              <button style={{ background:'#080808', border:'1px solid #1a1a1a', color:'#a07fd4', fontFamily:'Courier New', fontSize:10, padding:'5px', cursor:'pointer' }}>
+              <button style={{ background:'var(--inset2)', border:'1px solid #1a1a1a', color:'#a07fd4', fontFamily:'Courier New', fontSize:10, padding:'5px', cursor:'pointer' }}>
                 MIGRATE (SPAWN)
               </button>
               <button onClick={()=>{ kill(selected.pid); setSelected(null); }} style={{ background:'#1a0000', border:'1px solid #3d1520', color:'#e05c6e', fontFamily:'Courier New', fontSize:10, padding:'5px', cursor:'pointer' }}>

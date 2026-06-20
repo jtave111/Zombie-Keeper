@@ -49,8 +49,8 @@ export default function OperationsView() {
     <div style={{ display:'flex', flexDirection:'column', height:'100%', overflow:'hidden', fontFamily:'Courier New' }}>
 
       {/* Header */}
-      <div style={{ padding:'8px 14px', background:'#0d0d0d', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', gap:16, flexShrink:0 }}>
-        <span style={{ fontSize:11, color:'#555', textTransform:'uppercase', letterSpacing:1 }}>Operation Planner</span>
+      <div style={{ padding:'8px 14px', background:'var(--inset2)', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', gap:16, flexShrink:0 }}>
+        <span style={{ fontSize:11, color:'var(--tx1)', textTransform:'uppercase', letterSpacing:1 }}>Operation Planner</span>
         <div style={{ display:'flex', gap:10 }}>
           {PHASES.map(ph => (
             <span key={ph.key} style={{ fontSize:10, color:ph.color }}>
@@ -58,18 +58,18 @@ export default function OperationsView() {
             </span>
           ))}
         </div>
-        <span style={{ marginLeft:'auto', fontSize:9, color:'#2a2a2a' }}>drag planned → use move buttons</span>
+        <span style={{ marginLeft:'auto', fontSize:9, color:'var(--tx2)' }}>drag planned → use move buttons</span>
       </div>
 
       {/* Board */}
       <div style={{ flex:1, overflow:'hidden', display:'flex', gap:8, padding:'10px 14px' }}>
         {PHASES.map(ph => (
-          <div key={ph.key} style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden', background:'#0a0a0a', border:'1px solid #1a1a1a' }}>
+          <div key={ph.key} style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden', background:'var(--inset2)', border:'1px solid #1a1a1a' }}>
             {/* Lane header */}
-            <div style={{ padding:'6px 10px', background:'#111', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
+            <div style={{ padding:'6px 10px', background:'var(--inset)', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
               <div style={{ width:4, height:4, borderRadius:'50%', background:ph.color }}/>
               <span style={{ fontSize:9, color:ph.color, textTransform:'uppercase', letterSpacing:1.2, fontWeight:700 }}>{ph.label}</span>
-              <span style={{ fontSize:9, color:'#333', marginLeft:'auto' }}>{tasks.filter(t=>t.phase===ph.key).length}</span>
+              <span style={{ fontSize:9, color:'var(--tx2)', marginLeft:'auto' }}>{tasks.filter(t=>t.phase===ph.key).length}</span>
             </div>
 
             {/* Cards */}
@@ -86,22 +86,22 @@ export default function OperationsView() {
                     <span style={{ fontSize:9, color:PRIO_COL[t.priority], textTransform:'uppercase', letterSpacing:0.5 }}>
                       ▲ {t.priority}
                     </span>
-                    <span style={{ fontSize:9, color:'#2a2a2a' }}>{t.ts}</span>
+                    <span style={{ fontSize:9, color:'var(--tx2)' }}>{t.ts}</span>
                   </div>
                   <div style={{ fontSize:11, color:'#cccccc', lineHeight:1.4, marginBottom:4 }}>{t.title}</div>
                   <div style={{ display:'flex', gap:4, flexWrap:'wrap', marginBottom:4 }}>
                     {t.tags.map(tag => (
-                      <span key={tag} style={{ fontSize:8, padding:'1px 5px', background:'#181818', color:'#444', border:'1px solid #222' }}>{tag}</span>
+                      <span key={tag} style={{ fontSize:8, padding:'1px 5px', background:'var(--inset)', color:'var(--tx2)', border:'1px solid #222' }}>{tag}</span>
                     ))}
                   </div>
-                  <div style={{ fontSize:9, color:'#2a2a2a' }}>{t.agent !== '—' ? `→ ${t.agent}` : ''}</div>
+                  <div style={{ fontSize:9, color:'var(--tx2)' }}>{t.agent !== '—' ? `→ ${t.agent}` : ''}</div>
 
                   {/* Move buttons */}
                   {selected?.id===t.id && (
                     <div style={{ display:'flex', gap:4, marginTop:6, flexWrap:'wrap' }}>
                       {PHASES.filter(p=>p.key!==ph.key).map(p => (
                         <button key={p.key} onClick={e=>{e.stopPropagation();move(t.id,p.key);}} style={{
-                          background:'#080808', border:`1px solid ${p.color}44`,
+                          background:'var(--inset2)', border:`1px solid ${p.color}44`,
                           color:p.color, fontFamily:'Courier New', fontSize:8,
                           padding:'2px 8px', cursor:'pointer', textTransform:'uppercase',
                         }}>→ {p.label}</button>
@@ -113,18 +113,18 @@ export default function OperationsView() {
 
               {/* Add task */}
               {adding === ph.key ? (
-                <div style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', padding:'8px' }}>
+                <div style={{ background:'var(--inset2)', border:'1px solid #1a1a1a', padding:'8px' }}>
                   <input autoFocus value={newTitle} onChange={e=>setNewTitle(e.target.value)}
                     onKeyDown={e=>{ if(e.key==='Enter') addTask(ph.key); if(e.key==='Escape') setAdding(null); }}
                     placeholder="task title..."
-                    style={{ width:'100%', background:'#040404', border:'1px solid #2a2a2a', color:'#ccc', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none', marginBottom:4 }}/>
+                    style={{ width:'100%', background:'var(--inset2)', border:'1px solid #2a2a2a', color:'#ccc', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none', marginBottom:4 }}/>
                   <div style={{ display:'flex', gap:4 }}>
                     <button onClick={()=>addTask(ph.key)} style={{ background:'#1a0000', border:'1px solid #e05c6e', color:'#e05c6e', fontFamily:'Courier New', fontSize:9, padding:'2px 10px', cursor:'pointer' }}>ADD</button>
-                    <button onClick={()=>setAdding(null)} style={{ background:'transparent', border:'1px solid #222', color:'#333', fontFamily:'Courier New', fontSize:9, padding:'2px 10px', cursor:'pointer' }}>CANCEL</button>
+                    <button onClick={()=>setAdding(null)} style={{ background:'transparent', border:'1px solid #222', color:'var(--tx2)', fontFamily:'Courier New', fontSize:9, padding:'2px 10px', cursor:'pointer' }}>CANCEL</button>
                   </div>
                 </div>
               ) : (
-                <button onClick={()=>setAdding(ph.key)} style={{ width:'100%', background:'transparent', border:'1px dashed #1a1a1a', color:'#2a2a2a', fontFamily:'Courier New', fontSize:10, padding:'6px', cursor:'pointer', marginTop:2 }}>
+                <button onClick={()=>setAdding(ph.key)} style={{ width:'100%', background:'transparent', border:'1px dashed #1a1a1a', color:'var(--tx2)', fontFamily:'Courier New', fontSize:10, padding:'6px', cursor:'pointer', marginTop:2 }}>
                   + add task
                 </button>
               )}
@@ -135,7 +135,7 @@ export default function OperationsView() {
 
       {/* Detail panel */}
       {selected && (
-        <div style={{ padding:'8px 14px', background:'#0d0d0d', borderTop:'1px solid #1a1a1a', flexShrink:0 }}>
+        <div style={{ padding:'8px 14px', background:'var(--inset2)', borderTop:'1px solid #1a1a1a', flexShrink:0 }}>
           <span style={{ fontSize:10, color:'#e05c6e', marginRight:12 }}>{selected.id}</span>
           <span style={{ fontSize:10, color:'#777' }}>{selected.desc || 'no description'}</span>
         </div>

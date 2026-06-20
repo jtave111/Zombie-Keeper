@@ -84,8 +84,8 @@ export default function SweepView() {
     <div style={{ display:'flex', height:'100%', overflow:'hidden', fontFamily:'Courier New' }}>
 
       {/* LEFT — agent selector */}
-      <div style={{ width:220, background:'#0d0d0d', borderRight:'1px solid #1a1a1a', display:'flex', flexDirection:'column', flexShrink:0 }}>
-        <div style={{ padding:'8px 10px', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'#444', textTransform:'uppercase', letterSpacing:1 }}>
+      <div style={{ width:220, background:'var(--inset2)', borderRight:'1px solid #1a1a1a', display:'flex', flexDirection:'column', flexShrink:0 }}>
+        <div style={{ padding:'8px 10px', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1 }}>
           Target Filter
         </div>
         <div style={{ padding:'8px 10px', borderBottom:'1px solid #1a1a1a' }}>
@@ -98,7 +98,7 @@ export default function SweepView() {
             }}>{m.toUpperCase()}</div>
           ))}
         </div>
-        <div style={{ fontSize:9, color:'#2a2a2a', padding:'6px 10px', textTransform:'uppercase', letterSpacing:1 }}>Agents</div>
+        <div style={{ fontSize:9, color:'var(--tx2)', padding:'6px 10px', textTransform:'uppercase', letterSpacing:1 }}>Agents</div>
         <div style={{ flex:1, overflowY:'auto' }}>
           {MOCK_AGENTS.map(a => (
             <div key={a.id} onClick={()=>toggle(a.id)} style={{
@@ -109,13 +109,13 @@ export default function SweepView() {
               <div style={{ display:'flex', gap:6, alignItems:'center' }}>
                 <div style={{ width:5, height:5, borderRadius:'50%', flexShrink:0,
                   background: a.status==='ONLINE' ? '#33a84a' : '#2a2a2a' }}/>
-                <span style={{ fontSize:10, color: selected.has(a.id) ? '#cccccc' : '#444' }}>{a.id}</span>
+                <span style={{ fontSize:10, color: selected.has(a.id) ? 'var(--tx0)' : 'var(--tx2)' }}>{a.id}</span>
               </div>
-              <div style={{ fontSize:9, color:'#2a2a2a', paddingLeft:11 }}>{a.host}</div>
+              <div style={{ fontSize:9, color:'var(--tx2)', paddingLeft:11 }}>{a.host}</div>
             </div>
           ))}
         </div>
-        <div style={{ padding:'8px 10px', borderTop:'1px solid #1a1a1a', fontSize:10, color:'#333' }}>
+        <div style={{ padding:'8px 10px', borderTop:'1px solid #1a1a1a', fontSize:10, color:'var(--tx2)' }}>
           {targets.length} targets selected
         </div>
       </div>
@@ -124,13 +124,13 @@ export default function SweepView() {
       <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
 
         {/* Command bar */}
-        <div style={{ padding:'10px 14px', background:'#0d0d0d', borderBottom:'1px solid #1a1a1a', flexShrink:0 }}>
-          <div style={{ fontSize:9, color:'#333', textTransform:'uppercase', letterSpacing:1, marginBottom:6 }}>Sweep Command</div>
+        <div style={{ padding:'10px 14px', background:'var(--inset2)', borderBottom:'1px solid #1a1a1a', flexShrink:0 }}>
+          <div style={{ fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1, marginBottom:6 }}>Sweep Command</div>
           <div style={{ display:'flex', gap:8, marginBottom:8 }}>
             <input value={cmd} onChange={e=>setCmd(e.target.value)}
               onKeyDown={e=>e.key==='Enter'&&sweep()}
               placeholder="command to execute on all targets..."
-              style={{ flex:1, background:'#040404', border:'1px solid #1e1e1e', color:'#cccccc', fontFamily:'Courier New', fontSize:12, padding:'6px 10px', outline:'none' }}/>
+              style={{ flex:1, background:'var(--inset2)', border:'1px solid #1e1e1e', color:'#cccccc', fontFamily:'Courier New', fontSize:12, padding:'6px 10px', outline:'none' }}/>
             <button onClick={sweep} disabled={sweeping||!cmd.trim()||targets.length===0} style={{
               background: sweeping?'#0d0d0d':'#1a0000',
               border:`1px solid ${sweeping?'#222':'#e05c6e'}`,
@@ -145,7 +145,7 @@ export default function SweepView() {
           <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
             {PRESETS.map(p => (
               <button key={p.label} onClick={()=>setCmd(p.cmd)} style={{
-                background:'#080808', border:'1px solid #1a1a1a', color:'#444',
+                background:'var(--inset2)', border:'1px solid #1a1a1a', color:'var(--tx2)',
                 fontFamily:'Courier New', fontSize:9, padding:'2px 8px', cursor:'pointer',
               }}>{p.label}</button>
             ))}
@@ -155,23 +155,23 @@ export default function SweepView() {
         {/* Results grid */}
         <div style={{ flex:1, overflowY:'auto', padding:'10px 14px', display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:8, alignContent:'start' }}>
           {results.length === 0 && (
-            <div style={{ gridColumn:'1/-1', color:'#1a1a1a', fontSize:12, paddingTop:20 }}>
+            <div style={{ gridColumn:'1/-1', color:'var(--tx3)', fontSize:12, paddingTop:20 }}>
               [*] Select targets, enter a command and execute the sweep.
             </div>
           )}
           {results.map(r => (
-            <div key={r.id} style={{ background:'#0d0d0d', border:`1px solid ${S_COL[r.status]}22`, padding:'10px' }}>
+            <div key={r.id} style={{ background:'var(--inset2)', border:`1px solid ${S_COL[r.status]}22`, padding:'10px' }}>
               <div style={{ display:'flex', justifyContent:'space-between', marginBottom:6 }}>
                 <div>
                   <span style={{ fontSize:11, color:'#cccccc', fontWeight:700 }}>{r.id}</span>
-                  <span style={{ fontSize:10, color:'#333', marginLeft:8 }}>{r.host}</span>
+                  <span style={{ fontSize:10, color:'var(--tx2)', marginLeft:8 }}>{r.host}</span>
                 </div>
                 <div style={{ display:'flex', gap:6, alignItems:'center' }}>
-                  {r.ms !== null && <span style={{ fontSize:9, color:'#2a2a2a' }}>{r.ms}ms</span>}
+                  {r.ms !== null && <span style={{ fontSize:9, color:'var(--tx2)' }}>{r.ms}ms</span>}
                   <span style={{ fontSize:9, color:S_COL[r.status], fontWeight:700, textTransform:'uppercase' }}>{r.status}</span>
                 </div>
               </div>
-              <div style={{ background:'#040404', border:'1px solid #111', padding:'6px 8px', minHeight:40, fontFamily:'Courier New', fontSize:10, color: r.status==='error'?'#e05c6e':'#555', whiteSpace:'pre-wrap', wordBreak:'break-all' }}>
+              <div style={{ background:'var(--inset2)', border:'1px solid #111', padding:'6px 8px', minHeight:40, fontFamily:'Courier New', fontSize:10, color: r.status==='error'?'#e05c6e':'#555', whiteSpace:'pre-wrap', wordBreak:'break-all' }}>
                 {r.status==='running' ? '...' : r.status==='pending' ? '' : r.output || '(no output)'}
               </div>
               {r.exitCode !== null && (
@@ -185,7 +185,7 @@ export default function SweepView() {
 
         {/* Summary bar */}
         {results.length > 0 && (
-          <div style={{ padding:'5px 14px', background:'#0d0d0d', borderTop:'1px solid #1a1a1a', display:'flex', gap:16, fontSize:10, flexShrink:0 }}>
+          <div style={{ padding:'5px 14px', background:'var(--inset2)', borderTop:'1px solid #1a1a1a', display:'flex', gap:16, fontSize:10, flexShrink:0 }}>
             {(['done','running','error','offline'] as ResultStatus[]).map(s => {
               const count = results.filter(r=>r.status===s).length;
               return count > 0 ? <span key={s} style={{ color:S_COL[s] }}>{s}: {count}</span> : null;

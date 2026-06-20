@@ -1,89 +1,147 @@
-const SECTIONS = [
-  { label:'OVERVIEW', items:[
-    { key:'dashboard',  icon:'#', label:'Dashboard' },
+import { useState, useEffect } from 'react';
+
+type Section = {
+  key: string;
+  label: string;
+  items: { key: string; icon: string; label: string; badge?: string; badgeAlert?: boolean }[];
+};
+
+const SECTIONS: Section[] = [
+  { key: 'c2', label: 'C2 Operations', items: [
+    { key: 'dashboard',  icon: '⊞', label: 'Dashboard' },
+    { key: 'agents',     icon: '⬡', label: 'Agents',       badge: '6' },
+    { key: 'shell',      icon: '$', label: 'C2 Shell' },
+    { key: 'listeners',  icon: '⋮', label: 'Listeners',    badge: '2' },
+    { key: 'payloads',   icon: '⊕', label: 'Payloads' },
+    { key: 'sweep',      icon: '⌖', label: 'Sweep',        badge: '!', badgeAlert: true },
+    { key: 'timeline',   icon: '⊢', label: 'Timeline' },
   ]},
-  { label:'C2 OPERATIONS', items:[
-    { key:'agents',     icon:'>', label:'Agents',        badge:'6' },
-    { key:'shell',      icon:'$', label:'Shell' },
-    { key:'listeners',  icon:'~', label:'Listeners',     badge:'2' },
-    { key:'payloads',   icon:'*', label:'Payloads' },
-    { key:'sweep',      icon:'»', label:'Sweep',         badge:'!' },
+  { key: 'net', label: 'Network & Recon', items: [
+    { key: 'network',    icon: '⬡', label: 'Network Map' },
   ]},
-  { label:'OPERATIONS', items:[
-    { key:'operations', icon:'K', label:'Op Planner' },
-    { key:'mitre',      icon:'M', label:'MITRE ATT&CK' },
-    { key:'playbooks',  icon:'▶', label:'Playbooks' },
+  { key: 'intel', label: 'Intelligence', items: [
+    { key: 'loot',       icon: '≡', label: 'Loot' },
+    { key: 'credentials',icon: '⊛', label: 'Credentials' },
+    { key: 'clipboard',  icon: '⊡', label: 'Clipboard' },
+    { key: 'reports',    icon: '⊟', label: 'Reports' },
   ]},
-  { label:'RECON', items:[
-    { key:'scanner',    icon:'@', label:'Net Scanner' },
-    { key:'network',    icon:'°', label:'Network Map' },
+  { key: 'arsenal', label: 'Arsenal', items: [
+    { key: 'implants',   icon: '⚡', label: 'Implants' },
+    { key: 'exploits',   icon: '!', label: 'Exploits' },
+    { key: 'arsenal',    icon: '⚙', label: 'Build Manager' },
   ]},
-  { label:'POST-EXPLOIT', items:[
-    { key:'files',      icon:'/', label:'File Manager' },
-    { key:'processes',  icon:'%', label:'Processes' },
-    { key:'tunnels',    icon:'↔', label:'Tunnels' },
+  { key: 'ops', label: 'Operations', items: [
+    { key: 'operations', icon: '◈', label: 'Op Planner' },
+    { key: 'mitre',      icon: 'M', label: 'MITRE ATT&CK' },
+    { key: 'playbooks',  icon: '▷', label: 'Playbooks' },
   ]},
-  { label:'INTELLIGENCE', items:[
-    { key:'loot',       icon:'=', label:'Loot' },
-    { key:'credentials',icon:':', label:'Credentials' },
-    { key:'reports',    icon:'~', label:'Reports' },
+  { key: 'post', label: 'Post-Exploitation', items: [
+    { key: 'files',      icon: '/', label: 'File Manager' },
+    { key: 'processes',  icon: '%', label: 'Processes' },
+    { key: 'tunnels',    icon: '⇄', label: 'Tunnels' },
   ]},
-  { label:'ARSENAL', items:[
-    { key:'implants',   icon:'⚡', label:'Implants' },
-    { key:'exploits',   icon:'!', label:'Exploits' },
-    { key:'arsenal',    icon:'⚙', label:'Build Manager' },
+  { key: 'opsec', label: 'OPSEC', items: [
+    { key: 'opsec',      icon: '⊘', label: 'IOC Tracker' },
+    { key: 'logs',       icon: '≈', label: 'Event Log' },
   ]},
-  { label:'OPSEC', items:[
-    { key:'opsec',      icon:'⊘', label:'IOC Tracker' },
-  ]},
-  { label:'SYSTEM', items:[
-    { key:'users',      icon:'@', label:'Users' },
-    { key:'logs',       icon:'=', label:'Logs' },
-    { key:'settings',   icon:'+', label:'Settings' },
+  { key: 'sys', label: 'System', items: [
+    { key: 'users',      icon: '⊹', label: 'Users' },
+    { key: 'settings',   icon: '⚙', label: 'Settings' },
   ]},
 ];
 
-export default function Sidebar({ active, onNav }: { active:string; onNav:(k:string)=>void }) {
+export default function Sidebar({
+  active,
+  onNav,
+  width = 220,
+}: {
+  active: string;
+  onNav: (k: string) => void;
+  width?: number;
+}) {
+  const [expanded, setExpanded] = useState<Set<string>>(new Set(['c2', 'net', 'intel']));
+  const [filter,   setFilter]   = useState('');
+
+  /* Auto-expand section containing the active item */
+  useEffect(() => {
+    const sec = SECTIONS.find(s => s.items.some(i => i.key === active));
+    if (sec) setExpanded(prev => prev.has(sec.key) ? prev : new Set([...prev, sec.key]));
+  }, [active]);
+
+  const toggle = (key: string) => {
+    setExpanded(prev => {
+      const next = new Set(prev);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
+  };
+
+  const filterLow = filter.toLowerCase();
+  const filtered  = filterLow
+    ? SECTIONS.map(s => ({ ...s, items: s.items.filter(i => i.label.toLowerCase().includes(filterLow)) })).filter(s => s.items.length > 0)
+    : SECTIONS;
+
   return (
-    <div style={{ width:196, minWidth:196, background:'#0d0d0d', borderRight:'1px solid #1a1a1a', display:'flex', flexDirection:'column', overflow:'hidden' }}>
-      {/* Brand */}
-      <div style={{ padding:'14px 14px 12px', borderBottom:'1px solid #1a1a1a', flexShrink:0 }}>
-        <div style={{ fontSize:13, fontWeight:700, color:'#cccccc', letterSpacing:0.5, fontFamily:'Courier New' }}>ZOMBIE_KEEPER</div>
-        <div style={{ fontSize:10, color:'#333', marginTop:2, fontFamily:'Courier New' }}>C2 Framework v3.0.1</div>
+    <div className="navigator" style={{ width, minWidth: width, maxWidth: width }}>
+
+      {/* DBeaver-style panel tab strip */}
+      <div style={{ height:22, background:'var(--panel2)', borderBottom:'1px solid var(--b1)', display:'flex', alignItems:'stretch', flexShrink:0, userSelect:'none' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:5, padding:'0 10px', fontSize:11, color:'var(--tx0)', borderRight:'1px solid var(--b1)', borderTop:'2px solid var(--red)', background:'var(--panel)', flexShrink:0 }}>
+          <span style={{ color:'var(--red)', fontSize:9 }}>⬡</span>
+          <span>Navigator</span>
+        </div>
+        <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', paddingRight:4, gap:0 }}>
+          <span
+            title="Collapse all"
+            onClick={() => setExpanded(new Set())}
+            style={{ width:18, height:18, display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, color:'var(--tx3)', cursor:'pointer' }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'var(--tx1)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--tx3)')}
+          >⊟</span>
+          <span
+            title="Expand all"
+            onClick={() => setExpanded(new Set(SECTIONS.map(s => s.key)))}
+            style={{ width:18, height:18, display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, color:'var(--tx3)', cursor:'pointer' }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'var(--tx1)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--tx3)')}
+          >⊞</span>
+        </div>
       </div>
 
-      {/* Nav */}
+      {/* Filter */}
+      <div className="navigator-search">
+        <input
+          value={filter}
+          onChange={e => setFilter(e.target.value)}
+          placeholder="Filter views..."
+        />
+      </div>
+
+      {/* Tree */}
       <div style={{ flex:1, overflowY:'auto' }}>
-        {SECTIONS.map(sec => (
-          <div key={sec.label}>
-            <div style={{ fontSize:8, color:'#2a2a2a', textTransform:'uppercase', letterSpacing:'1.4px', padding:'10px 14px 4px', fontFamily:'Courier New' }}>
-              {sec.label}
+        {filtered.map(sec => (
+          <div key={sec.key} className="tree-section">
+            <div className="tree-section-hdr" onClick={() => toggle(sec.key)}>
+              <span className="tree-arrow">{expanded.has(sec.key) ? '▾' : '▸'}</span>
+              <span style={{ flex:1 }}>{sec.label}</span>
+              <span style={{ fontSize:9, color:'var(--tx3)', paddingRight:2 }}>{sec.items.length}</span>
             </div>
-            {sec.items.map(item => (
-              <div key={item.key}
-                className={`nav-item${active===item.key?' active':''}`}
-                onClick={() => onNav(item.key)}>
-                <span className="nav-icon" style={{ fontFamily:'Courier New' }}>{item.icon}</span>
-                <span style={{ flex:1, fontFamily:'Courier New' }}>{item.label}</span>
+
+            {expanded.has(sec.key) && sec.items.map(item => (
+              <div
+                key={item.key}
+                className={`tree-item${active === item.key ? ' active' : ''}`}
+                onClick={() => onNav(item.key)}
+              >
+                <span className="tree-item-icon">{item.icon}</span>
+                <span className="tree-item-label">{item.label}</span>
                 {item.badge && (
-                  <span style={{ fontSize:9, padding:'1px 5px', background:'#1a0000', color:'#e05c6e', border:'1px solid #3d1520', fontFamily:'Courier New' }}>
-                    {item.badge}
-                  </span>
+                  <span className={`tree-badge${item.badgeAlert ? ' alert' : ''}`}>{item.badge}</span>
                 )}
               </div>
             ))}
           </div>
         ))}
-      </div>
-
-      {/* Footer */}
-      <div style={{ padding:'10px 14px', borderTop:'1px solid #1a1a1a', flexShrink:0 }}>
-        <div style={{ display:'flex', alignItems:'center', gap:7, marginBottom:4 }}>
-          <div style={{ width:6, height:6, borderRadius:'50%', background:'#33a84a', flexShrink:0 }}/>
-          <span style={{ fontSize:10, color:'#33a84a', fontWeight:700, fontFamily:'Courier New' }}>C2 ONLINE</span>
-        </div>
-        <div style={{ fontSize:10, color:'#444', fontFamily:'Courier New' }}>op: ROOT_ADMIN</div>
-        <div style={{ fontSize:10, color:'#2a2a2a', fontFamily:'Courier New' }}>role: ADMIN · RBAC</div>
       </div>
     </div>
   );

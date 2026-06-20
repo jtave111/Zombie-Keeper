@@ -83,8 +83,8 @@ export default function MitreView() {
     <div style={{ display:'flex', flexDirection:'column', height:'100%', overflow:'hidden', fontFamily:'Courier New' }}>
 
       {/* Header */}
-      <div style={{ padding:'8px 14px', background:'#0d0d0d', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', gap:20, flexShrink:0 }}>
-        <span style={{ fontSize:11, color:'#555', textTransform:'uppercase', letterSpacing:1 }}>MITRE ATT&amp;CK — Enterprise</span>
+      <div style={{ padding:'8px 14px', background:'var(--inset2)', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', gap:20, flexShrink:0 }}>
+        <span style={{ fontSize:11, color:'var(--tx1)', textTransform:'uppercase', letterSpacing:1 }}>MITRE ATT&amp;CK — Enterprise</span>
         <div style={{ display:'flex', gap:12 }}>
           {(['done','active','planned'] as const).map(s => (
             <span key={s} style={{ fontSize:10, color:S_TEXT[s] }}>
@@ -97,11 +97,11 @@ export default function MitreView() {
             <button key={f} onClick={()=>setFilter(f)} style={{
               background: filter===f ? (f==='all'?'#181818':S_COLOR[f as TechStatus]) : '#080808',
               border:`1px solid ${filter===f?(f==='all'?'#333':S_TEXT[f as TechStatus]):'#1a1a1a'}`,
-              color: filter===f ? (f==='all'?'#888':S_TEXT[f as TechStatus]) : '#2a2a2a',
+              color: filter===f ? (f==='all'?'var(--tx1)':S_TEXT[f as TechStatus]) : 'var(--tx2)',
               fontFamily:'Courier New', fontSize:9, padding:'2px 10px', cursor:'pointer', textTransform:'uppercase',
             }}>{f}</button>
           ))}
-          <button onClick={()=>setTechs({})} style={{ background:'#080808', border:'1px solid #1a1a1a', color:'#333', fontFamily:'Courier New', fontSize:9, padding:'2px 10px', cursor:'pointer' }}>RESET</button>
+          <button onClick={()=>setTechs({})} style={{ background:'var(--inset2)', border:'1px solid #1a1a1a', color:'var(--tx2)', fontFamily:'Courier New', fontSize:9, padding:'2px 10px', cursor:'pointer' }}>RESET</button>
         </div>
       </div>
 
@@ -110,14 +110,14 @@ export default function MitreView() {
         <div style={{ display:'flex', minWidth:'max-content', padding:'10px 14px', gap:6, alignItems:'flex-start' }}>
           {MATRIX.map(col => (
             <div key={col.id} style={{ width:130, flexShrink:0 }}>
-              <div style={{ background:'#181818', border:'1px solid #222', padding:'5px 7px', marginBottom:4 }}>
+              <div style={{ background:'var(--inset)', border:'1px solid #222', padding:'5px 7px', marginBottom:4 }}>
                 <div style={{ fontSize:8, color:'#e05c6e', letterSpacing:1, textTransform:'uppercase', marginBottom:1 }}>{col.id}</div>
                 <div style={{ fontSize:10, color:'#888', fontWeight:700, lineHeight:1.3 }}>{col.tactic}</div>
               </div>
               {col.techniques.map(t => {
                 const st = techs[t.id] || 'none';
                 if (filter !== 'all' && st !== filter) return (
-                  <div key={t.id} style={{ height:40, background:'#080808', border:'1px solid #0d0d0d', marginBottom:3, opacity:0.15 }}/>
+                  <div key={t.id} style={{ height:40, background:'var(--inset2)', border:'1px solid #0d0d0d', marginBottom:3, opacity:0.15 }}/>
                 );
                 return (
                   <div key={t.id} onClick={()=>{cycle(t.id); setDetail({...t, tactic:col.tactic});}}
@@ -140,12 +140,12 @@ export default function MitreView() {
 
       {/* Detail bar */}
       {detail && (
-        <div style={{ padding:'6px 14px', background:'#0d0d0d', borderTop:'1px solid #1a1a1a', display:'flex', gap:16, alignItems:'center', flexShrink:0, fontSize:10 }}>
+        <div style={{ padding:'6px 14px', background:'var(--inset2)', borderTop:'1px solid #1a1a1a', display:'flex', gap:16, alignItems:'center', flexShrink:0, fontSize:10 }}>
           <span style={{ color:'#e05c6e' }}>{detail.id}</span>
           <span style={{ color:'#777' }}>{detail.name}</span>
-          <span style={{ color:'#333' }}>{detail.tactic}</span>
+          <span style={{ color:'var(--tx2)' }}>{detail.tactic}</span>
           <span style={{ color:S_TEXT[techs[detail.id]||'none'], marginLeft:'auto' }}>{S_LABEL[techs[detail.id]||'none']}</span>
-          <span style={{ color:'#2a2a2a' }}>click technique to cycle status</span>
+          <span style={{ color:'var(--tx2)' }}>click technique to cycle status</span>
         </div>
       )}
     </div>

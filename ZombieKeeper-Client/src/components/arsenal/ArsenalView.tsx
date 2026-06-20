@@ -103,9 +103,9 @@ export default function ArsenalView() {
     <div style={{ display:'flex', height:'100%', overflow:'hidden', fontFamily:'Courier New' }}>
 
       {/* LEFT — tool list */}
-      <div style={{ width:240, background:'#0d0d0d', borderRight:'1px solid #1a1a1a', display:'flex', flexDirection:'column', flexShrink:0 }}>
+      <div style={{ width:240, background:'var(--inset2)', borderRight:'1px solid #1a1a1a', display:'flex', flexDirection:'column', flexShrink:0 }}>
         <div style={{ padding:'8px 10px', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', gap:8 }}>
-          <span style={{ fontSize:9, color:'#444', textTransform:'uppercase', letterSpacing:1 }}>Arsenal</span>
+          <span style={{ fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1 }}>Arsenal</span>
           <span style={{ fontSize:9, color:'#33a84a', marginLeft:'auto' }}>{tools.filter(t=>t.status==='built').length}/{tools.filter(t=>t.status!=='planned').length} built</span>
         </div>
 
@@ -115,7 +115,7 @@ export default function ArsenalView() {
             <button key={d} onClick={()=>setDF(d)} style={{
               flex:1, background:domainFilter===d?'#141414':'transparent',
               border:'none', borderRight:'1px solid #111',
-              color: domainFilter===d ? '#ccc' : '#2a2a2a',
+              color: domainFilter===d ? 'var(--tx0)' : 'var(--tx2)',
               fontFamily:'Courier New', fontSize:8, padding:'4px 2px', cursor:'pointer', textTransform:'uppercase',
             }}>{d==='all'?'ALL':d==='network-session'?'NET':d==='agents'?'AGT':'LIBS'}</button>
           ))}
@@ -137,7 +137,7 @@ export default function ArsenalView() {
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:6 }}>
                 <span style={{ fontSize:9, color:STATUS_COLOR[t.status] }}>● {t.status}</span>
-                {t.lastBuild && <span style={{ fontSize:9, color:'#2a2a2a' }}>{t.lastBuild.slice(11)}</span>}
+                {t.lastBuild && <span style={{ fontSize:9, color:'var(--tx2)' }}>{t.lastBuild.slice(11)}</span>}
                 {building===t.id && <span style={{ fontSize:9, color:'#d48b55', animation:'pulse 1s infinite' }}>BUILDING…</span>}
               </div>
             </div>
@@ -155,36 +155,36 @@ export default function ArsenalView() {
       <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
 
         {/* Tool header */}
-        <div style={{ padding:'10px 14px', background:'#0d0d0d', borderBottom:'1px solid #1a1a1a', flexShrink:0 }}>
+        <div style={{ padding:'10px 14px', background:'var(--inset2)', borderBottom:'1px solid #1a1a1a', flexShrink:0 }}>
           <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:6 }}>
             <span style={{ fontSize:14, color:'#cccccc', fontWeight:700 }}>{selected.name}</span>
             <span style={{ fontSize:9, color:DOMAIN_COLOR[selected.domain], border:`1px solid ${DOMAIN_COLOR[selected.domain]}44`, padding:'2px 8px', textTransform:'uppercase' }}>{selected.domain}</span>
             <span style={{ fontSize:9, color:STATUS_COLOR[selected.status], marginLeft:'auto' }}>● {selected.status.toUpperCase()}</span>
           </div>
-          <div style={{ fontSize:11, color:'#555', marginBottom:8 }}>{selected.desc}</div>
+          <div style={{ fontSize:11, color:'var(--tx1)', marginBottom:8 }}>{selected.desc}</div>
           <div style={{ display:'flex', gap:16, fontSize:10 }}>
             <div>
-              <span style={{ color:'#2a2a2a' }}>binary: </span>
-              <span style={{ color:'#444', fontFamily:'monospace' }}>{selected.binary}</span>
+              <span style={{ color:'var(--tx2)' }}>binary: </span>
+              <span style={{ color:'var(--tx2)', fontFamily:'monospace' }}>{selected.binary}</span>
             </div>
-            {selected.size && <div><span style={{ color:'#2a2a2a' }}>size: </span><span style={{ color:'#444' }}>{selected.size}</span></div>}
+            {selected.size && <div><span style={{ color:'var(--tx2)' }}>size: </span><span style={{ color:'var(--tx2)' }}>{selected.size}</span></div>}
           </div>
           {selected.deps.length > 0 && (
             <div style={{ marginTop:6, display:'flex', gap:6 }}>
-              <span style={{ fontSize:9, color:'#2a2a2a' }}>deps:</span>
-              {selected.deps.map(d=><span key={d} style={{ fontSize:9, color:'#333', border:'1px solid #1a1a1a', padding:'1px 6px' }}>{d}</span>)}
+              <span style={{ fontSize:9, color:'var(--tx2)' }}>deps:</span>
+              {selected.deps.map(d=><span key={d} style={{ fontSize:9, color:'var(--tx2)', border:'1px solid #1a1a1a', padding:'1px 6px' }}>{d}</span>)}
             </div>
           )}
           {selected.caps && (
             <div style={{ marginTop:4, display:'flex', gap:6 }}>
-              <span style={{ fontSize:9, color:'#2a2a2a' }}>caps:</span>
+              <span style={{ fontSize:9, color:'var(--tx2)' }}>caps:</span>
               {selected.caps.map(c=><span key={c} style={{ fontSize:9, color:'#c8a84b', border:'1px solid #2a2a1a', padding:'1px 6px' }}>{c}</span>)}
             </div>
           )}
         </div>
 
         {/* Build buttons */}
-        <div style={{ padding:'8px 14px', background:'#0a0a0a', borderBottom:'1px solid #1a1a1a', display:'flex', gap:8, flexShrink:0 }}>
+        <div style={{ padding:'8px 14px', background:'var(--inset2)', borderBottom:'1px solid #1a1a1a', display:'flex', gap:8, flexShrink:0 }}>
           <button
             onClick={()=>triggerBuild(selected)}
             disabled={building!==null || selected.status==='planned'}
@@ -196,19 +196,19 @@ export default function ArsenalView() {
               [ SETCAP ]
             </button>
           )}
-          <button onClick={()=>setBuildLog([])} style={{ background:'transparent', border:'1px solid #1a1a1a', color:'#333', fontFamily:'Courier New', fontSize:10, padding:'4px 16px', cursor:'pointer' }}>
+          <button onClick={()=>setBuildLog([])} style={{ background:'transparent', border:'1px solid #1a1a1a', color:'var(--tx2)', fontFamily:'Courier New', fontSize:10, padding:'4px 16px', cursor:'pointer' }}>
             [ CLEAR LOG ]
           </button>
-          <span style={{ marginLeft:'auto', fontSize:10, color:'#2a2a2a', alignSelf:'center' }}>
+          <span style={{ marginLeft:'auto', fontSize:10, color:'var(--tx2)', alignSelf:'center' }}>
             {selected.lastBuild ? `last: ${selected.lastBuild}` : 'never built'}
           </span>
         </div>
 
         {/* Build log */}
-        <div style={{ flex:1, overflowY:'auto', padding:'10px 14px', background:'#050505' }}>
-          <div style={{ fontSize:9, color:'#1a1a1a', textTransform:'uppercase', letterSpacing:1, marginBottom:8 }}>Build Output</div>
+        <div style={{ flex:1, overflowY:'auto', padding:'10px 14px', background:'var(--inset2)' }}>
+          <div style={{ fontSize:9, color:'var(--tx3)', textTransform:'uppercase', letterSpacing:1, marginBottom:8 }}>Build Output</div>
           {buildLog.length === 0 && (
-            <div style={{ fontSize:10, color:'#1a1a1a' }}>No build output — click BUILD to compile</div>
+            <div style={{ fontSize:10, color:'var(--tx3)' }}>No build output — click BUILD to compile</div>
           )}
           {buildLog.map((line,i)=>(
             <div key={i} style={{ fontSize:11, color: line.startsWith('[+]')?'#33a84a':line.startsWith('[-]')?'#e05c6e':line.startsWith('[!]')?'#c8a84b':'#555', lineHeight:1.7, fontFamily:'monospace' }}>
@@ -218,16 +218,16 @@ export default function ArsenalView() {
         </div>
 
         {/* Build reference */}
-        <div style={{ padding:'8px 14px', background:'#0d0d0d', borderTop:'1px solid #1a1a1a', flexShrink:0 }}>
-          <div style={{ fontSize:9, color:'#1a1a1a', marginBottom:4, textTransform:'uppercase', letterSpacing:1 }}>Quick Commands</div>
+        <div style={{ padding:'8px 14px', background:'var(--inset2)', borderTop:'1px solid #1a1a1a', flexShrink:0 }}>
+          <div style={{ fontSize:9, color:'var(--tx3)', marginBottom:4, textTransform:'uppercase', letterSpacing:1 }}>Quick Commands</div>
           <div style={{ display:'flex', gap:12, fontSize:10, fontFamily:'monospace' }}>
-            <span style={{ color:'#2a2a2a' }}>make network-session</span>
-            <span style={{ color:'#2a2a2a' }}>·</span>
-            <span style={{ color:'#2a2a2a' }}>make agents</span>
-            <span style={{ color:'#2a2a2a' }}>·</span>
-            <span style={{ color:'#2a2a2a' }}>make clean</span>
-            <span style={{ color:'#2a2a2a' }}>·</span>
-            <span style={{ color:'#2a2a2a' }}>make reset</span>
+            <span style={{ color:'var(--tx2)' }}>make network-session</span>
+            <span style={{ color:'var(--tx2)' }}>·</span>
+            <span style={{ color:'var(--tx2)' }}>make agents</span>
+            <span style={{ color:'var(--tx2)' }}>·</span>
+            <span style={{ color:'var(--tx2)' }}>make clean</span>
+            <span style={{ color:'var(--tx2)' }}>·</span>
+            <span style={{ color:'var(--tx2)' }}>make reset</span>
           </div>
         </div>
       </div>

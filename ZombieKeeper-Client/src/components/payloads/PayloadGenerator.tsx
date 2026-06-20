@@ -49,10 +49,10 @@ const DEFAULT: Config = {
 };
 
 const S = {
-  lbl: { fontSize:9, color:'#444', textTransform:'uppercase' as const, letterSpacing:'1px', marginBottom:5, display:'block' as const },
-  field: { width:'100%', background:'#040404', border:'1px solid #1e1e1e', color:'#cccccc', fontFamily:'Courier New', fontSize:12, padding:'6px 8px', outline:'none' as const, appearance:'none' as const },
+  lbl: { fontSize:9, color:'var(--tx2)', textTransform:'uppercase' as const, letterSpacing:'1px', marginBottom:5, display:'block' as const },
+  field: { width:'100%', background:'var(--inset2)', border:'1px solid #1e1e1e', color:'#cccccc', fontFamily:'Courier New', fontSize:12, padding:'6px 8px', outline:'none' as const, appearance:'none' as const },
   row: { marginBottom:12 },
-  sec: { fontSize:9, color:'#333', textTransform:'uppercase' as const, letterSpacing:'1.2px', padding:'8px 0 4px', display:'block' as const, borderBottom:'1px solid #111', marginBottom:10 },
+  sec: { fontSize:9, color:'var(--tx2)', textTransform:'uppercase' as const, letterSpacing:'1.2px', padding:'8px 0 4px', display:'block' as const, borderBottom:'1px solid #111', marginBottom:10 },
 };
 
 function Toggle({ label, desc, value, onChange }: { label:string; desc:string; value:boolean; onChange:(v:boolean)=>void }) {
@@ -60,7 +60,7 @@ function Toggle({ label, desc, value, onChange }: { label:string; desc:string; v
     <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:10 }}>
       <div>
         <div style={{ fontSize:11, color:'#888', fontFamily:'Courier New' }}>{label}</div>
-        <div style={{ fontSize:9, color:'#333', fontFamily:'Courier New', marginTop:1 }}>{desc}</div>
+        <div style={{ fontSize:9, color:'var(--tx2)', fontFamily:'Courier New', marginTop:1 }}>{desc}</div>
       </div>
       <button onClick={()=>onChange(!value)} style={{ background:value?'#1a0000':'#0d0d0d', border:`1px solid ${value?'#e05c6e':'#222'}`, color:value?'#e05c6e':'#444', fontFamily:'Courier New', fontSize:9, fontWeight:700, padding:'3px 10px', cursor:'pointer', minWidth:40 }}>
         {value?'ON':'OFF'}
@@ -114,10 +114,10 @@ export default function PayloadGenerator() {
     <div style={{ display:'flex', height:'100%', overflow:'hidden' }}>
 
       {/* ── CONFIG PANEL ── */}
-      <div style={{ width:340, background:'#0d0d0d', borderRight:'1px solid #1a1a1a', display:'flex', flexDirection:'column', overflow:'hidden', flexShrink:0 }}>
+      <div style={{ width:340, background:'var(--inset2)', borderRight:'1px solid #1a1a1a', display:'flex', flexDirection:'column', overflow:'hidden', flexShrink:0 }}>
 
         {/* Tab bar */}
-        <div style={{ display:'flex', background:'#080808', borderBottom:'1px solid #1a1a1a', flexShrink:0 }}>
+        <div style={{ display:'flex', background:'var(--inset2)', borderBottom:'1px solid #1a1a1a', flexShrink:0 }}>
           {TABS.map(t=>(
             <div key={t} onClick={()=>setTab(t)} style={{
               flex:1, padding:'6px 0', textAlign:'center', fontSize:9, fontFamily:'Courier New',
@@ -185,8 +185,8 @@ export default function PayloadGenerator() {
               <span style={S.sec}>TLS / SSL</span>
               <Toggle label="Verify HTTPS cert"   desc="Validate server TLS certificate"         value={cfg.https_verify} onChange={set('https_verify')} />
               <span style={S.sec}>Preview — Generated Headers</span>
-              <div style={{ background:'#080808', border:'1px solid #1a1a1a', padding:'8px 10px', fontFamily:'Courier New', fontSize:10, color:'#555', marginBottom:12, lineHeight:1.6 }}>
-                <div style={{color:'#444'}}>GET /beacon HTTP/1.1</div>
+              <div style={{ background:'var(--inset2)', border:'1px solid #1a1a1a', padding:'8px 10px', fontFamily:'Courier New', fontSize:10, color:'var(--tx1)', marginBottom:12, lineHeight:1.6 }}>
+                <div style={{color:'var(--tx2)'}}>GET /beacon HTTP/1.1</div>
                 <div><span style={{color:'#3a3a3a'}}>Host: </span>{listenerHost}</div>
                 <div><span style={{color:'#3a3a3a'}}>User-Agent: </span>{ua.length > 50 ? ua.slice(0,50)+'…' : ua}</div>
                 {cfg.referer && <div><span style={{color:'#3a3a3a'}}>Referer: </span>{cfg.referer}</div>}
@@ -199,28 +199,28 @@ export default function PayloadGenerator() {
 
           {tab === 'advanced' && <>
             <span style={S.sec}>Build Options</span>
-            <div style={{ marginBottom:12, padding:'10px', background:'#080808', border:'1px solid #1a1a1a' }}>
-              <div style={{ fontSize:10, color:'#555', fontFamily:'Courier New', lineHeight:1.7 }}>
-                <div><span style={{ color:'#444' }}>OS:</span>       {cfg.os}</div>
-                <div><span style={{ color:'#444' }}>Arch:</span>     {cfg.arch}</div>
-                <div><span style={{ color:'#444' }}>Format:</span>   {cfg.format}</div>
-                <div><span style={{ color:'#444' }}>Listener:</span> {cfg.listener}</div>
-                <div><span style={{ color:'#444' }}>Encoding:</span> {cfg.encoding}</div>
-                <div><span style={{ color:'#444' }}>Inject:</span>      {cfg.inject}</div>
-                <div><span style={{ color:'#444' }}>Anti-Analysis:</span>{cfg.anti_analysis}</div>
-                <div><span style={{ color:'#444' }}>Sandbox:</span>     {cfg.sandbox}</div>
-                <div><span style={{ color:'#444' }}>Persistence:</span> {cfg.persistence}</div>
-                <div><span style={{ color:'#444' }}>Sleep:</span>       {cfg.sleep}s / {cfg.jitter}% jitter</div>
-                <div><span style={{ color:'#444' }}>Kill Date:</span>   {cfg.killdate || 'none'}</div>
-                <div><span style={{ color:'#444' }}>Stageless:</span>   {cfg.stageless?'yes':'no'}</div>
+            <div style={{ marginBottom:12, padding:'10px', background:'var(--inset2)', border:'1px solid #1a1a1a' }}>
+              <div style={{ fontSize:10, color:'var(--tx1)', fontFamily:'Courier New', lineHeight:1.7 }}>
+                <div><span style={{ color:'var(--tx2)' }}>OS:</span>       {cfg.os}</div>
+                <div><span style={{ color:'var(--tx2)' }}>Arch:</span>     {cfg.arch}</div>
+                <div><span style={{ color:'var(--tx2)' }}>Format:</span>   {cfg.format}</div>
+                <div><span style={{ color:'var(--tx2)' }}>Listener:</span> {cfg.listener}</div>
+                <div><span style={{ color:'var(--tx2)' }}>Encoding:</span> {cfg.encoding}</div>
+                <div><span style={{ color:'var(--tx2)' }}>Inject:</span>      {cfg.inject}</div>
+                <div><span style={{ color:'var(--tx2)' }}>Anti-Analysis:</span>{cfg.anti_analysis}</div>
+                <div><span style={{ color:'var(--tx2)' }}>Sandbox:</span>     {cfg.sandbox}</div>
+                <div><span style={{ color:'var(--tx2)' }}>Persistence:</span> {cfg.persistence}</div>
+                <div><span style={{ color:'var(--tx2)' }}>Sleep:</span>       {cfg.sleep}s / {cfg.jitter}% jitter</div>
+                <div><span style={{ color:'var(--tx2)' }}>Kill Date:</span>   {cfg.killdate || 'none'}</div>
+                <div><span style={{ color:'var(--tx2)' }}>Stageless:</span>   {cfg.stageless?'yes':'no'}</div>
               </div>
             </div>
             <span style={S.sec}>Raw Builder Command</span>
-            <div style={{ background:'#080808', border:'1px solid #1a1a1a', padding:'8px 10px', fontFamily:'Courier New', fontSize:10, color:'#444', wordBreak:'break-all', marginBottom:12 }}>
+            <div style={{ background:'var(--inset2)', border:'1px solid #1a1a1a', padding:'8px 10px', fontFamily:'Courier New', fontSize:10, color:'var(--tx2)', wordBreak:'break-all', marginBottom:12 }}>
               {'zk-build'} --os "{cfg.os}" --arch "{cfg.arch}" --fmt "{cfg.format}" --listener "{cfg.listener}" --enc "{cfg.encoding}" --inject "{cfg.inject}" --anti "{cfg.anti_analysis}" --sandbox "{cfg.sandbox}" --persist "{cfg.persistence}" --sleep {cfg.sleep} --jitter {cfg.jitter}{cfg.stageless?' --stageless':''}{cfg.killdate?` --killdate "${cfg.killdate}"`:''}
             </div>
             <span style={S.sec}>API Endpoint</span>
-            <div style={{ background:'#080808', border:'1px solid #1a1a1a', padding:'8px 10px', fontFamily:'Courier New', fontSize:10, color:'#444', marginBottom:12 }}>
+            <div style={{ background:'var(--inset2)', border:'1px solid #1a1a1a', padding:'8px 10px', fontFamily:'Courier New', fontSize:10, color:'var(--tx2)', marginBottom:12 }}>
               POST /api/payload/build<br/>
               Content-Type: application/json<br/>
               Authorization: Bearer {'<JWT>'}
@@ -242,15 +242,15 @@ export default function PayloadGenerator() {
       </div>
 
       {/* ── BUILD OUTPUT ── */}
-      <div style={{ flex:1, display:'flex', flexDirection:'column', background:'#080808', overflow:'hidden' }}>
-        <div style={{ padding:'5px 12px', background:'#111', borderBottom:'1px solid #1a1a1a', fontSize:10, color:'#444', textTransform:'uppercase', letterSpacing:1, flexShrink:0, display:'flex', alignItems:'center', gap:10 }}>
+      <div style={{ flex:1, display:'flex', flexDirection:'column', background:'var(--inset2)', overflow:'hidden' }}>
+        <div style={{ padding:'5px 12px', background:'var(--inset)', borderBottom:'1px solid #1a1a1a', fontSize:10, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1, flexShrink:0, display:'flex', alignItems:'center', gap:10 }}>
           <span>Build Output</span>
           {building && <span style={{ color:'#d48b55' }}>● BUILDING</span>}
           {built && !building && <span style={{ color:'#33a84a' }}>● SUCCESS</span>}
         </div>
         <div style={{ flex:1, overflowY:'auto', padding:'14px', fontFamily:'Courier New', fontSize:12 }}>
           {buildLog.length === 0 && !built && (
-            <div style={{ color:'#222' }}>[*] Configure payload and click Generate</div>
+            <div style={{ color:'var(--tx3)' }}>[*] Configure payload and click Generate</div>
           )}
           {buildLog.map((l,i) => (
             <div key={i} style={{ color:l.startsWith('[+')?'#33a84a':l.startsWith('[*')?'#555':'#888', marginBottom:3, lineHeight:1.5 }}>{l}</div>
@@ -258,7 +258,7 @@ export default function PayloadGenerator() {
           {built && !building && (
             <div style={{ marginTop:16 }}>
               <div style={{ color:'#33a84a', marginBottom:12, fontSize:13, fontWeight:700 }}>[+] Payload built successfully</div>
-              <div style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', padding:'12px', marginBottom:14 }}>
+              <div style={{ background:'var(--inset2)', border:'1px solid #1a1a1a', padding:'12px', marginBottom:14 }}>
                 {[
                   ['Target OS', cfg.os], ['Architecture', cfg.arch], ['Format', cfg.format],
                   ['Listener', cfg.listener], ['Encoding', cfg.encoding],
@@ -269,14 +269,14 @@ export default function PayloadGenerator() {
                   ['Output', `/tmp/zk_payload_${Date.now()}.${cfg.format.split('(')[1]?.replace(')','').replace('.','').toLowerCase()||'bin'}`],
                 ].map(([k,v])=>(
                   <div key={k} style={{ display:'flex', gap:12, marginBottom:4 }}>
-                    <span style={{ color:'#444', minWidth:110 }}>{k}:</span>
+                    <span style={{ color:'var(--tx2)', minWidth:110 }}>{k}:</span>
                     <span style={{ color: k==='SHA256'||k==='MD5'?'#5bb8d4':'#777' }}>{v}</span>
                   </div>
                 ))}
               </div>
               <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
                 {[['Download Binary','#e05c6e'],['Copy Base64','#777'],['Get Stage URL','#777'],['One-liner (PS)','#777'],['One-liner (curl)','#777']].map(([label,col])=>(
-                  <button key={label} style={{ background:'#0d0d0d', border:`1px solid ${col==='#e05c6e'?'#e05c6e':'#222'}`, color:col, fontFamily:'Courier New', fontSize:11, padding:'5px 14px', cursor:'pointer' }}>{label}</button>
+                  <button key={label} style={{ background:'var(--inset2)', border:`1px solid ${col==='#e05c6e'?'#e05c6e':'#222'}`, color:col, fontFamily:'Courier New', fontSize:11, padding:'5px 14px', cursor:'pointer' }}>{label}</button>
                 ))}
               </div>
             </div>

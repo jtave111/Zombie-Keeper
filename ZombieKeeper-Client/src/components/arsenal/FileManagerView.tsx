@@ -69,18 +69,18 @@ export default function FileManagerView() {
     <div style={{ display:'flex', height:'100%', overflow:'hidden', fontFamily:'Courier New' }}>
 
       {/* LEFT — agent + actions */}
-      <div style={{ width:210, background:'#0d0d0d', borderRight:'1px solid #1a1a1a', display:'flex', flexDirection:'column', flexShrink:0 }}>
-        <div style={{ padding:'8px 10px', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'#444', textTransform:'uppercase', letterSpacing:1 }}>Agent</div>
+      <div style={{ width:210, background:'var(--inset2)', borderRight:'1px solid #1a1a1a', display:'flex', flexDirection:'column', flexShrink:0 }}>
+        <div style={{ padding:'8px 10px', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1 }}>Agent</div>
         <div style={{ padding:'8px 10px', borderBottom:'1px solid #1a1a1a' }}>
           <select value={agent} onChange={e=>setAgent(e.target.value)}
-            style={{ width:'100%', background:'#040404', border:'1px solid #1e1e1e', color:'#ccc', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none', appearance:'none' }}>
+            style={{ width:'100%', background:'var(--inset2)', border:'1px solid #1e1e1e', color:'#ccc', fontFamily:'Courier New', fontSize:11, padding:'4px 8px', outline:'none', appearance:'none' }}>
             {AGENTS.map(a=><option key={a}>{a}</option>)}
           </select>
         </div>
 
         {/* Quick actions */}
         <div style={{ padding:'8px 10px', borderBottom:'1px solid #1a1a1a' }}>
-          <div style={{ fontSize:9, color:'#2a2a2a', textTransform:'uppercase', letterSpacing:1, marginBottom:6 }}>Quick Paths</div>
+          <div style={{ fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1, marginBottom:6 }}>Quick Paths</div>
           {['/', '/etc', '/root', '/home', '/var', '/tmp'].map(p => (
             <div key={p} onClick={()=>{setPath(p);setSelected(null);}} style={{
               padding:'3px 8px', fontSize:11, cursor:'pointer', marginBottom:2,
@@ -92,18 +92,18 @@ export default function FileManagerView() {
 
         {/* Upload zone */}
         <div style={{ padding:'8px 10px', borderBottom:'1px solid #1a1a1a' }}>
-          <div style={{ fontSize:9, color:'#2a2a2a', textTransform:'uppercase', letterSpacing:1, marginBottom:6 }}>Upload to {path}</div>
+          <div style={{ fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1, marginBottom:6 }}>Upload to {path}</div>
           <div
             onDrop={e=>{e.preventDefault();[...e.dataTransfer.files].forEach(f=>fakeUpload(f.name));}}
             onDragOver={e=>e.preventDefault()}
-            style={{ border:'1px dashed #1a1a1a', padding:'10px 8px', textAlign:'center', fontSize:10, color:'#2a2a2a', cursor:'pointer' }}
+            style={{ border:'1px dashed #1a1a1a', padding:'10px 8px', textAlign:'center', fontSize:10, color:'var(--tx2)', cursor:'pointer' }}
             onClick={()=>fakeUpload(`payload_${Date.now()}.elf`)}>
             drop file / click
           </div>
           {uploads.map(u=>(
             <div key={u.name} style={{ marginTop:4 }}>
-              <div style={{ fontSize:9, color:'#555', marginBottom:2, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{u.name}</div>
-              <div style={{ height:3, background:'#111', borderRadius:2 }}>
+              <div style={{ fontSize:9, color:'var(--tx1)', marginBottom:2, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{u.name}</div>
+              <div style={{ height:3, background:'var(--inset)', borderRadius:2 }}>
                 <div style={{ height:'100%', width:`${u.prog}%`, background: u.prog===100?'#33a84a':'#d48b55', borderRadius:2, transition:'width 0.1s' }}/>
               </div>
             </div>
@@ -115,9 +115,9 @@ export default function FileManagerView() {
         {/* Selected file actions */}
         {selected && (
           <div style={{ padding:'8px 10px', borderTop:'1px solid #1a1a1a' }}>
-            <div style={{ fontSize:9, color:'#555', marginBottom:6 }}>{selected.name}</div>
+            <div style={{ fontSize:9, color:'var(--tx1)', marginBottom:6 }}>{selected.name}</div>
             {[['Download','#e05c6e'],['View','#777'],['Execute','#d48b55'],['Delete','#e05c6e']].map(([l,c])=>(
-              <button key={l} style={{ width:'100%', background:'#080808', border:`1px solid ${l==='Delete'?'#3a1220':'#1a1a1a'}`, color:c as string, fontFamily:'Courier New', fontSize:10, padding:'4px', cursor:'pointer', marginBottom:3 }}>{l}</button>
+              <button key={l} style={{ width:'100%', background:'var(--inset2)', border:`1px solid ${l==='Delete'?'#3a1220':'#1a1a1a'}`, color:c as string, fontFamily:'Courier New', fontSize:10, padding:'4px', cursor:'pointer', marginBottom:3 }}>{l}</button>
             ))}
           </div>
         )}
@@ -126,29 +126,29 @@ export default function FileManagerView() {
       {/* RIGHT — file listing */}
       <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
         {/* Breadcrumb + toolbar */}
-        <div style={{ padding:'6px 14px', background:'#0d0d0d', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
+        <div style={{ padding:'6px 14px', background:'var(--inset2)', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
           {path !== '/' && (
-            <button onClick={up} style={{ background:'#080808', border:'1px solid #1a1a1a', color:'#444', fontFamily:'Courier New', fontSize:10, padding:'2px 8px', cursor:'pointer' }}>↑ up</button>
+            <button onClick={up} style={{ background:'var(--inset2)', border:'1px solid #1a1a1a', color:'var(--tx2)', fontFamily:'Courier New', fontSize:10, padding:'2px 8px', cursor:'pointer' }}>↑ up</button>
           )}
           <div style={{ display:'flex', gap:4, fontSize:11 }}>
             {breadcrumb.map((seg,i)=>(
               <span key={i} style={{ color: i===breadcrumb.length-1?'#cccccc':'#333' }}>
-                {i>0&&<span style={{color:'#1a1a1a',margin:'0 2px'}}>/</span>}{seg}
+                {i>0&&<span style={{color:'var(--tx3)',margin:'0 2px'}}>/</span>}{seg}
               </span>
             ))}
           </div>
-          <span style={{ marginLeft:'auto', fontSize:10, color:'#2a2a2a' }}>{entries.length} entries</span>
+          <span style={{ marginLeft:'auto', fontSize:10, color:'var(--tx2)' }}>{entries.length} entries</span>
         </div>
 
         {/* Table header */}
-        <div style={{ display:'grid', gridTemplateColumns:'28px 1fr 80px 120px 80px 90px', padding:'4px 14px', background:'#111', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'#333', textTransform:'uppercase', letterSpacing:0.8, flexShrink:0 }}>
+        <div style={{ display:'grid', gridTemplateColumns:'28px 1fr 80px 120px 80px 90px', padding:'4px 14px', background:'var(--inset)', borderBottom:'1px solid #1a1a1a', fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:0.8, flexShrink:0 }}>
           <span/><span>Name</span><span style={{textAlign:'right'}}>Size</span><span>Permissions</span><span>Owner</span><span>Modified</span>
         </div>
 
         {/* Entries */}
         <div style={{ flex:1, overflowY:'auto' }}>
           {entries.length === 0 && (
-            <div style={{ padding:'20px 14px', color:'#1a1a1a', fontSize:11 }}>[*] Empty directory or path not cached — TODO: fetch via agent</div>
+            <div style={{ padding:'20px 14px', color:'var(--tx3)', fontSize:11 }}>[*] Empty directory or path not cached — TODO: fetch via agent</div>
           )}
           {entries.map(e => (
             <div key={e.name}
@@ -162,10 +162,10 @@ export default function FileManagerView() {
               onMouseLeave={el=>(el.currentTarget.style.background=selected?.name===e.name?'#0d0d14':'transparent')}>
               <span style={{ fontSize:10, color:COL[e.type], fontWeight:700 }}>{ICON[e.type]}</span>
               <span style={{ fontSize:11, color:COL[e.type] }}>{e.name}</span>
-              <span style={{ fontSize:10, color:'#333', textAlign:'right' }}>{e.size}</span>
-              <span style={{ fontSize:10, color:'#2a2a2a', fontFamily:'monospace' }}>{e.perms}</span>
-              <span style={{ fontSize:10, color:'#2a2a2a' }}>{e.owner}</span>
-              <span style={{ fontSize:10, color:'#2a2a2a' }}>{e.modified}</span>
+              <span style={{ fontSize:10, color:'var(--tx2)', textAlign:'right' }}>{e.size}</span>
+              <span style={{ fontSize:10, color:'var(--tx2)', fontFamily:'monospace' }}>{e.perms}</span>
+              <span style={{ fontSize:10, color:'var(--tx2)' }}>{e.owner}</span>
+              <span style={{ fontSize:10, color:'var(--tx2)' }}>{e.modified}</span>
             </div>
           ))}
         </div>

@@ -69,32 +69,32 @@ export default function AgentsView({ onOpenShell }: Props) {
     <div style={{ display:'flex', flexDirection:'column', height:'100%', overflow:'hidden' }}>
 
       {/* TOOLBAR */}
-      <div style={{ display:'flex', alignItems:'center', gap:6, padding:'6px 10px', background:'#111', borderBottom:'1px solid #222', flexShrink:0 }}>
+      <div style={{ display:'flex', alignItems:'center', gap:6, padding:'6px 10px', background:'var(--inset)', borderBottom:'1px solid #222', flexShrink:0 }}>
         <input className="zk-input" style={{ width:220 }} placeholder="search agents..."
           value={search} onChange={e=>setSearch(e.target.value)} />
-        <span style={{ fontSize:11, color:'#2a2a2a' }}>|</span>
+        <span style={{ fontSize:11, color:'var(--tx2)' }}>|</span>
         {FILTERS.map(f => (
           <button key={f.key} className={`zk-btn${filter===f.key?' active':''}`} onClick={()=>setFilter(f.key)}>{f.label}</button>
         ))}
-        <div style={{ marginLeft:'auto', fontSize:11, color:'#444' }}>{agents.length} session{agents.length!==1?'s':''}</div>
+        <div style={{ marginLeft:'auto', fontSize:11, color:'var(--tx2)' }}>{agents.length} session{agents.length!==1?'s':''}</div>
         <button className="zk-btn" style={{ marginLeft:6 }} onClick={load}>Refresh</button>
         <button className="zk-btn danger">Kill All</button>
       </div>
 
-      <div style={{ padding:'3px 10px', background:'#0d0d0d', borderBottom:'1px solid #111', flexShrink:0, fontSize:10, color:'#2a2a2a', fontFamily:'Courier New' }}>
+      <div style={{ padding:'3px 10px', background:'var(--inset2)', borderBottom:'1px solid #111', flexShrink:0, fontSize:10, color:'var(--tx2)', fontFamily:'Courier New' }}>
         Double-click row to open agent shell · Single-click to inspect
       </div>
 
       {/* TABLE */}
       <div style={{ flex:1, overflow:'auto' }}>
         {loading && (
-          <div style={{ padding:'20px', color:'#2a2a2a', fontFamily:'Courier New', fontSize:11 }}>[*] Loading agents...</div>
+          <div style={{ padding:'20px', color:'var(--tx2)', fontFamily:'Courier New', fontSize:11 }}>[*] Loading agents...</div>
         )}
         {error && (
           <div style={{ padding:'20px', color:'#e05c6e', fontFamily:'Courier New', fontSize:11 }}>[-] {error}</div>
         )}
         {!loading && !error && agents.length === 0 && (
-          <div style={{ padding:'20px', color:'#2a2a2a', fontFamily:'Courier New', fontSize:11 }}>[*] No agents connected</div>
+          <div style={{ padding:'20px', color:'var(--tx2)', fontFamily:'Courier New', fontSize:11 }}>[*] No agents connected</div>
         )}
         {!loading && !error && agents.length > 0 && (
           <table className="zk-table">
@@ -114,7 +114,7 @@ export default function AgentsView({ onOpenShell }: Props) {
                   <td className="cell-ip">{agent.ip}</td>
                   <td className="cell-dim" style={{ fontSize:11 }}>{agent.mac}</td>
                   <td style={{ color:'#888' }}>{agent.hostname}</td>
-                  <td style={{ color:'#666' }}>{agent.user}</td>
+                  <td style={{ color:'var(--tx1)' }}>{agent.user}</td>
                   <td className={agent.priv==='ROOT'?'priv-root':'priv-user'}>{agent.priv}</td>
                   <td className="cell-dim">{agent.os}</td>
                   <td className="cell-proc">{agent.process}</td>
@@ -142,13 +142,13 @@ export default function AgentsView({ onOpenShell }: Props) {
         const a = agents.find(x=>x.id===selected);
         if (!a) return null;
         return (
-          <div style={{ borderTop:'1px solid #222', background:'#0d0d0d', padding:'8px 14px', flexShrink:0, fontFamily:'Courier New', fontSize:11 }}>
-            <div style={{ color:'#333', marginBottom:6, fontSize:10, letterSpacing:1 }}>AGENT DETAIL — {a.id}</div>
+          <div style={{ borderTop:'1px solid #222', background:'var(--inset2)', padding:'8px 14px', flexShrink:0, fontFamily:'Courier New', fontSize:11 }}>
+            <div style={{ color:'var(--tx2)', marginBottom:6, fontSize:10, letterSpacing:1 }}>AGENT DETAIL — {a.id}</div>
             <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'4px 20px', marginBottom:8 }}>
               {[['Hostname',a.hostname],['IP',a.ip],['MAC',a.mac],['OS',a.os],
                 ['User',a.user],['Priv',a.priv],['Process',`${a.process} (${a.pid})`],['Arch',a.arch]].map(([k,v])=>(
                 <div key={k} style={{ display:'flex', gap:8 }}>
-                  <span style={{ color:'#333', minWidth:60 }}>{k}:</span>
+                  <span style={{ color:'var(--tx2)', minWidth:60 }}>{k}:</span>
                   <span style={{ color:'#5bb8d4' }}>{v}</span>
                 </div>
               ))}
@@ -161,7 +161,7 @@ export default function AgentsView({ onOpenShell }: Props) {
       })()}
 
       {/* STATUS BAR */}
-      <div style={{ padding:'3px 10px', background:'#111', borderTop:'1px solid #1a1a1a', flexShrink:0, display:'flex', gap:20, fontSize:11, fontFamily:'Courier New' }}>
+      <div style={{ padding:'3px 10px', background:'var(--inset)', borderTop:'1px solid #1a1a1a', flexShrink:0, display:'flex', gap:20, fontSize:11, fontFamily:'Courier New' }}>
         <span className="status-on">[*] {online} online</span>
         <span className="status-idle">[~] {idle} idle</span>
         <span className="status-lost">[!] {lost} lost</span>

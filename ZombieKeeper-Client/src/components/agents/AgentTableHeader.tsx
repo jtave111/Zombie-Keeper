@@ -58,7 +58,7 @@ export default function AgentTableHeader({ onSelectAgent }: { onSelectAgent?:(id
               </tr>
             ))}
             {agents.length === 0 && (
-              <tr><td colSpan={11} style={{ color:'#2a2a2a', padding:'8px 10px', fontFamily:'Courier New', fontSize:10 }}>[*] No agents</td></tr>
+              <tr><td colSpan={11} style={{ color:'var(--tx2)', padding:'8px 10px', fontFamily:'Courier New', fontSize:10 }}>[*] No agents</td></tr>
             )}
           </tbody>
         </table>

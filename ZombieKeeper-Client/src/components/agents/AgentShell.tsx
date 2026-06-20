@@ -119,34 +119,34 @@ export default function AgentShell({ agent, onClose }: { agent: Agent; onClose: 
   const privColor = agent.priv === 'ROOT' ? '#e05c6e' : '#888888';
 
   return (
-    <div style={{ display:'flex', flexDirection:'column', height:'100%', overflow:'hidden', background:'#080808' }}>
+    <div style={{ display:'flex', flexDirection:'column', height:'100%', overflow:'hidden', background:'var(--inset2)' }}>
 
       {/* ── HEADER ── */}
-      <div style={{ background:'#111', borderBottom:'1px solid #2a2a2a', padding:'8px 16px', flexShrink:0, display:'flex', alignItems:'center', gap:16 }}>
+      <div style={{ background:'var(--inset)', borderBottom:'1px solid #2a2a2a', padding:'8px 16px', flexShrink:0, display:'flex', alignItems:'center', gap:16 }}>
         <div style={{ display:'flex', alignItems:'center', gap:10 }}>
           <div style={{ width:7, height:7, borderRadius:'50%', background:'#33a84a' }}/>
           <span style={{ fontSize:13, fontWeight:700, color:'#cccccc', fontFamily:'Courier New' }}>{agent.id}</span>
-          <span style={{ fontSize:11, color:'#555' }}>—</span>
+          <span style={{ fontSize:11, color:'var(--tx1)' }}>—</span>
           <span style={{ fontSize:12, color:'#5bb8d4', fontFamily:'Courier New' }}>{agent.ip}</span>
-          <span style={{ fontSize:11, color:'#555' }}>({agent.hostname})</span>
+          <span style={{ fontSize:11, color:'var(--tx1)' }}>({agent.hostname})</span>
         </div>
         <div style={{ display:'flex', gap:12, fontSize:11, fontFamily:'Courier New' }}>
-          <span><span style={{ color:'#555' }}>user: </span><span style={{ color:privColor }}>{agent.user}</span></span>
-          <span><span style={{ color:'#555' }}>priv: </span><span style={{ color:privColor, fontWeight:700 }}>{agent.priv}</span></span>
-          <span><span style={{ color:'#555' }}>os: </span><span style={{ color:'#888' }}>{agent.os}</span></span>
-          <span><span style={{ color:'#555' }}>arch: </span><span style={{ color:'#888' }}>{agent.arch}</span></span>
+          <span><span style={{ color:'var(--tx1)' }}>user: </span><span style={{ color:privColor }}>{agent.user}</span></span>
+          <span><span style={{ color:'var(--tx1)' }}>priv: </span><span style={{ color:privColor, fontWeight:700 }}>{agent.priv}</span></span>
+          <span><span style={{ color:'var(--tx1)' }}>os: </span><span style={{ color:'#888' }}>{agent.os}</span></span>
+          <span><span style={{ color:'var(--tx1)' }}>arch: </span><span style={{ color:'#888' }}>{agent.arch}</span></span>
         </div>
-        <button onClick={onClose} style={{ marginLeft:'auto', background:'transparent', border:'1px solid #2a2a2a', color:'#555', fontFamily:'Courier New', fontSize:11, padding:'3px 12px', cursor:'pointer' }}>
+        <button onClick={onClose} style={{ marginLeft:'auto', background:'transparent', border:'1px solid #2a2a2a', color:'var(--tx1)', fontFamily:'Courier New', fontSize:11, padding:'3px 12px', cursor:'pointer' }}>
           [X] CLOSE SESSION
         </button>
       </div>
 
       {/* ── TABS ── */}
-      <div style={{ display:'flex', background:'#0d0d0d', borderBottom:'1px solid #222', flexShrink:0 }}>
+      <div style={{ display:'flex', background:'var(--inset2)', borderBottom:'1px solid #222', flexShrink:0 }}>
         {TABS.map(t => (
           <div key={t} onClick={() => setTab(t)} style={{
             padding:'5px 16px', fontSize:12, fontFamily:'Courier New',
-            color: tab === t ? '#cccccc' : '#444',
+            color: tab === t ? 'var(--tx0)' : 'var(--tx2)',
             borderRight:'1px solid #1a1a1a',
             borderTop: tab === t ? '2px solid #e05c6e' : '2px solid transparent',
             background: tab === t ? '#080808' : 'transparent',
@@ -160,17 +160,17 @@ export default function AgentShell({ agent, onClose }: { agent: Agent; onClose: 
       {/* ── CONTENT ── */}
       {tab === 'Shell' && (
         <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }} onClick={() => inputRef.current?.focus()}>
-          <div style={{ flex:1, overflowY:'auto', padding:'10px 14px', fontFamily:'Courier New', fontSize:12, background:'#080808' }}>
+          <div style={{ flex:1, overflowY:'auto', padding:'10px 14px', fontFamily:'Courier New', fontSize:12, background:'var(--inset2)' }}>
             {lines.map((l, i) => (
               <div key={i} style={{ display:'flex', gap:10, lineHeight:'1.6', alignItems:'baseline' }}>
-                {l.time && <span style={{ color:'#333', fontSize:10, minWidth:60, flexShrink:0 }}>{l.time}</span>}
+                {l.time && <span style={{ color:'var(--tx2)', fontSize:10, minWidth:60, flexShrink:0 }}>{l.time}</span>}
                 <span style={{ color: LINE_COLOR[l.type], whiteSpace:'pre-wrap', wordBreak:'break-all' }}>{l.text}</span>
               </div>
             ))}
             <div ref={bottomRef}/>
           </div>
 
-          <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 14px', borderTop:'1px solid #1a1a1a', background:'#0d0d0d', flexShrink:0 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 14px', borderTop:'1px solid #1a1a1a', background:'var(--inset2)', flexShrink:0 }}>
             <span style={{ color:'#e05c6e', fontFamily:'Courier New', fontSize:12, whiteSpace:'nowrap', fontWeight:700 }}>
               {agent.user}@{agent.hostname} $&gt;
             </span>
@@ -183,12 +183,12 @@ export default function AgentShell({ agent, onClose }: { agent: Agent; onClose: 
       )}
 
       {tab === 'Process List' && (
-        <div style={{ flex:1, overflow:'auto', background:'#080808' }}>
+        <div style={{ flex:1, overflow:'auto', background:'var(--inset2)' }}>
           <table style={{ width:'100%', borderCollapse:'collapse', fontFamily:'Courier New', fontSize:12 }}>
             <thead>
-              <tr style={{ background:'#111', borderBottom:'1px solid #222', position:'sticky', top:0 }}>
+              <tr style={{ background:'var(--inset)', borderBottom:'1px solid #222', position:'sticky', top:0 }}>
                 {['PID','PPID','NAME','USER','CPU','MEM','STATUS'].map(h => (
-                  <th key={h} style={{ padding:'5px 12px', color:'#444', fontWeight:400, textAlign:'left', borderRight:'1px solid #1a1a1a', fontSize:11, textTransform:'uppercase' }}>{h}</th>
+                  <th key={h} style={{ padding:'5px 12px', color:'var(--tx2)', fontWeight:400, textAlign:'left', borderRight:'1px solid #1a1a1a', fontSize:11, textTransform:'uppercase' }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -218,10 +218,10 @@ export default function AgentShell({ agent, onClose }: { agent: Agent; onClose: 
       )}
 
       {tab === 'File Manager' && (
-        <div style={{ flex:1, display:'flex', overflow:'hidden', background:'#080808' }}>
+        <div style={{ flex:1, display:'flex', overflow:'hidden', background:'var(--inset2)' }}>
           <div style={{ flex:1, display:'flex', flexDirection:'column' }}>
-            <div style={{ padding:'6px 12px', background:'#0d0d0d', borderBottom:'1px solid #222', display:'flex', gap:8, alignItems:'center' }}>
-              <span style={{ color:'#555', fontSize:11, fontFamily:'Courier New' }}>Path:</span>
+            <div style={{ padding:'6px 12px', background:'var(--inset2)', borderBottom:'1px solid #222', display:'flex', gap:8, alignItems:'center' }}>
+              <span style={{ color:'var(--tx1)', fontSize:11, fontFamily:'Courier New' }}>Path:</span>
               <span style={{ color:'#5bb8d4', fontSize:12, fontFamily:'Courier New' }}>/root</span>
               <button style={{ marginLeft:'auto', background:'transparent', border:'1px solid #2a2a2a', color:'#888', fontFamily:'Courier New', fontSize:10, padding:'2px 8px', cursor:'pointer' }}>Upload</button>
               <button style={{ background:'transparent', border:'1px solid #2a2a2a', color:'#888', fontFamily:'Courier New', fontSize:10, padding:'2px 8px', cursor:'pointer' }}>Refresh</button>
@@ -229,9 +229,9 @@ export default function AgentShell({ agent, onClose }: { agent: Agent; onClose: 
             <div style={{ flex:1, overflowY:'auto' }}>
               <table style={{ width:'100%', borderCollapse:'collapse', fontFamily:'Courier New', fontSize:12 }}>
                 <thead>
-                  <tr style={{ background:'#111', borderBottom:'1px solid #222' }}>
+                  <tr style={{ background:'var(--inset)', borderBottom:'1px solid #222' }}>
                     {['Name','Size','Type','Modified','Perms'].map(h => (
-                      <th key={h} style={{ padding:'5px 12px', color:'#444', fontWeight:400, textAlign:'left', fontSize:11, textTransform:'uppercase', borderRight:'1px solid #1a1a1a' }}>{h}</th>
+                      <th key={h} style={{ padding:'5px 12px', color:'var(--tx2)', fontWeight:400, textAlign:'left', fontSize:11, textTransform:'uppercase', borderRight:'1px solid #1a1a1a' }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -248,10 +248,10 @@ export default function AgentShell({ agent, onClose }: { agent: Agent; onClose: 
                       onMouseEnter={e=>(e.currentTarget.style.background='#111')}
                       onMouseLeave={e=>(e.currentTarget.style.background='transparent')}>
                       <td style={{ padding:'5px 12px', color: row[2]==='dir'?'#5bb8d4':row[0].includes('password')||row[0].includes('id_rsa')?'#e05c6e':'#888', borderRight:'1px solid #111' }}>{row[0]}</td>
-                      <td style={{ padding:'5px 12px', color:'#555', borderRight:'1px solid #111' }}>{row[1]}</td>
-                      <td style={{ padding:'5px 12px', color:'#555', borderRight:'1px solid #111' }}>{row[2]}</td>
-                      <td style={{ padding:'5px 12px', color:'#555', borderRight:'1px solid #111' }}>{row[3]}</td>
-                      <td style={{ padding:'5px 12px', color:'#444' }}>{row[4]}</td>
+                      <td style={{ padding:'5px 12px', color:'var(--tx1)', borderRight:'1px solid #111' }}>{row[1]}</td>
+                      <td style={{ padding:'5px 12px', color:'var(--tx1)', borderRight:'1px solid #111' }}>{row[2]}</td>
+                      <td style={{ padding:'5px 12px', color:'var(--tx1)', borderRight:'1px solid #111' }}>{row[3]}</td>
+                      <td style={{ padding:'5px 12px', color:'var(--tx2)' }}>{row[4]}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -262,18 +262,18 @@ export default function AgentShell({ agent, onClose }: { agent: Agent; onClose: 
       )}
 
       {tab === 'Port Forward' && (
-        <div style={{ flex:1, padding:'16px', overflow:'auto', background:'#080808', fontFamily:'Courier New' }}>
-          <div style={{ marginBottom:16, fontSize:10, color:'#444', textTransform:'uppercase', letterSpacing:1 }}>Port Forwarding Rules</div>
+        <div style={{ flex:1, padding:'16px', overflow:'auto', background:'var(--inset2)', fontFamily:'Courier New' }}>
+          <div style={{ marginBottom:16, fontSize:10, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1 }}>Port Forwarding Rules</div>
           <div style={{ display:'flex', gap:8, marginBottom:16 }}>
-            <input style={{ background:'#0d0d0d', border:'1px solid #2a2a2a', color:'#cccccc', fontFamily:'Courier New', fontSize:12, padding:'5px 8px', width:120 }} placeholder="Local port" />
-            <input style={{ background:'#0d0d0d', border:'1px solid #2a2a2a', color:'#cccccc', fontFamily:'Courier New', fontSize:12, padding:'5px 8px', flex:1 }} placeholder="Remote host:port" />
+            <input style={{ background:'var(--inset2)', border:'1px solid #2a2a2a', color:'#cccccc', fontFamily:'Courier New', fontSize:12, padding:'5px 8px', width:120 }} placeholder="Local port" />
+            <input style={{ background:'var(--inset2)', border:'1px solid #2a2a2a', color:'#cccccc', fontFamily:'Courier New', fontSize:12, padding:'5px 8px', flex:1 }} placeholder="Remote host:port" />
             <button style={{ background:'#1a0000', border:'1px solid #e05c6e', color:'#e05c6e', fontFamily:'Courier New', fontSize:11, padding:'5px 14px', cursor:'pointer' }}>Add Rule</button>
           </div>
           <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
             <thead>
-              <tr style={{ background:'#111', borderBottom:'1px solid #222' }}>
+              <tr style={{ background:'var(--inset)', borderBottom:'1px solid #222' }}>
                 {['Local','Remote','Status','Action'].map(h=>(
-                  <th key={h} style={{ padding:'5px 12px', color:'#444', fontWeight:400, textAlign:'left', fontSize:11, textTransform:'uppercase' }}>{h}</th>
+                  <th key={h} style={{ padding:'5px 12px', color:'var(--tx2)', fontWeight:400, textAlign:'left', fontSize:11, textTransform:'uppercase' }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -290,7 +290,7 @@ export default function AgentShell({ agent, onClose }: { agent: Agent; onClose: 
       )}
 
       {tab === 'Sysinfo' && (
-        <div style={{ flex:1, overflow:'auto', padding:'16px', background:'#080808', fontFamily:'Courier New', fontSize:12 }}>
+        <div style={{ flex:1, overflow:'auto', padding:'16px', background:'var(--inset2)', fontFamily:'Courier New', fontSize:12 }}>
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
             {[
               { title:'SYSTEM', rows:[['Hostname',agent.hostname],['OS',agent.os],['Arch',agent.arch],['Kernel','—']] },
@@ -298,11 +298,11 @@ export default function AgentShell({ agent, onClose }: { agent: Agent; onClose: 
               { title:'NETWORK', rows:[['IP',agent.ip],['MAC',agent.mac],['IPv6','—'],['Status',agent.status]] },
               { title:'SESSION', rows:[['Shell',WS_INDICATOR[wsStatus].label],['Beacon','—'],['Jitter','—'],['Priv',agent.priv]] },
             ].map(card => (
-              <div key={card.title} style={{ background:'#0d0d0d', border:'1px solid #222' }}>
-                <div style={{ padding:'5px 12px', background:'#111', borderBottom:'1px solid #222', fontSize:9, color:'#444', textTransform:'uppercase', letterSpacing:1 }}>{card.title}</div>
+              <div key={card.title} style={{ background:'var(--inset2)', border:'1px solid #222' }}>
+                <div style={{ padding:'5px 12px', background:'var(--inset)', borderBottom:'1px solid #222', fontSize:9, color:'var(--tx2)', textTransform:'uppercase', letterSpacing:1 }}>{card.title}</div>
                 {card.rows.map(([k,v]) => (
                   <div key={k} style={{ display:'flex', padding:'6px 12px', borderBottom:'1px solid #111' }}>
-                    <span style={{ color:'#555', minWidth:90 }}>{k}:</span>
+                    <span style={{ color:'var(--tx1)', minWidth:90 }}>{k}:</span>
                     <span style={{ color: k==='Privilege'&&v==='ROOT'?'#e05c6e':k==='IP'?'#5bb8d4':k==='Shell'?WS_INDICATOR[wsStatus].color:'#888' }}>{v}</span>
                   </div>
                 ))}
@@ -313,10 +313,10 @@ export default function AgentShell({ agent, onClose }: { agent: Agent; onClose: 
       )}
 
       {/* ── STATUS BAR ── */}
-      <div style={{ height:20, background:'#0d0d0d', borderTop:'1px solid #1a1a1a', display:'flex', alignItems:'center', padding:'0 14px', gap:20, fontSize:10, fontFamily:'Courier New', flexShrink:0 }}>
+      <div style={{ height:20, background:'var(--inset2)', borderTop:'1px solid #1a1a1a', display:'flex', alignItems:'center', padding:'0 14px', gap:20, fontSize:10, fontFamily:'Courier New', flexShrink:0 }}>
         <span style={{ color: WS_INDICATOR[wsStatus].color }}>[*] {WS_INDICATOR[wsStatus].label}</span>
-        <span style={{ color:'#444' }}>agent: {agent.id}</span>
-        <span style={{ marginLeft:'auto', color:'#333' }}>Press [X] to close</span>
+        <span style={{ color:'var(--tx2)' }}>agent: {agent.id}</span>
+        <span style={{ marginLeft:'auto', color:'var(--tx2)' }}>Press [X] to close</span>
       </div>
     </div>
   );

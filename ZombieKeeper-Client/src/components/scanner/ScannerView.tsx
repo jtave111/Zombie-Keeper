@@ -223,7 +223,7 @@ export default function ScannerView({ targetNode, onClose }: ScannerViewProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
       {/* MODE TABS */}
-      <div style={{ display:'flex', background:'#090909', borderBottom:'1px solid #111', flexShrink:0 }}>
+      <div style={{ display:'flex', background:'var(--inset2)', borderBottom:'1px solid #111', flexShrink:0 }}>
         {[{k:'standard',l:'Standard Scanner'},{k:'custom',l:'Custom / Nmap'}].map(m=>(
           <button key={m.k} onClick={()=>setScanMode(m.k as any)} style={{
             padding:'6px 18px', background:scanMode===m.k?'#0d0d0d':'transparent',
@@ -238,29 +238,29 @@ export default function ScannerView({ targetNode, onClose }: ScannerViewProps) {
         /* ── CUSTOM SCANNER ── */
         <div style={{ flex:1, display:'flex', overflow:'hidden' }}>
           {/* Left: builder */}
-          <div style={{ width:340, background:'#0a0a0a', borderRight:'1px solid #111', display:'flex', flexDirection:'column', overflow:'hidden', flexShrink:0 }}>
-            <div style={{ padding:'5px 12px', background:'#111', borderBottom:'1px solid #0d0d0d', fontSize:10, color:'#777', textTransform:'uppercase', letterSpacing:1 }}>Command Builder</div>
+          <div style={{ width:340, background:'var(--bg)', borderRight:'1px solid #111', display:'flex', flexDirection:'column', overflow:'hidden', flexShrink:0 }}>
+            <div style={{ padding:'5px 12px', background:'var(--inset)', borderBottom:'1px solid #0d0d0d', fontSize:10, color:'#777', textTransform:'uppercase', letterSpacing:1 }}>Command Builder</div>
             <div style={{ flex:1, overflowY:'auto', padding:'14px' }}>
 
               <div style={{ marginBottom:14 }}>
-                <div style={{ fontSize:9, color:'#555', textTransform:'uppercase', letterSpacing:'1px', marginBottom:6, fontFamily:'Courier New' }}>Target</div>
+                <div style={{ fontSize:9, color:'var(--tx1)', textTransform:'uppercase', letterSpacing:'1px', marginBottom:6, fontFamily:'Courier New' }}>Target</div>
                 <input className="zk-input" value={customTgt} onChange={e=>setCustomTgt(e.target.value)} placeholder="192.168.1.0/24 or single IP"/>
               </div>
 
               <div style={{ marginBottom:14 }}>
-                <div style={{ fontSize:9, color:'#555', textTransform:'uppercase', letterSpacing:'1px', marginBottom:6, fontFamily:'Courier New' }}>Nmap Command (editable)</div>
+                <div style={{ fontSize:9, color:'var(--tx1)', textTransform:'uppercase', letterSpacing:'1px', marginBottom:6, fontFamily:'Courier New' }}>Nmap Command (editable)</div>
                 <textarea value={customCmd} onChange={e=>setCustomCmd(e.target.value)}
-                  style={{ width:'100%', background:'#060606', border:'1px solid #1a1a1a', color:'#e8e8e8', fontFamily:'Courier New', fontSize:12, padding:'8px', outline:'none', resize:'vertical', minHeight:80, boxSizing:'border-box' as const }}/>
+                  style={{ width:'100%', background:'var(--bg)', border:'1px solid #1a1a1a', color:'#e8e8e8', fontFamily:'Courier New', fontSize:12, padding:'8px', outline:'none', resize:'vertical', minHeight:80, boxSizing:'border-box' as const }}/>
               </div>
 
               <div style={{ marginBottom:14 }}>
-                <div style={{ fontSize:9, color:'#555', textTransform:'uppercase', letterSpacing:'1px', marginBottom:6, fontFamily:'Courier New' }}>Notes</div>
+                <div style={{ fontSize:9, color:'var(--tx1)', textTransform:'uppercase', letterSpacing:'1px', marginBottom:6, fontFamily:'Courier New' }}>Notes</div>
                 <input className="zk-input" value={customNotes} onChange={e=>setCustomNotes(e.target.value)} placeholder="Scan purpose / notes..."/>
               </div>
 
               {/* Quick flags */}
               <div style={{ marginBottom:14 }}>
-                <div style={{ fontSize:9, color:'#555', textTransform:'uppercase', letterSpacing:'1px', marginBottom:8, fontFamily:'Courier New' }}>Quick Flags</div>
+                <div style={{ fontSize:9, color:'var(--tx1)', textTransform:'uppercase', letterSpacing:'1px', marginBottom:8, fontFamily:'Courier New' }}>Quick Flags</div>
                 <div style={{ display:'flex', flexWrap:'wrap', gap:5 }}>
                   {[
                     ['-sS','SYN Scan'],   ['-sV','Svc Ver'],  ['-sC','Scripts'],
@@ -283,8 +283,8 @@ export default function ScannerView({ targetNode, onClose }: ScannerViewProps) {
 
               {/* Preview */}
               <div style={{ marginBottom:14 }}>
-                <div style={{ fontSize:9, color:'#555', textTransform:'uppercase', letterSpacing:'1px', marginBottom:6, fontFamily:'Courier New' }}>Full Command Preview</div>
-                <div style={{ background:'#060606', border:'1px solid #0d0d0d', padding:'8px 10px', fontFamily:'Courier New', fontSize:11, color:'#e05c6e', wordBreak:'break-all' }}>
+                <div style={{ fontSize:9, color:'var(--tx1)', textTransform:'uppercase', letterSpacing:'1px', marginBottom:6, fontFamily:'Courier New' }}>Full Command Preview</div>
+                <div style={{ background:'var(--bg)', border:'1px solid #0d0d0d', padding:'8px 10px', fontFamily:'Courier New', fontSize:11, color:'#e05c6e', wordBreak:'break-all' }}>
                   $ {customCmd} {customTgt}
                 </div>
               </div>
@@ -293,11 +293,11 @@ export default function ScannerView({ targetNode, onClose }: ScannerViewProps) {
               <div style={{ marginBottom:14 }}>
                 <div style={{ display:'flex', gap:6, marginBottom:8 }}>
                   <button onClick={() => { if(customNotes||customCmd) setSavedScans(p=>[...p,{name:customNotes||`scan-${Date.now()}`,cmd:customCmd,tgt:customTgt,notes:customNotes}]); }}
-                    style={{ flex:1, background:'#0d0d0d', border:'1px solid #1a1a1a', color:'#777', fontFamily:'Courier New', fontSize:10, padding:'5px', cursor:'pointer' }}>
+                    style={{ flex:1, background:'var(--bg)', border:'1px solid #1a1a1a', color:'#777', fontFamily:'Courier New', fontSize:10, padding:'5px', cursor:'pointer' }}>
                     + Save Preset
                   </button>
                   <button onClick={() => { setCustomCmd('nmap -sV -sC -T4'); setCustomTgt('192.168.1.0/24'); }}
-                    style={{ background:'transparent', border:'1px solid #0d0d0d', color:'#444', fontFamily:'Courier New', fontSize:10, padding:'5px 10px', cursor:'pointer' }}>
+                    style={{ background:'transparent', border:'1px solid #0d0d0d', color:'var(--tx2)', fontFamily:'Courier New', fontSize:10, padding:'5px 10px', cursor:'pointer' }}>
                     Reset
                   </button>
                 </div>
@@ -316,8 +316,8 @@ export default function ScannerView({ targetNode, onClose }: ScannerViewProps) {
           </div>
 
           {/* Center: saved presets */}
-          <div style={{ width:280, background:'#080808', borderRight:'1px solid #111', display:'flex', flexDirection:'column', overflow:'hidden', flexShrink:0 }}>
-            <div style={{ padding:'5px 12px', background:'#111', borderBottom:'1px solid #0d0d0d', fontSize:10, color:'#777', textTransform:'uppercase', letterSpacing:1 }}>Saved Presets</div>
+          <div style={{ width:280, background:'var(--bg)', borderRight:'1px solid #111', display:'flex', flexDirection:'column', overflow:'hidden', flexShrink:0 }}>
+            <div style={{ padding:'5px 12px', background:'var(--inset)', borderBottom:'1px solid #0d0d0d', fontSize:10, color:'#777', textTransform:'uppercase', letterSpacing:1 }}>Saved Presets</div>
             <div style={{ flex:1, overflowY:'auto' }}>
               {savedScans.map((sc,i) => (
                 <div key={i} style={{ padding:'10px 12px', borderBottom:'1px solid #0d0d0d', cursor:'pointer' }}
@@ -329,24 +329,24 @@ export default function ScannerView({ targetNode, onClose }: ScannerViewProps) {
                       style={{ fontSize:8, background:'#1a0000', border:'1px solid #e05c6e', color:'#e05c6e', fontFamily:'Courier New', padding:'1px 7px', cursor:'pointer' }}>Load</button>
                   </div>
                   <div style={{ fontSize:10, color:'#e05c6e', fontFamily:'Courier New', marginBottom:3, opacity:0.7 }}>{sc.cmd.slice(0,40)}{sc.cmd.length>40?'...':''}</div>
-                  <div style={{ fontSize:9, color:'#555', fontFamily:'Courier New' }}>{sc.notes}</div>
+                  <div style={{ fontSize:9, color:'var(--tx1)', fontFamily:'Courier New' }}>{sc.notes}</div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Right: output */}
-          <div style={{ flex:1, display:'flex', flexDirection:'column', background:'#060606', overflow:'hidden' }}>
-            <div style={{ padding:'5px 12px', background:'#111', borderBottom:'1px solid #0d0d0d', fontSize:10, color:'#777', textTransform:'uppercase', letterSpacing:1, display:'flex', alignItems:'center', gap:10 }}>
+          <div style={{ flex:1, display:'flex', flexDirection:'column', background:'var(--bg)', overflow:'hidden' }}>
+            <div style={{ padding:'5px 12px', background:'var(--inset)', borderBottom:'1px solid #0d0d0d', fontSize:10, color:'#777', textTransform:'uppercase', letterSpacing:1, display:'flex', alignItems:'center', gap:10 }}>
               <span>Output</span>
               {running&&<span style={{ color:'#e05c6e' }}>● RUNNING</span>}
-              <button onClick={()=>setLog([])} style={{ marginLeft:'auto', background:'transparent', border:'1px solid #111', color:'#444', fontFamily:'Courier New', fontSize:9, padding:'2px 8px', cursor:'pointer' }}>Clear</button>
+              <button onClick={()=>setLog([])} style={{ marginLeft:'auto', background:'transparent', border:'1px solid #111', color:'var(--tx2)', fontFamily:'Courier New', fontSize:9, padding:'2px 8px', cursor:'pointer' }}>Clear</button>
             </div>
             <div style={{ flex:1, overflowY:'auto', padding:'10px 14px', fontFamily:'Courier New', fontSize:12 }}>
-              {log.length===0&&<div style={{ color:'#222' }}>[*] Configure command and execute</div>}
+              {log.length===0&&<div style={{ color:'var(--tx3)' }}>[*] Configure command and execute</div>}
               {log.map((l,i)=>(
                 <div key={i} style={{ display:'flex', gap:10, lineHeight:1.65, marginBottom:1 }}>
-                  <span style={{ color:'#1a1a1a', fontSize:10, minWidth:58, flexShrink:0 }}>{l.time}</span>
+                  <span style={{ color:'var(--tx3)', fontSize:10, minWidth:58, flexShrink:0 }}>{l.time}</span>
                   <span style={{ color:l.cls==='ok'?'#33a84a':l.cls==='err'?'#e05c6e':l.cls==='warn'?'#d48b55':l.cls==='find'?'#5bb8d4':'#444' }}>{l.msg}</span>
                 </div>
               ))}
@@ -357,7 +357,7 @@ export default function ScannerView({ targetNode, onClose }: ScannerViewProps) {
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 
       {/* ── CONFIG PANEL ── */}
-      <div style={{ width: 270, minWidth: 270, background: '#0d0d0d', borderRight: '1px solid #1a1a1a', display: 'flex', flexDirection: 'column', overflow: 'hidden', flexShrink: 0 }}>
+      <div style={{ width: 270, minWidth: 270, background: 'var(--inset2)', borderRight: '1px solid var(--b1)', display: 'flex', flexDirection: 'column', overflow: 'hidden', flexShrink: 0 }}>
         {targetNode && (
           <div style={{ padding: '7px 12px', background: '#1a0000', borderBottom: '1px solid #e05c6e44', display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 10, color: '#e05c6e', fontFamily: 'Courier New', flex: 1 }}>Single-node scan: {nodeIp}</span>
@@ -365,51 +365,47 @@ export default function ScannerView({ targetNode, onClose }: ScannerViewProps) {
           </div>
         )}
 
-        <div className="sec-hdr" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span>Scanner Config</span>
-        </div>
-
         <div style={{ flex: 1, overflowY: 'auto' }}>
 
           {/* TARGET */}
-          <div style={{ padding: '10px 12px', borderBottom: '1px solid #111' }}>
-            <div style={{ fontSize: 9, color: '#2a2a2a', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 6 }}>Target</div>
+          <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--b1)' }}>
+            <span style={{ fontSize: 9, color: 'var(--tx2)', textTransform: 'uppercase', letterSpacing: '1.2px', display: 'block', borderBottom: '1px solid #111', marginBottom: 8, paddingBottom: 4 }}>Target</span>
             <input className="zk-input" value={target} onChange={e => setTarget(e.target.value)} disabled={!!targetNode}
               style={{ opacity: targetNode ? 0.5 : 1 }} />
-            <div style={{ marginTop: 8 }}>
-              <div style={{ fontSize: 9, color: '#2a2a2a', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 5 }}>Session</div>
+            <div style={{ marginTop: 10 }}>
+              <span style={{ fontSize: 9, color: 'var(--tx2)', textTransform: 'uppercase', letterSpacing: '1.2px', display: 'block', marginBottom: 5 }}>Session</span>
               <select className="zk-select"><option>Corp-Local (eth0)</option><option>Corp-WiFi (wlan0)</option></select>
             </div>
           </div>
 
           {/* SCAN TYPES */}
-          <div style={{ padding: '10px 12px', borderBottom: '1px solid #111' }}>
-            <div style={{ fontSize: 9, color: '#2a2a2a', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 8 }}>Scan Types (multi-select)</div>
+          <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--b1)' }}>
+            <span style={{ fontSize: 9, color: 'var(--tx2)', textTransform: 'uppercase', letterSpacing: '1.2px', display: 'block', borderBottom: '1px solid #111', marginBottom: 8, paddingBottom: 4 }}>Scan Types</span>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
               {SCAN_TYPES.map(st => (
                 <button key={st.key} onClick={() => toggleType(st.key)}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 8, padding: '4px 8px',
-                    background: selectedTypes.includes(st.key) ? '#1a0000' : '#080808',
-                    border: `1px solid ${selectedTypes.includes(st.key) ? '#e05c6e' : '#111'}`,
-                    color: selectedTypes.includes(st.key) ? '#e05c6e' : '#444',
+                    background: selectedTypes.includes(st.key) ? '#1a0000' : 'transparent',
+                    border: `1px solid ${selectedTypes.includes(st.key) ? '#e05c6e' : 'transparent'}`,
+                    color: selectedTypes.includes(st.key) ? '#e05c6e' : 'var(--tx1)',
                     fontFamily: 'Courier New', fontSize: 10, cursor: 'pointer', textAlign: 'left',
                   }}>
                   <span style={{ minWidth: 60 }}>{st.label}</span>
-                  <span style={{ fontSize: 9, color: selectedTypes.includes(st.key) ? '#e05c6e88' : '#222' }}>{st.desc}</span>
+                  <span style={{ fontSize: 9, color: selectedTypes.includes(st.key) ? '#e05c6e88' : 'var(--tx2)' }}>{st.desc}</span>
                 </button>
               ))}
             </div>
           </div>
 
           {/* PORT SCOPE */}
-          <div style={{ padding: '10px 12px', borderBottom: '1px solid #111' }}>
-            <div style={{ fontSize: 9, color: '#2a2a2a', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 8 }}>Port Scope</div>
+          <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--b1)' }}>
+            <span style={{ fontSize: 9, color: 'var(--tx2)', textTransform: 'uppercase', letterSpacing: '1.2px', display: 'block', borderBottom: '1px solid #111', marginBottom: 8, paddingBottom: 4 }}>Port Scope</span>
             {PORT_SCOPES.map(ps => (
               <div key={ps.key} onClick={() => setScope(ps.key)}
-                style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 8px', marginBottom: 3, cursor: 'pointer', background: scope === ps.key ? '#1a0000' : 'transparent', border: `1px solid ${scope === ps.key ? '#e05c6e' : '#0d0d0d'}` }}>
-                <span style={{ fontSize: 10, color: scope === ps.key ? '#e05c6e' : '#555', fontFamily: 'Courier New', minWidth: 70 }}>{ps.label}</span>
-                <span style={{ fontSize: 9, color: scope === ps.key ? '#e05c6e66' : '#222', fontFamily: 'Courier New' }}>{ps.range}</span>
+                style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 8px', marginBottom: 3, cursor: 'pointer', background: scope === ps.key ? '#1a0000' : 'transparent', border: `1px solid ${scope === ps.key ? '#e05c6e' : 'transparent'}` }}>
+                <span style={{ fontSize: 10, color: scope === ps.key ? '#e05c6e' : 'var(--tx1)', fontFamily: 'Courier New', minWidth: 70 }}>{ps.label}</span>
+                <span style={{ fontSize: 9, color: scope === ps.key ? '#e05c6e88' : 'var(--tx2)', fontFamily: 'Courier New' }}>{ps.range}</span>
               </div>
             ))}
             {scope === 'custom' && (
@@ -418,25 +414,23 @@ export default function ScannerView({ targetNode, onClose }: ScannerViewProps) {
           </div>
 
           {/* AGGRESSION */}
-          <div style={{ padding: '10px 12px', borderBottom: '1px solid #111' }}>
-            <div style={{ fontSize: 9, color: '#2a2a2a', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 8 }}>Aggression</div>
+          <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--b1)' }}>
+            <span style={{ fontSize: 9, color: 'var(--tx2)', textTransform: 'uppercase', letterSpacing: '1.2px', display: 'block', borderBottom: '1px solid #111', marginBottom: 8, paddingBottom: 4 }}>Aggression</span>
             <div style={{ display: 'flex', gap: 4 }}>
               {['STEALTH','STD','AGGR'].map(a => (
                 <button key={a} onClick={() => setAggr(a)} className={`zk-btn${aggr === a ? ' active' : ''}`} style={{ flex: 1, fontSize: 10 }}>{a}</button>
               ))}
             </div>
-            <div style={{ fontSize: 9, color: '#2a2a2a', marginTop: 6, fontFamily: 'Courier New' }}>
+            <div style={{ fontSize: 9, color: 'var(--tx2)', marginTop: 6, fontFamily: 'Courier New' }}>
               { aggr==='STEALTH'?'SYN-only · low noise · slow':aggr==='STD'?'Standard connect · moderate':'Aggressive · fast · noisy'}
             </div>
           </div>
 
           {/* AUTO LOOP */}
-          <div style={{ padding: '10px 12px' }}>
+          <div style={{ padding: '10px 14px' }}>
+            <span style={{ fontSize: 9, color: 'var(--tx2)', textTransform: 'uppercase', letterSpacing: '1.2px', display: 'block', borderBottom: '1px solid #111', marginBottom: 8, paddingBottom: 4 }}>Auto Loop</span>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-              <div>
-                <div style={{ fontSize: 12, color: '#888', fontFamily: 'Courier New' }}>Auto Loop</div>
-                <div style={{ fontSize: 9, color: '#2a2a2a', fontFamily: 'Courier New', marginTop: 2 }}>Repeat scan continuously</div>
-              </div>
+              <div style={{ fontSize: 9, color: 'var(--tx2)', fontFamily: 'Courier New' }}>Repeat scan continuously</div>
               <button className={`zk-btn${autoLoop ? ' active' : ''}`} style={{ minWidth: 44 }} onClick={() => setAutoLoop(p => !p)}>{autoLoop ? 'ON' : 'OFF'}</button>
             </div>
             {autoLoop && (
@@ -450,13 +444,13 @@ export default function ScannerView({ targetNode, onClose }: ScannerViewProps) {
         </div>
 
         {/* LAUNCH */}
-        <div style={{ padding: '10px 12px', borderTop: '1px solid #1a1a1a', flexShrink: 0 }}>
+        <div style={{ padding: '10px 12px', borderTop: '1px solid var(--b1)', flexShrink: 0 }}>
           <button onClick={launchScan} style={{
             width: '100%', padding: '10px', fontSize: 12, fontWeight: 700, letterSpacing: 1,
             fontFamily: 'Courier New', cursor: 'pointer', textTransform: 'uppercase',
-            background: running ? '#0d0d0d' : '#1a0000',
-            border: `1px solid ${running ? '#333' : '#e05c6e'}`,
-            color: running ? '#444' : '#e05c6e',
+            background: running ? 'var(--inset2)' : '#1a0000',
+            border: `1px solid ${running ? 'var(--b2)' : '#e05c6e'}`,
+            color: running ? 'var(--tx2)' : '#e05c6e',
           }}>
             {running ? '[ STOP SCAN ]' : `[ LAUNCH SCAN${targetNode ? ' (NODE)' : ''} ]`}
           </button>
@@ -467,11 +461,11 @@ export default function ScannerView({ targetNode, onClose }: ScannerViewProps) {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
         {/* Top bar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '0 12px', height: 34, background: '#111', borderBottom: '1px solid #1a1a1a', flexShrink: 0 }}>
-          <span style={{ fontSize: 10, color: '#333', textTransform: 'uppercase', letterSpacing: 1, fontFamily: 'Courier New' }}>Scan Output</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '0 12px', height: 34, background: 'var(--inset)', borderBottom: '1px solid #1a1a1a', flexShrink: 0 }}>
+          <span style={{ fontSize: 10, color: 'var(--tx2)', textTransform: 'uppercase', letterSpacing: 1, fontFamily: 'Courier New' }}>Scan Output</span>
           <div style={{ width: 5, height: 5, borderRadius: '50%', background: running ? '#e05c6e' : '#222' }} />
           <span style={{ fontSize: 11, color: running ? '#e05c6e' : '#333', fontFamily: 'Courier New' }}>{running ? '[RUNNING]' : progress === 100 ? '[DONE]' : 'Idle'}</span>
-          {progress > 0 && <span style={{ fontSize: 10, color: '#444', fontFamily: 'Courier New', marginLeft: 4 }}>{progress}%</span>}
+          {progress > 0 && <span style={{ fontSize: 10, color: 'var(--tx2)', fontFamily: 'Courier New', marginLeft: 4 }}>{progress}%</span>}
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
             <button className="zk-btn" style={{ fontSize: 10, padding: '2px 10px' }} onClick={() => setLog([])}>Clear</button>
             <button className="zk-btn" style={{ fontSize: 10, padding: '2px 10px' }}>Export</button>
@@ -480,25 +474,25 @@ export default function ScannerView({ targetNode, onClose }: ScannerViewProps) {
         </div>
 
         {/* Progress */}
-        <div style={{ height: 2, background: '#111', flexShrink: 0 }}>
+        <div style={{ height: 2, background: 'var(--inset)', flexShrink: 0 }}>
           <div style={{ height: 2, background: '#e05c6e', width: `${progress}%`, transition: 'width 0.2s' }} />
         </div>
 
         <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
           {/* TERMINAL */}
-          <div style={{ flex: 1, background: '#060606', padding: '10px 14px', overflowY: 'auto', fontFamily: 'Courier New', fontSize: 12 }}
+          <div style={{ flex: 1, background: 'var(--bg)', padding: '10px 14px', overflowY: 'auto', fontFamily: 'Courier New', fontSize: 12 }}
             onClick={() => cmdRef.current?.focus()}>
             {log.map((line, i) => (
               <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'baseline', padding: '2px 0', borderBottom: '1px solid rgba(30,30,30,0.5)' }}>
-                <span style={{ fontSize: 10, color: '#1e1e1e', minWidth: 58, flexShrink: 0 }}>{line.time}</span>
+                <span style={{ fontSize: 10, color: 'var(--tx3)', minWidth: 58, flexShrink: 0 }}>{line.time}</span>
                 <span style={{ color: COL[line.cls] || '#888', fontWeight: line.tag === 'CMD' ? 700 : 400, minWidth: 36, flexShrink: 0, fontSize: 10 }}>{line.tag}</span>
                 <span style={{ color: COL[line.cls] || '#888' }}>{line.msg}</span>
               </div>
             ))}
             {running && (
               <div style={{ display: 'flex', gap: 10, padding: '3px 0' }}>
-                <span style={{ fontSize: 10, color: '#1e1e1e', minWidth: 58 }}>--:--:--</span>
+                <span style={{ fontSize: 10, color: 'var(--tx3)', minWidth: 58 }}>--:--:--</span>
                 <span style={{ color: '#e05c6e' }}>Scanning<span className="cursor" /></span>
               </div>
             )}
@@ -506,24 +500,24 @@ export default function ScannerView({ targetNode, onClose }: ScannerViewProps) {
           </div>
 
           {/* DISCOVERED NODES */}
-          <div style={{ width: 240, background: '#0d0d0d', borderLeft: '1px solid #1a1a1a', display: 'flex', flexDirection: 'column', overflow: 'hidden', flexShrink: 0 }}>
+          <div style={{ width: 240, background: 'var(--panel)', borderLeft: '1px solid var(--b1)', display: 'flex', flexDirection: 'column', overflow: 'hidden', flexShrink: 0 }}>
             <div className="sec-hdr">
               <span>Discovered Nodes</span>
               <span style={{ color: '#e05c6e' }}>{0}</span>
             </div>
-            <div style={{ flex: 1, overflowY: 'auto', background: '#080808' }}>
+            <div style={{ flex: 1, overflowY: 'auto', background: 'var(--bg)' }}>
               {([] as import('@/lib/models/localNetwork/networkModel').NetworkNode[]).map(node => {
                 const hasRisk = node.ports.some(() => false);
                 const col = hasRisk ? '#e05c6e' : '#33a84a';
                 return (
                   <div key={node.ipv4} className="node-card"
-                    style={{ padding: '8px 10px', borderBottom: '1px solid #0d0d0d' }}>
+                    style={{ padding: '8px 10px', borderBottom: '1px solid var(--b1)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
                       <span style={{ fontSize: 10, color: col, flexShrink: 0 }}>{hasRisk ? '[!]' : '[*]'}</span>
                       <span style={{ fontSize: 11, fontWeight: 700, color: '#5bb8d4', flex: 1 }}>{node.ipv4}</span>
                       {node.isAgent && <span style={{ fontSize: 8, padding: '0 4px', background: '#1a0000', border: '1px solid #e05c6e', color: '#e05c6e' }}>ZK</span>}
                     </div>
-                    <div style={{ fontSize: 10, color: '#333', marginBottom: 4, fontFamily: 'Courier New' }}>{node.mac} · {node.os}</div>
+                    <div style={{ fontSize: 10, color: 'var(--tx2)', marginBottom: 4, fontFamily: 'Courier New' }}>{node.mac} · {node.os}</div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                       {node.ports.map(p => (
                         <span key={p.number} className={`port-tag${false ? ' risk' : ' open'}`}>{p.number}</span>
@@ -537,18 +531,18 @@ export default function ScannerView({ targetNode, onClose }: ScannerViewProps) {
         </div>
 
         {/* PROMPT + STATS */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 12px', borderTop: '1px solid #1a1a1a', background: '#0d0d0d', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 12px', borderTop: '1px solid var(--b1)', background: 'var(--panel)', flexShrink: 0 }}>
           <span style={{ fontSize: 12, color: '#e05c6e', whiteSpace: 'nowrap', fontFamily: 'Courier New', fontWeight: 700 }}>[ZK-ROOT] $&gt;</span>
           <input ref={cmdRef} value={cmd} onChange={e => setCmd(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') { execCmd(cmd); } }}
             style={{ flex: 1, background: 'transparent', border: 'none', color: '#cccccc', fontFamily: 'Courier New', fontSize: 12, outline: 'none' }}
             placeholder="command..." />
         </div>
-        <div style={{ display: 'flex', gap: 24, alignItems: 'center', padding: '3px 12px', background: '#111', borderTop: '1px solid #0d0d0d', flexShrink: 0, fontSize: 11, fontFamily: 'Courier New' }}>
-          <span><span style={{ fontWeight: 700, color: '#cccccc', fontSize: 13 }}>{stats.hosts || 0}</span><span style={{ color: '#333', marginLeft: 4 }}>hosts</span></span>
-          <span><span style={{ fontWeight: 700, color: '#cccccc', fontSize: 13 }}>{stats.ports || 14}</span><span style={{ color: '#333', marginLeft: 4 }}>ports</span></span>
-          <span><span style={{ fontWeight: 700, color: '#e05c6e', fontSize: 13 }}>{stats.vulns || 3}</span><span style={{ color: '#333', marginLeft: 4 }}>vulns</span></span>
-          <span style={{ marginLeft: 'auto', color: '#1a1a1a' }}>
+        <div style={{ display: 'flex', gap: 24, alignItems: 'center', padding: '3px 12px', background: 'var(--inset)', borderTop: '1px solid #0d0d0d', flexShrink: 0, fontSize: 11, fontFamily: 'Courier New' }}>
+          <span><span style={{ fontWeight: 700, color: '#cccccc', fontSize: 13 }}>{stats.hosts || 0}</span><span style={{ color: 'var(--tx2)', marginLeft: 4 }}>hosts</span></span>
+          <span><span style={{ fontWeight: 700, color: '#cccccc', fontSize: 13 }}>{stats.ports || 14}</span><span style={{ color: 'var(--tx2)', marginLeft: 4 }}>ports</span></span>
+          <span><span style={{ fontWeight: 700, color: '#e05c6e', fontSize: 13 }}>{stats.vulns || 3}</span><span style={{ color: 'var(--tx2)', marginLeft: 4 }}>vulns</span></span>
+          <span style={{ marginLeft: 'auto', color: 'var(--tx3)' }}>
             {aggr} · {selectedTypes.join('+') || 'none'} · {scope}
           </span>
         </div>
