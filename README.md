@@ -427,8 +427,8 @@ ZombieKeeper/
 ### 1. Clonar o repositório
 
 ```bash
-git clone https://github.com/jtave111/ZombieKeeper.git
-cd ZombieKeeper
+git clone https://github.com/jtave111/Zombie-Keeper.git
+cd Zombie-Keeper
 ```
 
 ### 2. Configurar variáveis de ambiente
@@ -576,10 +576,11 @@ Targets disponíveis: LocalFingerPrint · ping · D_DOS · net_utils
 
 **Desktop App (Cliente Tauri)**
 - [x] UI dark terminal com navegação completa de operador (12 views)
-- [x] Login com autenticação JWT
+- [x] Login com autenticação JWT + persistência via validação de expiração client-side (sem logout falso em restart)
 - [x] Dashboard com estatísticas de agents em tempo real e mapa mundial Leaflet
 - [x] Tabela de agents — API real, filtros, busca, ação de kill
 - [x] Gerenciamento de usuários — CRUD completo com atribuição de roles (API real)
+- [x] Design system coeso: tema dark terminal consistente em todas as 12 views (token CSS + PayloadGenerator como referência visual)
 - [~] Shell do agent — UI terminal pronta, WebSocket direto ao Spring Boot (precisa de backend real)
 - [~] Tabs do Shell — Process List, File Manager, Port Forward, Sysinfo (UI pronta, sem backend)
 - [~] View Scanner — UI + construtor de comandos pronto, execução de scan simulada
