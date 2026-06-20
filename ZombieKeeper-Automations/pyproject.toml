@@ -1,0 +1,54 @@
+# =============================================================================
+# ZombieKeeper Automations — configuração do projeto Python
+# =============================================================================
+#
+# Gerenciamento de dependências e metadados do projeto.
+#
+# Setup inicial:
+#   python -m venv .venv
+#   source .venv/bin/activate
+#   pip install -e ".[dev]"
+#
+# Ou via Makefile:
+#   make setup
+# =============================================================================
+
+[build-system]
+requires      = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name        = "zk-automations"
+version     = "0.1.0"
+description = "Automações Python para o ZombieKeeper C2"
+requires-python = ">=3.11"
+
+# Dependências de produção
+# Adicione aqui conforme os módulos forem sendo implementados
+dependencies = [
+    # "requests>=2.31",   # quando client.py precisar de requests
+    # "python-dotenv",    # quando config.py precisar ler .env
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov",
+    # "mypy",            # type checking
+    # "ruff",            # linter
+]
+
+# Scripts CLI — adicionar conforme forem criados em scripts/
+# [project.scripts]
+# zk-recon   = "scripts.run_recon:main"
+# zk-monitor = "scripts.monitor_agents:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts   = "-v --tb=short"
+
+# [tool.mypy]
+# strict = true
+
+# [tool.ruff]
+# line-length = 100

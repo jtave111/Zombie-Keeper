@@ -2,9 +2,8 @@
 # TARGET: ping  (biblioteca estática)
 # =============================================================================
 #
-# O que é:
-#   Biblioteca de baixo nível para envio e recepção de pacotes ICMP Echo.
-#   Requer CAP_NET_RAW ou execução como root para abrir raw sockets.
+# Biblioteca de baixo nível para envio e recepção de pacotes ICMP Echo.
+# Requer CAP_NET_RAW ou execução como root para abrir raw sockets.
 #
 # Como usar em qualquer domínio do Arsenal:
 #   target_link_libraries(<meu-target> PRIVATE ping)
@@ -15,14 +14,16 @@
 # =============================================================================
 
 add_library(ping STATIC
-    Ping.cpp
+    src/Ping.cpp
 )
 
 # PUBLIC: quem linkar esta lib herda o diretório de includes automaticamente.
 target_include_directories(ping
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
+target_link_libraries(ping PRIVATE net_utils)
 
 target_compile_features(ping PUBLIC cxx_std_17)
 

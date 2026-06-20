@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "agent_locations")
+@Table(name = "tb_agent_locations")
 public class AgentLocation {
 
     @Id
@@ -26,8 +26,7 @@ public class AgentLocation {
     @Column(nullable = false)
     private Double lng;
 
-    // Dados geográficos
-    @Column
+     @Column
     private String city;
 
     @Column

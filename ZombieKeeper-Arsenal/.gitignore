@@ -26,7 +26,7 @@ compile_commands.json
 *.so
 
 # Binários compilados — gerados em build/, não devem ir pro repositório
-network-session/scanners/local-fingerprint/cpp/LocalFingerPrint
+network-session/tools/local-fingerprint/LocalFingerPrint
 
 # -----------------------------------------------------------------------------
 # IDEs

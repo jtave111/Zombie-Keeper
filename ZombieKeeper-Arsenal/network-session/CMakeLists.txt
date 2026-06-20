@@ -30,7 +30,7 @@ find_package(CURL REQUIRED)
 # -----------------------------------------------------------------------------
 # Scanners — ferramentas de varredura ativa de rede.
 # -----------------------------------------------------------------------------
-add_subdirectory(scanners/local-fingerprint/cpp)  # → target: LocalFingerPrint
+add_subdirectory(tools/local-fingerprint)  # → target: LocalFingerPrint
 
 # -----------------------------------------------------------------------------
 # Descoberta de hosts — adicionar quando implementados em C/C++.

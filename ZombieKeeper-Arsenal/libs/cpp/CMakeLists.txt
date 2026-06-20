@@ -11,7 +11,9 @@
 #   target_link_libraries(<meu-target> PRIVATE <nome>)
 # =============================================================================
 
-add_subdirectory(ping)   # ICMP raw socket — ping/sweep de hosts
+add_subdirectory(net_utils)  # utilitários compartilhados (checksum ICMP, ...)
+add_subdirectory(ping)       # ICMP raw socket — ping/sweep de hosts
+add_subdirectory(D_DOS)      # TCP flood + ICMP ping flood (uso autorizado)
 
 # add_subdirectory(crypto)     # futuro — wrappers criptográficos
 # add_subdirectory(ipc)        # futuro — comunicação inter-processo

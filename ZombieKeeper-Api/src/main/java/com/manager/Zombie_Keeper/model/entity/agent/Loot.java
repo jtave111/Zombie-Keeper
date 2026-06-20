@@ -11,6 +11,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 @Entity
+@Table(name = "tb_agent_loot")
 public class Loot {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,7 +26,7 @@ public class Loot {
     private LocalDateTime collectedAt;
 
     @ManyToOne
-    @JoinColumn(name =  "agent_id")
+    @JoinColumn(name = "agent_id")
     @JsonIgnore
     private Agent agent;
 
