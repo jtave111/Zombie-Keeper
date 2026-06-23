@@ -622,3 +622,57 @@ html, body {
 
 /* Monospace terminal text */
 .mono { font-family: 'Courier New', Courier, monospace; }
+
+/* ── LoginPage — MU/TH/UR Ops Deck ── */
+@keyframes zkRoll    { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:translateY(0) } }
+@keyframes zkFlicker { 0%,100%{opacity:.03} 7%{opacity:.09} 9%{opacity:.02} 50%{opacity:.055} 92%{opacity:.10} }
+@keyframes zkWave    { 0%,100%{transform:scaleY(.16)} 50%{transform:scaleY(1)} }
+@keyframes zkSweep   { from{left:-3%} to{left:103%} }
+@keyframes zkLed     { 50%{opacity:.4} }
+@keyframes zkBlink   { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes zkShake   { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-4px)} 40%{transform:translateX(4px)} 60%{transform:translateX(-2px)} 80%{transform:translateX(2px)} }
+
+.zk-lg-rivet   { position:absolute; width:7px; height:7px; border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, #5a5a5a, #141414);
+  box-shadow:inset 0 1px 1px rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.04); z-index:7; }
+.zk-lg-well    { position:relative; background:var(--inset2); border:1px solid var(--b2);
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.6); display:flex; align-items:center; transition:all .14s; }
+.zk-lg-well:focus-within { border-color:var(--red);
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.6), 0 0 12px rgba(204,68,68,.30); }
+.zk-lg-plate   { position:absolute; top:-7px; left:12px; padding:0 6px; background:var(--panel);
+  font-size:9px; letter-spacing:1.5px; color:var(--tx2); text-shadow:0 1px 0 #000; text-transform:uppercase; }
+.zk-lg-well:focus-within .zk-lg-plate { color:var(--red-hi); }
+.zk-lg-input   { flex:1; background:transparent; border:none; outline:none; color:var(--tx0);
+  font-family:var(--mono); font-size:13px; padding:12px 12px; letter-spacing:.6px; min-width:0; }
+.zk-lg-input::placeholder { color:var(--tx3); }
+.zk-lg-led     { width:7px; height:7px; border-radius:50%; margin:0 12px; flex-shrink:0;
+  background:var(--tx3); transition:all .14s; }
+.zk-lg-well:focus-within .zk-lg-led { background:var(--red-hi); box-shadow:0 0 8px var(--red-hi); }
+
+.zk-lg-btn     { width:100%; font-family:var(--mono); font-size:12px; font-weight:700; letter-spacing:2px;
+  text-transform:uppercase; color:var(--red-hi); cursor:pointer; padding:12px; text-align:center;
+  border:1px solid var(--red); border-radius:2px;
+  background:linear-gradient(180deg, #43202a 0%, var(--red2) 55%, var(--red3) 100%);
+  box-shadow:inset 0 1px 0 rgba(224,92,110,.25), inset 0 -2px 4px rgba(0,0,0,.5), 0 0 16px rgba(204,68,68,.10);
+  transition:all .12s; }
+.zk-lg-btn:hover:not(:disabled)  { color:#fff; border-color:var(--red-hi);
+  box-shadow:inset 0 1px 0 rgba(224,92,110,.4), inset 0 -2px 4px rgba(0,0,0,.5), 0 0 22px rgba(204,68,68,.28); }
+.zk-lg-btn:active:not(:disabled) { transform:translateY(1px);
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.6); }
+.zk-lg-btn:disabled { color:var(--tx2); border-color:var(--b2); cursor:not-allowed;
+  background:var(--inset2); box-shadow:inset 0 1px 0 rgba(255,255,255,.02); }
+
+.zk-lg-scan    { position:absolute; inset:0; z-index:6; pointer-events:none; border-radius:3px;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,.26) 0px, rgba(0,0,0,.26) 1px, transparent 1px, transparent 3px); }
+.zk-lg-flicker { position:absolute; inset:0; z-index:6; pointer-events:none; border-radius:3px;
+  background:rgba(204,68,68,.02); animation:zkFlicker 6s infinite steps(1,end); }
+
+.zk-lg-bar  { width:3px; transform-origin:center; border-radius:1px; opacity:.6;
+  background:linear-gradient(var(--red-hi), var(--red)); box-shadow:0 0 5px rgba(204,68,68,.45);
+  animation:zkWave 1.4s ease-in-out infinite; }
+.zk-lg-beam { position:absolute; top:0; bottom:0; width:2px; z-index:3;
+  background:linear-gradient(transparent, rgba(224,92,110,.85), transparent);
+  box-shadow:0 0 10px rgba(224,92,110,.6); animation:zkSweep 3.4s linear infinite; }
+
+.zk-lg-caret { display:inline-block; width:8px; height:13px; background:var(--red-hi);
+  box-shadow:0 0 7px rgba(224,92,110,.7); vertical-align:text-bottom; animation:zkBlink 1s step-end infinite; }

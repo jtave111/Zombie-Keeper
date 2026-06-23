@@ -14,13 +14,13 @@
 # =============================================================================
 
 add_library(ping STATIC
-    src/Ping.cpp
+        src/Ping.cpp
 )
 
 # PUBLIC: quem linkar esta lib herda o diretório de includes automaticamente.
 target_include_directories(ping
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        include
 )
 
 target_link_libraries(ping PRIVATE net_utils)

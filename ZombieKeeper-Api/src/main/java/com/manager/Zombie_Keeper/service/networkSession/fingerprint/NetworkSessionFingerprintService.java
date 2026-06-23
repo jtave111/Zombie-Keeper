@@ -1,4 +1,4 @@
-package com.manager.Zombie_Keeper.service.localNetwork.fingerprint;
+package com.manager.Zombie_Keeper.service.networkSession.fingerprint;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,12 +9,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
+import com.manager.Zombie_Keeper.model.entity.localNetwork.NetworkSession;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
 
 
 @Service
-public class LocalNetworkFingerprintService {
+public class NetworkSessionFingerprintService {
 
     private final Map<String, Process> activeProcesses = new ConcurrentHashMap<>();
 
@@ -51,11 +54,11 @@ public class LocalNetworkFingerprintService {
         return  currentDir.equals("ZombieKeeper-Api")? currentDir.getParentFile(): null;
         
     }
-    /*
+
 
     //TODO:  Refatorar e implementar sobrescritas dos metodos
     public NetworkSession localNetworkFingerprint(Consumer<String> onProgress, String binaryName,
-          List<PortScope> portScopes, List<ScanType> scanTypes, String sec,  String usec){
+                                                  List<PortScope> portScopes, List<ScanType> scanTypes, String sec, String usec){
         
         NetworkSession session = new NetworkSession();
 
@@ -67,7 +70,7 @@ public class LocalNetworkFingerprintService {
         try {
             
 
-         //   File binaryFile = new File(this.getRootPath(), STR."modules/linux/c++/code/localFingerPrint/\{binaryName}");
+            File binaryFile = new File(this.getRootPath(), STR."modules/linux/c++/code/localFingerPrint/\{binaryName}");
 
             if(!binaryFile.exists() ) throw new FileNotFoundException();
 
@@ -75,12 +78,8 @@ public class LocalNetworkFingerprintService {
 
             command.add(binaryFile.getAbsolutePath());
 
+            /* TODO: mapear ScanType/flag → flags de comando
             command.add(scanTypes.toString());
-
-            // TODO: mapear ScanType → flags de comando
-//            for(ScanType scanType : scanTypes){
-//                if()
-//            }
 
             if(flag.equalsIgnoreCase("all")) {
                 command.add("--create_session");
@@ -89,6 +88,7 @@ public class LocalNetworkFingerprintService {
                 command.add("--create_session");
                 command.add("-any-ports");
             }
+            */
 
             command.add(sec);
             command.add(usec);
@@ -146,7 +146,7 @@ public class LocalNetworkFingerprintService {
         return  session;
     }
 
-     */
+
 
 
     //C++ binaries 
@@ -230,12 +230,12 @@ public class LocalNetworkFingerprintService {
 
     public int excLocalPortScan(String binaryName, String networkIdentfier, String mac, String ip, String port, String sec, String usec){
 
-        List<String> comand = new ArrayList<>();
+        List<String> command = new ArrayList<>();
 
         try {
 
             File root = this.getRootPath();
-            File binaryFile = new File(root, "modules/linux/c++/code/localFingerPrint/" + binaryName );
+            File binaryFile = new File(root, STR."modules/linux/c++/code/localFingerPrint/\{binaryName}");
             
 
             if(!binaryFile.exists()) throw new FileNotFoundException();
@@ -244,14 +244,14 @@ public class LocalNetworkFingerprintService {
                 binaryFile.setExecutable(true);
             }
             
-            comand.add(binaryFile.getAbsolutePath());
-            comand.add("--simple_scan");
-            comand.add(networkIdentfier);
-            comand.add(mac);
-            comand.add(ip);
-            comand.add(port);
-            comand.add(sec);
-            comand.add(usec);
+            command.add(binaryFile.getAbsolutePath());
+            command.add("--simple_scan");
+            command.add(networkIdentfier);
+            command.add(mac);
+            command.add(ip);
+            command.add(port);
+            command.add(sec);
+            command.add(usec);
         
         } catch (Exception e) {
             e.printStackTrace();
@@ -262,7 +262,7 @@ public class LocalNetworkFingerprintService {
         int exitCode =-1;
         try {
             
-            ProcessBuilder pb = new ProcessBuilder(comand);
+            ProcessBuilder pb = new ProcessBuilder(command);
             Process process = pb.start();
 
             boolean finished = process.waitFor(60, TimeUnit.SECONDS);
@@ -419,4 +419,44 @@ public class LocalNetworkFingerprintService {
         
         return output.toString();
     }
+
+    enum ScanType {
+        TCP,
+        UDP,
+        HTTP,
+        HTTPS,
+        OS,
+        VULN,
+        DNS,
+        SSH,
+        SMB,
+        ICMP,
+        RDP,
+        ARP,
+        HARDWARE,
+
+
+    }
+    enum PortScope {
+        COMMON,
+        FULL,
+        WEB,
+        DB,
+        CUSTOM
+
+    }
+
+    class CommandExecution {
+
+        private String binaryFileName;
+        private PortScope portScope;
+        private ScanType scanType;
+        private Long sec;
+        private Long usec;
+        private Long timeout;
+        private int threads;
+
+
+    }
+
 }

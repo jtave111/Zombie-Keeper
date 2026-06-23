@@ -1,0 +1,14 @@
+//
+// Created by zero on 6/23/26.
+//
+
+#ifndef ZOMBIEKEEPER_ARSENAL_ZKOUTPUT_H
+#define ZOMBIEKEEPER_ARSENAL_ZKOUTPUT_H
+
+
+class ZKOutput
+{
+};
+
+
+#endif //ZOMBIEKEEPER_ARSENAL_ZKOUTPUT_H

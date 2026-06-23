@@ -11,12 +11,12 @@
 # =============================================================================
 
 add_library(D_DOS STATIC
-    src/DOS.cpp
+        src/DOS.cpp
 )
 
 target_include_directories(D_DOS
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        include
 )
 
 target_link_libraries(D_DOS PRIVATE net_utils)
