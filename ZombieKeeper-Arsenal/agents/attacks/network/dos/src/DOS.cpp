@@ -16,7 +16,7 @@
 
 #include "DOS.h"
 #include "net_utils/checksum.h"
-
+//TODO: fix/ migrar dos para outro diretorio, pensar em um nome
 void DOS::tcp_flood(const struct targetHost *target_host)
 {
     const char *ip = target_host->ip;

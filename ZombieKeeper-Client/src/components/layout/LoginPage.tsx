@@ -12,10 +12,11 @@ const BOOT: BootLine[] = [
   { label: 'awaiting operator credentials',    flag: ''       },
 ];
 
-const BARS = Array.from({ length: 38 }, (_, i) => i);
+const API_HEALTH = `${import.meta.env.VITE_API_URL ?? 'http://localhost:8080'}/actuator/health`;
+
+interface Ping { ms: number; ok: boolean; }
 
 interface Props { onLogin: () => void; }
-
 
 export default function LoginPage({ onLogin }: Props) {
   const [user,    setUser]    = useState('');
@@ -25,6 +26,8 @@ export default function LoginPage({ onLogin }: Props) {
   const [lines,   setLines]   = useState<BootLine[]>([]);
   const [time,    setTime]    = useState('');
   const [shake,   setShake]   = useState(0);
+  const [pings,   setPings]   = useState<Ping[]>([]);
+  const [apiUp,   setApiUp]   = useState<boolean | null>(null);
 
   useEffect(() => {
     let i = 0;
@@ -33,6 +36,24 @@ export default function LoginPage({ onLogin }: Props) {
       else clearInterval(id);
     }, 320);
     return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    let alive = true;
+    const check = async () => {
+      const t0 = performance.now();
+      try {
+        await fetch(API_HEALTH, { signal: AbortSignal.timeout(3500) });
+        const ms = Math.round(performance.now() - t0);
+        if (alive) { setApiUp(true);  setPings(p => [...p.slice(-39), { ms, ok: true  }]); }
+      } catch {
+        const ms = Math.min(Math.round(performance.now() - t0), 3500);
+        if (alive) { setApiUp(false); setPings(p => [...p.slice(-39), { ms, ok: false }]); }
+      }
+    };
+    check();
+    const id = setInterval(check, 3000);
+    return () => { alive = false; clearInterval(id); };
   }, []);
 
   useEffect(() => {
@@ -70,184 +91,240 @@ export default function LoginPage({ onLogin }: Props) {
   };
 
   return (
-    <div style={{ height: '100vh', width: '100vw', background: 'var(--inset2)', position: 'relative',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
-      fontFamily: 'var(--mono)', padding: 36 }}>
-      {/* viewport vignette — corners fall into shadow */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none',
-        background: 'radial-gradient(ellipse 120% 100% at 50% 46%, transparent 52%, rgba(0,0,0,.62) 100%)' }} />
+    <div style={{
+      height: '100vh', width: '100vw',
+      background: 'var(--bg)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontFamily: 'var(--mono)', padding: 32,
+    }}>
+      <div style={{
+        display: 'flex', flexDirection: 'column',
+        width: 'min(1100px, 95vw)', height: 'min(680px, 92vh)',
+        background: 'var(--panel)',
+        border: '1px solid var(--b2)',
+        boxShadow: '0 20px 60px -14px rgba(0,0,0,.75)',
+        overflow: 'hidden',
+        animation: 'zkRoll .4s ease-out',
+      }}>
 
-      {/* ── CONSOLE FRAME ── */}
-      <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column',
-        width: 'min(1240px, 95vw)', height: 'min(760px, 92vh)', background: 'var(--panel)',
-        border: '2px solid var(--b3)', borderRadius: 4, overflow: 'hidden', animation: 'zkRoll .5s ease-out',
-        boxShadow: 'inset 0 1px 0 #3d3d3d, inset 0 0 0 1px #333, 0 26px 72px -16px #000, 0 0 96px -10px rgba(204,68,68,.16)' }}>
-
-        <div className="zk-lg-scan" />
-        <div className="zk-lg-flicker" />
-
-        {/* frame corner rivets */}
-        <i className="zk-lg-rivet" style={{ top: 7, left: 7 }} />
-        <i className="zk-lg-rivet" style={{ top: 7, right: 7 }} />
-        <i className="zk-lg-rivet" style={{ bottom: 7, left: 7 }} />
-        <i className="zk-lg-rivet" style={{ bottom: 7, right: 7 }} />
-
-        {/* ── HEADER PLATE ── */}
-        <div style={{ height: 60, flexShrink: 0, background: 'var(--panel2)', borderBottom: '1px solid var(--b2)',
-          display: 'flex', alignItems: 'center', gap: 14, padding: '0 26px', position: 'relative', zIndex: 3,
-          boxShadow: 'inset 0 -1px 0 #000' }}>
-          <div style={{ width: 34, height: 34, flexShrink: 0, border: '1px solid var(--red)', background: 'var(--red3)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: 'var(--red-hi)',
-            boxShadow: '0 0 10px rgba(204,68,68,.25)', textShadow: '0 0 8px rgba(224,92,110,.6)' }}>☣</div>
-          <div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--tx0)', letterSpacing: 3,
-              textShadow: '0 1px 0 #000' }}>
-              ZOMBIE KEEPER <span style={{ color: 'var(--tx2)', fontWeight: 400, letterSpacing: 2, fontSize: 12 }}>· C2 OPERATIONS CONSOLE</span>
-            </div>
-            <div style={{ fontSize: 9, color: 'var(--tx2)', letterSpacing: 1.5, marginTop: 2 }}>
+        {/* ── HEADER ── */}
+        <div style={{
+          height: 48, flexShrink: 0,
+          background: 'var(--panel2)', borderBottom: '1px solid var(--b2)',
+          display: 'flex', alignItems: 'center', gap: 11, padding: '0 16px',
+        }}>
+          <span style={{ fontSize: 12, color: 'var(--red-hi)', flexShrink: 0 }}>☣</span>
+          <div style={{ flex: 1 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--tx0)', letterSpacing: 1.8 }}>
+              ZOMBIE KEEPER
+            </span>
+            <span style={{ color: 'var(--tx3)', fontWeight: 400, letterSpacing: 1.5, fontSize: 10, marginLeft: 8 }}>
+              C2 OPERATIONS CONSOLE
+            </span>
+            <div style={{ fontSize: 9, color: 'var(--tx3)', letterSpacing: 1.5, marginTop: 2 }}>
               UNIT ZK-7 · MODEL MU/TH/UR-6000 · REV 3.0.1
             </div>
           </div>
-          <div style={{ flex: 1 }} />
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 13, color: 'var(--red-hi)', letterSpacing: 1, fontWeight: 700,
-              textShadow: '0 0 8px rgba(224,92,110,.4)' }}>{time}</div>
-            <div style={{ fontSize: 9, color: 'var(--tx2)', letterSpacing: 1, marginTop: 2 }}>
-              LINK <span style={{ color: 'var(--red)', letterSpacing: 0 }}>████████░</span> 98% · CH:SECURE
-            </div>
+          <div style={{ fontSize: 11, color: 'var(--tx2)', letterSpacing: 1, fontVariantNumeric: 'tabular-nums' }}>
+            {time}
           </div>
         </div>
 
         {/* ── BODY ── */}
-        <div style={{ flex: 1, display: 'flex', minHeight: 0, position: 'relative', zIndex: 3 }}>
+        <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
 
           {/* LEFT — CREDENTIAL BAY */}
-          <div style={{ width: 'clamp(370px, 38%, 470px)', flexShrink: 0, borderRight: '1px solid var(--b2)',
-            padding: '28px 34px', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative' }}>
-
-            <div style={{ fontSize: 10, color: 'var(--tx2)', letterSpacing: 2, textTransform: 'uppercase',
-              paddingBottom: 9, marginBottom: 26, borderBottom: '1px solid var(--b1)',
-              display: 'flex', justifyContent: 'space-between' }}>
-              <span>// credential bay</span><span style={{ color: 'var(--tx3)' }}>NEW USER #1</span>
+          <div style={{
+            width: 'clamp(310px, 34%, 410px)', flexShrink: 0,
+            borderRight: '1px solid var(--b2)',
+            display: 'flex', flexDirection: 'column',
+          }}>
+            <div className="sec-hdr">
+              <span>credential bay</span>
+              <span style={{ color: 'var(--tx3)', letterSpacing: 0, fontSize: 10 }}>SESSION #1</span>
             </div>
 
-            <div key={shake} style={{ animation: shake ? 'zkShake .4s ease' : undefined }}>
-              <div className="zk-lg-well" style={{ marginBottom: 22 }}>
-                <span className="zk-lg-plate">Operator ID</span>
-                <span className="zk-lg-led" />
-                <input className="zk-lg-input" placeholder="operator" value={user}
-                  onChange={e => setUser(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleLogin()}
-                  disabled={loading} autoFocus />
+            <div style={{ flex: 1, padding: '20px 22px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div key={shake} style={{ animation: shake ? 'zkShake .4s ease' : undefined }}>
+                <div className="zk-lg-well" style={{ marginBottom: 14 }}>
+                  <span className="zk-lg-plate">Operator ID</span>
+                  <input className="zk-lg-input" placeholder="operator" value={user}
+                    onChange={e => setUser(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleLogin()}
+                    disabled={loading} autoFocus />
+                </div>
+
+                <div className="zk-lg-well" style={{ marginBottom: 12 }}>
+                  <span className="zk-lg-plate">Access Key</span>
+                  <input className="zk-lg-input" type="password" placeholder="enter access key" value={pass}
+                    onChange={e => setPass(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleLogin()}
+                    disabled={loading} />
+                </div>
+
+                <div style={{ minHeight: 20, marginBottom: 10 }}>
+                  {error && (
+                    <div style={{
+                      fontSize: 10.5, color: 'var(--red-hi)',
+                      background: 'var(--red3)', borderLeft: '2px solid var(--red)',
+                      padding: '5px 9px', letterSpacing: .3,
+                    }}>
+                      {error}
+                    </div>
+                  )}
+                </div>
+
+                <button className="zk-lg-btn" onClick={handleLogin} disabled={loading}>
+                  {loading ? '◌  authenticating…' : '▶  initialize swarm uplink'}
+                </button>
               </div>
 
-              <div className="zk-lg-well" style={{ marginBottom: 18 }}>
-                <span className="zk-lg-plate">Access Key</span>
-                <span className="zk-lg-led" />
-                <input className="zk-lg-input" type="password" placeholder="enter access key" value={pass}
-                  onChange={e => setPass(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleLogin()}
-                  disabled={loading} />
-              </div>
-
-              {/* error strip — reserved height, no layout jump */}
-              <div style={{ minHeight: 22, marginBottom: 14, display: 'flex', alignItems: 'center' }}>
-                {error && (
-                  <div style={{ width: '100%', fontSize: 10.5, color: 'var(--red-hi)', background: 'var(--red3)',
-                    borderLeft: '2px solid var(--red-hi)', padding: '5px 9px', letterSpacing: .3 }}>
-                    {error}
+              {/* Auth subsystem status */}
+              <div style={{ marginTop: 22, borderTop: '1px solid var(--b1)', paddingTop: 12 }}>
+                <div style={{ fontSize: 9, color: 'var(--tx3)', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 7 }}>
+                  auth subsystems
+                </div>
+                {['TLS CHANNEL', 'JWT SIGNING', 'DB CONNECTION', 'LISTENER 4444'].map(label => (
+                  <div key={label} style={{
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    fontSize: 10, color: 'var(--tx2)', marginBottom: 4,
+                  }}>
+                    <span style={{ letterSpacing: .6 }}>{label}</span>
+                    <span style={{ color: 'var(--green)', letterSpacing: 1, fontSize: 9 }}>■ OK</span>
                   </div>
-                )}
+                ))}
               </div>
-
-              <button className="zk-lg-btn" onClick={handleLogin} disabled={loading}>
-                {loading ? '◌  authenticating…' : '▶  initialize swarm uplink'}
-              </button>
             </div>
-
-            <i className="zk-lg-rivet" style={{ top: 16, right: 14 }} />
-            <i className="zk-lg-rivet" style={{ bottom: 16, right: 14 }} />
           </div>
 
           {/* RIGHT — SIGNAL MONITOR */}
-          <div style={{ flex: 1, padding: '24px 30px', display: 'flex', flexDirection: 'column', position: 'relative', minWidth: 0 }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+            <div className="sec-hdr">signal monitor</div>
 
-            <div style={{ fontSize: 10, color: 'var(--tx2)', letterSpacing: 2, textTransform: 'uppercase',
-              paddingBottom: 9, marginBottom: 18, borderBottom: '1px solid var(--b1)',
-              display: 'flex', justifyContent: 'space-between' }}>
-              <span>// signal monitor · operator pulse</span>
-              <span style={{ color: 'var(--red-hi)' }}>● LIVE</span>
-            </div>
+            <div style={{ flex: 1, padding: '18px 20px', display: 'flex', flexDirection: 'column' }}>
+              {/* API Latency monitor */}
+              {(() => {
+                const maxMs  = pings.length ? Math.max(...pings.map(p => p.ms), 100) : 100;
+                const avgMs  = pings.length ? Math.round(pings.reduce((s, p) => s + p.ms, 0) / pings.length) : null;
+                const minMs  = pings.length ? Math.min(...pings.map(p => p.ms)) : null;
+                const lastMs = pings.length ? pings[pings.length - 1].ms : null;
+                const barColor = (ping: Ping) => {
+                  if (!ping.ok)      return 'var(--red)';
+                  if (ping.ms <  80) return 'var(--green)';
+                  if (ping.ms < 300) return '#c8a000';
+                  return 'var(--red-hi)';
+                };
+                return (
+                  <>
+                    <div style={{
+                      height: 130, flexShrink: 0,
+                      position: 'relative', overflow: 'hidden',
+                      background: 'var(--inset2)',
+                      border: '1px solid var(--b2)',
+                    }}>
+                      {/* reference gridlines at 25% / 50% / 75% height */}
+                      {[25, 50, 75].map(pct => (
+                        <div key={pct} style={{
+                          position: 'absolute', bottom: `${pct}%`, left: 0, right: 0,
+                          height: 1, background: 'rgba(255,255,255,.04)',
+                        }} />
+                      ))}
+                      {/* bar chart */}
+                      <div style={{
+                        position: 'absolute', inset: '0 6px 0', paddingTop: 6,
+                        display: 'flex', alignItems: 'flex-end', gap: 1.5,
+                      }}>
+                        {pings.map((p, i) => (
+                          <div key={i} style={{
+                            flex: 1, minWidth: 2,
+                            height: `${Math.max(4, (p.ms / maxMs) * 88)}%`,
+                            background: barColor(p),
+                            opacity: 0.55 + (i / pings.length) * 0.45,
+                            transition: 'height .2s ease',
+                          }} />
+                        ))}
+                        {pings.length === 0 && (
+                          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: 10, color: 'var(--tx3)', letterSpacing: 1 }}>
+                            checking api…
+                          </div>
+                        )}
+                      </div>
+                      {/* status badge — top right */}
+                      <div style={{
+                        position: 'absolute', top: 6, right: 8,
+                        fontSize: 9, letterSpacing: 1,
+                        color: apiUp === null ? 'var(--tx3)' : apiUp ? 'var(--green)' : 'var(--red-hi)',
+                      }}>
+                        {apiUp === null
+                          ? '◌ CHECKING'
+                          : apiUp
+                            ? `■ UP · ${lastMs}ms`
+                            : '■ OFFLINE'}
+                      </div>
+                    </div>
 
-            {/* oscilloscope */}
-            <div style={{ height: 150, position: 'relative', overflow: 'hidden', background: 'var(--inset2)',
-              border: '1px solid var(--b2)', borderRadius: 2,
-              boxShadow: 'inset 0 0 40px rgba(0,0,0,.7), inset 0 0 16px rgba(204,68,68,.05)',
-              backgroundImage:
-                'repeating-linear-gradient(0deg, rgba(204,68,68,.05) 0 1px, transparent 1px 19px),' +
-                'repeating-linear-gradient(90deg, rgba(204,68,68,.05) 0 1px, transparent 1px 19px)' }}>
-              {/* baseline */}
-              <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: 1,
-                background: 'rgba(224,92,110,.18)' }} />
-              {/* trace bars */}
-              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
-                justifyContent: 'space-between', padding: '0 14px' }}>
-                {BARS.map(i => (
-                  <span key={i} className="zk-lg-bar" style={{
-                    height: '78%',
-                    animationDelay: `${(i * 0.05).toFixed(2)}s`,
-                    animationDuration: `${(1.1 + (i % 6) * 0.13).toFixed(2)}s`,
-                  }} />
-                ))}
+                    {/* metrics row */}
+                    <div style={{
+                      display: 'flex', justifyContent: 'space-between',
+                      fontSize: 9, color: 'var(--tx3)', letterSpacing: 1,
+                      marginTop: 5, marginBottom: 16,
+                    }}>
+                      <span>MIN <span style={{ color: 'var(--tx2)' }}>{minMs !== null ? `${minMs}ms` : '—'}</span></span>
+                      <span>AVG <span style={{ color: 'var(--tx2)' }}>{avgMs !== null ? `${avgMs}ms` : '—'}</span></span>
+                      <span>MAX <span style={{ color: 'var(--tx2)' }}>{pings.length ? `${maxMs}ms` : '—'}</span></span>
+                      <span>SAMPLES <span style={{ color: 'var(--tx2)' }}>{pings.length}</span></span>
+                    </div>
+                  </>
+                );
+              })()}
+
+              {/* MOTD */}
+              <div style={{
+                border: '1px solid var(--b1)', background: 'var(--inset)',
+                padding: '11px 14px', position: 'relative',
+              }}>
+                <span style={{
+                  position: 'absolute', top: -7, left: 10,
+                  padding: '0 6px', background: 'var(--panel)',
+                  fontSize: 9, letterSpacing: 2, color: 'var(--tx3)',
+                }}>M.O.T.D.</span>
+                <div style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--tx1)', lineHeight: 1.8 }}>
+                  The puppeteer is <span style={{ color: 'var(--red-hi)' }}>invisible</span>.
+                </div>
+                <div style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--tx1)', lineHeight: 1.8 }}>
+                  The puppet believes it <span style={{ color: 'var(--red-hi)' }}>dances alone</span>.
+                </div>
               </div>
-              {/* sweep beam */}
-              <div className="zk-lg-beam" />
-            </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--tx2)',
-              letterSpacing: 1, marginTop: 8 }}>
-              <span>SWEEP 50ms/div</span><span>GAIN x4</span>
-              <span><span style={{ color: 'var(--red-hi)' }}>●</span> SIGNAL NOMINAL</span>
-            </div>
-
-            {/* MOTD plate */}
-            <div style={{ position: 'relative', marginTop: 26, border: '1px solid var(--b2)', borderRadius: 2,
-              background: 'var(--inset)', padding: '18px 20px 16px' }}>
-              <span style={{ position: 'absolute', top: -7, left: 14, padding: '0 7px', background: 'var(--panel)',
-                fontSize: 9, letterSpacing: 2, color: 'var(--tx2)' }}>M.O.T.D.</span>
-              <div style={{ fontSize: 13, fontStyle: 'italic', color: 'var(--tx1)', lineHeight: 1.9 }}>
-                The puppeteer is <span style={{ color: 'var(--red-hi)' }}>invisible</span>.
-              </div>
-              <div style={{ fontSize: 13, fontStyle: 'italic', color: 'var(--tx1)', lineHeight: 1.9 }}>
-                The puppet believes it <span style={{ color: 'var(--red-hi)' }}>dances alone</span>.
+              <div style={{ flex: 1 }} />
+              <div style={{ fontSize: 9, color: 'var(--tx3)', letterSpacing: 2.5, textAlign: 'center' }}>
+                ☣  AUTHORIZED ACCESS ONLY  ☣
               </div>
             </div>
-
-            <div style={{ flex: 1 }} />
-            <div style={{ textAlign: 'center', fontSize: 9, color: 'var(--tx3)', letterSpacing: 3 }}>
-              ☣  AUTHORIZED ACCESS ONLY  ☣
-            </div>
-
-            <i className="zk-lg-rivet" style={{ bottom: 16, left: 14 }} />
-            <i className="zk-lg-rivet" style={{ bottom: 16, right: 14 }} />
           </div>
         </div>
 
         {/* ── CONSOLE RAIL ── */}
-        <div style={{ height: 30, flexShrink: 0, background: 'var(--inset2)', borderTop: '1px solid var(--b2)',
-          display: 'flex', alignItems: 'center', gap: 12, padding: '0 16px', fontSize: 11, position: 'relative',
-          zIndex: 3, overflow: 'hidden', boxShadow: 'inset 0 1px 0 #000' }}>
+        <div style={{
+          height: 27, flexShrink: 0,
+          background: 'var(--inset2)', borderTop: '1px solid var(--b2)',
+          display: 'flex', alignItems: 'center', gap: 10, padding: '0 14px',
+          fontSize: 10.5, overflow: 'hidden',
+        }}>
           <span style={{ color: 'var(--tx3)', letterSpacing: 1, flexShrink: 0 }}>CONSOLE ▏</span>
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 0, whiteSpace: 'nowrap', overflow: 'hidden' }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', whiteSpace: 'nowrap', overflow: 'hidden' }}>
             {lines.map((l, i) => (
               <span key={i} style={{ color: 'var(--tx2)', flexShrink: 0 }}>
-                {i > 0 && <span style={{ color: 'var(--tx3)', margin: '0 9px' }}>▏</span>}
+                {i > 0 && <span style={{ color: 'var(--tx3)', margin: '0 8px' }}>·</span>}
                 {l.label}{' '}
-                {l.flag && <b style={{ color: 'var(--green)', fontWeight: 700, letterSpacing: .5 }}>{l.flag}</b>}
+                {l.flag && <b style={{ color: 'var(--green)', fontWeight: 700 }}>{l.flag}</b>}
               </span>
             ))}
             <span className="zk-lg-caret" style={{ marginLeft: 8, flexShrink: 0 }} />
           </div>
-          <span style={{ color: 'var(--red)', letterSpacing: 0, flexShrink: 0 }}>████</span>
         </div>
+
       </div>
     </div>
   );

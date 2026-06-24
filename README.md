@@ -102,10 +102,11 @@ O sistema opera em três camadas principais:
               │                              │
               │  ┌─────────────────────────┐ │
               │  │  libs/cpp/              │ │   ← libs compartilhadas
-              │  │    net_utils/           │ │     ICMP checksum
-              │  │    ping/                │ │     raw ICMP (linka net_utils)
-              │  │    D_DOS/               │ │     TCP flood + ICMP flood
-              │  │                         │ │
+              │  │    net_utils/           │ │     checksum ICMP (in_cksum)
+              │  │      checksum/          │ │
+              │  │      ping/              │ │     raw ICMP (linka net_utils)
+              │  │    output_utils/        │ │     ZKOutput + JsonSerializer
+              │  │                         │ │     nlohmann/json FetchContent
               │  │  network-session/tools/ │ │   ← Blue Team
               │  │    local-fingerprint/   │ │
               │  │      include/  src/     │ │
@@ -115,6 +116,7 @@ O sistema opera em três camadas principais:
               │  └─────────────────────────┘ │
               │  ┌─────────────────────────┐ │
               │  │  agents/               │ │   ← Red Team (planejado)
+              │  │    attacks/network/dos/ │ │     TCP/ICMP flood (D_DOS)
               │  │  implants/             │ │
               │  │  exploits/             │ │
               │  │  post-exploitation/    │ │
@@ -226,22 +228,29 @@ Ferramentas para descoberta, fingerprint e inteligência de rede local. Os dados
 ZombieKeeper-Arsenal/
 ├── libs/
 │   └── cpp/
-│       ├── net_utils/               # Utilitários compartilhados
-│       │   ├── include/             # net_utils::icmp_checksum (in_cksum)
-│       │   └── src/
-│       ├── ping/                    # ICMP raw socket — linka net_utils
-│       │   ├── include/
-│       │   └── src/
-│       └── D_DOS/                   # TCP SYN flood + ICMP/UDP flood
-│           ├── include/
-│           └── src/
+│       ├── net_utils/               # Utilitários de rede compartilhados
+│       │   ├── checksum/include/    # net_utils::icmp_checksum (in_cksum)
+│       │   ├── checksum/src/
+│       │   └── ping/                # ICMP raw socket — target CMake: ping
+│       │       ├── include/
+│       │       └── src/
+│       └── output_utils/            # Saída estruturada + serialização JSON
+│           ├── include/             # ZKOutput (stderr), JsonSerializer (Port/Node)
+│           └── src/                 # nlohmann/json via FetchContent
 │
-└── network-session/
-    └── tools/
-        └── local-fingerprint/       # Scanner de rede local (C++17)
-            ├── include/             # Headers públicos
-            ├── src/                 # Implementações
-            └── CMakeLists.txt       # Target: LocalFingerPrint
+├── network-session/
+│   └── tools/
+│       └── local-fingerprint/       # Scanner de rede local (C++17)
+│           ├── include/             # Headers públicos + modelos
+│           ├── src/                 # Implementações
+│           └── CMakeLists.txt       # Target: LocalFingerPrint
+│
+└── agents/
+    └── attacks/
+        └── network/
+            └── dos/                 # TCP SYN flood + ICMP/UDP flood (D_DOS)
+                ├── include/
+                └── src/
 ```
 
 Convenção em todo o Arsenal: `include/` para headers, `src/` para `.cpp`. Todas as libs linkam `net_utils` via `target_link_libraries(... PRIVATE net_utils)`.
@@ -271,12 +280,15 @@ ZombieKeeper-Arsenal/
 ├── Makefile                         ← wrapper: make network-session
 ├── libs/CMakeLists.txt
 │   └── libs/cpp/CMakeLists.txt
-│       ├── add_subdirectory(net_utils)   → target: net_utils
-│       ├── add_subdirectory(ping)        → target: ping (linka net_utils)
-│       └── add_subdirectory(D_DOS)       → target: D_DOS (linka net_utils)
+│       ├── add_subdirectory(net_utils)        → target: net_utils
+│       ├── add_subdirectory(net_utils/ping)   → target: ping (linka net_utils)
+│       ├── add_subdirectory(output_utils)     → target: output_utils
+│       └── FetchContent: nlohmann/json 3.11.3
 │
-└── network-session/CMakeLists.txt
-    └── tools/local-fingerprint/CMakeLists.txt → target: LocalFingerPrint
+├── network-session/CMakeLists.txt
+│   └── tools/local-fingerprint/CMakeLists.txt → target: LocalFingerPrint
+│
+└── agents/attacks/network/dos/CMakeLists.txt  → target: dos (linka net_utils)
 
 build/                               ← artefatos gerados (gitignored)
 ```
@@ -372,9 +384,9 @@ ZombieKeeper/
 ├── ZombieKeeper-Arsenal/                      # Arsenal de ferramentas nativas
 │   │
 │   ├── libs/cpp/                              # Bibliotecas compartilhadas C++17
-│   │   ├── net_utils/include/ src/            # ICMP checksum (in_cksum) + utilitários
-│   │   ├── ping/include/ src/                 # Raw ICMP socket (linka net_utils)
-│   │   └── D_DOS/include/ src/                # TCP SYN flood + ICMP/UDP flood
+│   │   ├── net_utils/checksum/include/ src/   # ICMP checksum (in_cksum)
+│   │   ├── net_utils/ping/include/ src/       # Raw ICMP socket (linka net_utils)
+│   │   └── output_utils/include/ src/         # ZKOutput + JsonSerializer (nlohmann/json)
 │   │
 │   ├── network-session/                       # Domínio: Blue Team
 │   │   └── tools/local-fingerprint/
@@ -382,9 +394,10 @@ ZombieKeeper/
 │   │       ├── src/                           # Implementação C++17
 │   │       └── CMakeLists.txt                 # Target: LocalFingerPrint
 │   │
-│   ├── agents/                                # Domínio: Red Team (planejado)
-│   │   ├── implants/linux/    (cpp, rust, go) # Beacons Linux
-│   │   ├── implants/windows/  (cpp, rust)     # Beacons Windows
+│   ├── agents/                                # Domínio: Red Team
+│   │   ├── attacks/network/dos/               # TCP SYN flood + ICMP/UDP flood (D_DOS)
+│   │   ├── implants/linux/    (cpp, rust, go) # Beacons Linux (planejado)
+│   │   ├── implants/windows/  (cpp, rust)     # Beacons Windows (planejado)
 │   │   ├── exploits/          (linux, windows, web)
 │   │   ├── post-exploitation/ (linux, windows)
 │   │   ├── attacks/           (network, web, credentials)
@@ -577,6 +590,8 @@ Targets disponíveis: LocalFingerPrint · ping · D_DOS · net_utils
 **Desktop App (Cliente Tauri)**
 - [x] UI dark terminal com navegação completa de operador (12 views)
 - [x] Login com autenticação JWT + persistência via validação de expiração client-side (sem logout falso em restart)
+- [x] Login page com tema IDE dark consistente e monitor de latência de API pré-autenticação
+- [x] ErrorBoundary em Root — crashes de render exibem erro legível em vez de tela preta
 - [x] Dashboard com estatísticas de agents em tempo real e mapa mundial Leaflet
 - [x] Tabela de agents — API real, filtros, busca, ação de kill
 - [x] Gerenciamento de usuários — CRUD completo com atribuição de roles (API real)
@@ -607,8 +622,11 @@ Targets disponíveis: LocalFingerPrint · ping · D_DOS · net_utils
 - [x] Modelo de sessão: Node → Port → Vulnerability
 - [x] Serialização da sessão e HTTP POST para o servidor C2
 - [x] Build via CMake 3.20+ com suporte a CLion
-- [x] Biblioteca Ping isolada como target CMake independente
+- [x] Biblioteca Ping isolada como target CMake independente (dentro de net_utils)
 - [x] Target `setcap` para aplicação de capabilities sem bloquear o build
+- [x] `output_utils` — ZKOutput (log estruturado stderr/stdout) + JsonSerializer (Port, Node → JSON)
+- [x] nlohmann/json v3.11.3 via CMake FetchContent (portabilidade, sem git submodule)
+- [x] D_DOS movido para `agents/attacks/network/dos/` (separação Blue/Red Team)
 - [ ] Banner grabbing de serviços (identificar versões de serviços em portas abertas)
 - [ ] OS fingerprinting via TTL / análise de TCP stack
 - [ ] Keep-alive beacon com intervalo de check-in configurável

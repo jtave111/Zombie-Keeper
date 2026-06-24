@@ -47,15 +47,20 @@ find_package(CURL REQUIRED)
 # Libs internas
 # Caminho: network-session/tools/local-fingerprint/ → Arsenal/libs/cpp/
 # net_utils deve vir antes de ping (ping linka net_utils).
+# Guards if(NOT TARGET) evitam double-inclusion ao buildar via root do Arsenal.
 # -----------------------------------------------------------------------------
-add_subdirectory(
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/cpp/net_utils
-    ${CMAKE_CURRENT_BINARY_DIR}/libs/net_utils
-)
-add_subdirectory(
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/cpp/ping
-    ${CMAKE_CURRENT_BINARY_DIR}/libs/ping
-)
+if(NOT TARGET net_utils)
+    add_subdirectory(
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/cpp/net_utils
+        ${CMAKE_CURRENT_BINARY_DIR}/libs/net_utils
+    )
+endif()
+if(NOT TARGET ping)
+    add_subdirectory(
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/cpp/net_utils/ping
+        ${CMAKE_CURRENT_BINARY_DIR}/libs/ping
+    )
+endif()
 
 # -----------------------------------------------------------------------------
 # Fontes do executável
